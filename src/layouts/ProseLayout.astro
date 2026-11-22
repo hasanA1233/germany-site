@@ -1,0 +1,25 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  h1: string;
+  breadcrumb: string;
+  noindex?: boolean;
+  lead?: string;
+}
+const { title, description, h1, breadcrumb, noindex = false, lead } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={[{ name: breadcrumb }]} noindex={noindex}>
+  <div class="container-page">
+    <article class="mx-auto max-w-3xl pt-6">
+      <h1 class="text-3xl font-extrabold tracking-tight text-navy-900 sm:text-4xl">{h1}</h1>
+      {lead && <p class="mt-4 text-lg leading-relaxed text-muted">{lead}</p>}
+      <div class="prose-qr mt-8">
+        <slot />
+      </div>
+    </article>
+  </div>
+</BaseLayout>

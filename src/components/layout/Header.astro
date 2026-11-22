@@ -1,0 +1,160 @@
+---
+import Logo from '../ui/Logo.astro';
+import Icon from '../ui/Icon.astro';
+import SearchBox from '../ui/SearchBox.astro';
+
+const nav = [
+  { href: '/finanzrechner/', label: 'Finanzrechner' },
+  { href: '/kredit/', label: 'Kredit & Finanzierung' },
+  { href: '/sparen-investieren/', label: 'Sparen & Investieren' },
+  { href: '/business/', label: 'Business' },
+  { href: '/gehalt-steuern/', label: 'Gehalt & Steuern' },
+];
+const path = Astro.url.pathname;
+const isActive = (href: string) => path === href || path.startsWith(href);
+---
+
+<header class="sticky top-0 z-40 border-b border-line bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
+  <div class="container-page flex h-16 items-center justify-between gap-4">
+    <a href="/" class="shrink-0 rounded-lg" aria-label="QuickRechner – zur Startseite">
+      <Logo />
+    </a>
+
+    <nav aria-label="Hauptnavigation" class="hidden lg:block">
+      <ul class="flex items-center gap-1">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+                class="rounded-lg px-3 py-2 text-sm font-medium text-ink transition-colors hover:bg-navy-50 hover:text-navy-900 aria-[current=page]:bg-navy-50 aria-[current=page]:text-navy-900"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-1">
+      <button
+        type="button"
+        data-open-search
+        class="inline-flex h-11 w-11 items-center justify-center rounded-xl text-navy-900 hover:bg-navy-50"
+        aria-label="Rechner suchen"
+        aria-haspopup="dialog"
+      >
+        <Icon name="search" />
+      </button>
+      <button
+        type="button"
+        data-menu-toggle
+        class="inline-flex h-11 w-11 items-center justify-center rounded-xl text-navy-900 hover:bg-navy-50 lg:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Menü öffnen"
+      >
+        <span data-icon-open><Icon name="menu" /></span>
+        <span data-icon-close hidden><Icon name="close" /></span>
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-menu" aria-label="Mobile Navigation" class="border-t border-line bg-white lg:hidden" hidden>
+    <ul class="container-page flex flex-col py-3">
+      {
+        nav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+              class="flex items-center justify-between rounded-xl px-3 py-3 font-medium text-ink hover:bg-navy-50 aria-[current=page]:text-brand-700"
+            >
+              {item.label}
+              <Icon name="chevron-right" size={18} class="text-muted" />
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <a href="/prozent-rechner/" class="flex items-center justify-between rounded-xl px-3 py-3 font-medium text-ink hover:bg-navy-50">
+          Prozent & Rabatt
+          <Icon name="chevron-right" size={18} class="text-muted" />
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<dialog
+  id="search-dialog"
+  aria-label="Rechner suchen"
+  class="m-0 mx-auto mt-[10vh] w-[min(40rem,calc(100%-2rem))] max-w-none overflow-visible bg-transparent p-0 backdrop:bg-navy-950/50"
+>
+  <div class="rounded-3xl bg-white p-4 shadow-2xl sm:p-5">
+    <div class="mb-3 flex items-center justify-between">
+      <p class="text-sm font-semibold text-navy-900">Rechner suchen</p>
+      <button type="button" data-close-search class="inline-flex h-10 w-10 items-center justify-center rounded-xl hover:bg-navy-50" aria-label="Suche schließen">
+        <Icon name="close" />
+      </button>
+    </div>
+    <SearchBox id="dialog-search" />
+  </div>
+</dialog>
+
+<script>
+  // Mobiles Menü
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.getElementById('mobile-menu');
+  if (toggle && menu) {
+    const setOpen = (open: boolean) => {
+      menu.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+      toggle.querySelector<HTMLElement>('[data-icon-open]')!.hidden = open;
+      toggle.querySelector<HTMLElement>('[data-icon-close]')!.hidden = !open;
+    };
+    toggle.addEventListener('click', () => setOpen(menu.hidden));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.hidden) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', (e) => e.matches && setOpen(false));
+  }
+
+  // Suchdialog (natives <dialog>: Fokusfalle und Escape inklusive)
+  const dialog = document.getElementById('search-dialog') as HTMLDialogElement | null;
+  if (dialog) {
+    const input = dialog.querySelector<HTMLInputElement>('input[type="search"]');
+    const open = () => {
+      dialog.showModal();
+      input?.focus();
+    };
+    document.querySelectorAll('[data-open-search]').forEach((b) => b.addEventListener('click', open));
+    dialog.querySelector('[data-close-search]')?.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+    // Suchfelder verbrauchen Escape sonst zum Leeren des Textes – hier soll Escape sofort schließen
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        dialog.close();
+      }
+    });
+    // Fokus nach dem Schließen zurück auf den Such-Button
+    dialog.addEventListener('close', () => document.querySelector<HTMLButtonElement>('[data-open-search]')?.focus());
+    // Tastenkürzel "/" öffnet die Suche
+    document.addEventListener('keydown', (e) => {
+      const t = e.target as HTMLElement;
+      if (e.key === '/' && !dialog.open && !t.closest('input, textarea, select, [contenteditable]')) {
+        e.preventDefault();
+        open();
+      }
+    });
+  }
+</script>

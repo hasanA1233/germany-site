@@ -1,0 +1,52 @@
+---
+import CategoryPage from '../components/layout/CategoryPage.astro';
+---
+
+<CategoryPage
+  id="gehalt-steuern"
+  h1="Steuerrechner: Umsatzsteuer und Mehrwertsteuer"
+  faq={[
+    {
+      q: 'Welcher Umsatzsteuersatz gilt für meine Leistung?',
+      a: 'In Deutschland gilt in der Regel der Regelsteuersatz von 19 %. Der ermäßigte Satz von 7 % gilt nur für bestimmte, gesetzlich festgelegte Umsätze. Daneben gibt es steuerfreie Umsätze und Sonderregeln. Welcher Satz zutrifft, hängt vom Einzelfall ab – im Zweifel hilft eine steuerliche Beratung.',
+    },
+    {
+      q: 'Wie rechne ich die Mehrwertsteuer aus einem Bruttobetrag heraus?',
+      a: 'Teilen Sie den Bruttobetrag durch 1,19 (bei 19 %) bzw. 1,07 (bei 7 %), um den Nettobetrag zu erhalten. Die Steuer ist die Differenz zwischen Brutto und Netto. Ziehen Sie nicht einfach 19 % vom Bruttobetrag ab – das ergibt einen falschen Wert.',
+    },
+    {
+      q: 'Berechnet QuickRechner auch mein Nettogehalt?',
+      a: 'Derzeit nicht. Die Berechnung von Lohnsteuer und Sozialabgaben hängt von vielen individuellen Faktoren und jährlich angepassten Werten ab. Wir veröffentlichen Rechner nur, wenn wir deren Ergebnisse sorgfältig geprüft haben.',
+    },
+  ]}
+>
+  <p>
+    Steuern richtig zu berechnen ist im Geschäftsalltag unverzichtbar – beim Schreiben von Rechnungen, beim Kalkulieren von Angeboten und beim
+    Buchen von Belegen. Hier finden Sie unsere Rechner rund um die Umsatzsteuer.
+  </p>
+
+  <Fragment slot="guide">
+    <h2>Umsatzsteuer im Alltag: Netto, Brutto und Steuerbetrag</h2>
+    <p>
+      Die Umsatzsteuer – umgangssprachlich Mehrwertsteuer – begegnet Ihnen auf fast jeder Rechnung. Unternehmen schlagen sie auf ihre Nettopreise
+      auf und führen sie an das Finanzamt ab. Für Privatpersonen ist meist nur der Bruttopreis relevant, für Unternehmen dagegen vor allem der
+      Nettobetrag und die ausgewiesene Steuer, die sie in der Regel als Vorsteuer geltend machen können.
+    </p>
+    <h3>Der häufigste Rechenfehler</h3>
+    <p>
+      Beim Herausrechnen der Steuer aus einem Bruttobetrag wird oft einfach der Steuersatz abgezogen. Doch die 19 % beziehen sich auf den
+      Nettobetrag. Aus 119 € brutto werden deshalb 100 € netto – und nicht 96,39 €. Der
+      <a href="/umsatzsteuer-rechner/">Umsatzsteuerrechner</a> rechnet in beide Richtungen korrekt und rundet auf volle Cent.
+    </p>
+    <h3>Steuersatz sorgfältig prüfen</h3>
+    <p>
+      Welcher Steuersatz gilt, regelt das Umsatzsteuergesetz. Der ermäßigte Satz ist an genau definierte Voraussetzungen geknüpft, und auch die
+      Kleinunternehmerregelung hat eigene Bedingungen. Nutzen Sie den Rechner für die Berechnung – die steuerliche Einordnung Ihres Umsatzes
+      sollten Sie im Zweifel mit einer Steuerberaterin oder einem Steuerberater klären.
+    </p>
+    <p>
+      Für die Kalkulation Ihrer Preise und Ergebnisse finden Sie weitere Werkzeuge in der Kategorie <a href="/business/">Business</a>, zum
+      Beispiel den <a href="/gewinn-rechner/">Gewinnrechner</a> und den <a href="/gewinnmarge-rechner/">Gewinnmargenrechner</a>.
+    </p>
+  </Fragment>
+</CategoryPage>

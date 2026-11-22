@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchBox from '../components/ui/SearchBox.astro';
+import CalculatorCard from '../components/ui/CalculatorCard.astro';
+import { calculators } from '../data/calculators';
+const suggestions = calculators.filter((c) => c.featured).slice(0, 3);
+---
+
+<BaseLayout title="Seite nicht gefunden (404)" description="Die angeforderte Seite wurde leider nicht gefunden. Nutzen Sie die Suche, um den passenden Rechner zu finden." noindex>
+  <div class="container-page">
+    <div class="mx-auto max-w-2xl py-16 text-center">
+      <p class="text-sm font-bold tracking-widest text-brand-700">FEHLER 404</p>
+      <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-navy-900 sm:text-4xl">Diese Seite gibt es leider nicht</h1>
+      <p class="mt-4 text-lg text-muted">
+        Vielleicht hat sich die Adresse geändert oder es hat sich ein Tippfehler eingeschlichen. Suchen Sie einfach nach dem passenden Rechner:
+      </p>
+      <div class="mt-8 text-left">
+        <SearchBox id="notfound-search" size="lg" />
+      </div>
+      <p class="mt-8">
+        <a href="/" class="btn-primary">Zur Startseite</a>
+      </p>
+    </div>
+    <section aria-labelledby="vorschlaege" class="mx-auto max-w-5xl">
+      <h2 id="vorschlaege" class="text-xl font-bold text-navy-900">Beliebte Rechner</h2>
+      <div class="mt-4 grid gap-4 sm:grid-cols-3">
+        {suggestions.map((c) => <CalculatorCard calc={c} />)}
+      </div>
+    </section>
+  </div>
+</BaseLayout>

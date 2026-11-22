@@ -1,0 +1,53 @@
+---
+import CategoryPage from '../components/layout/CategoryPage.astro';
+---
+
+<CategoryPage
+  id="kredit"
+  h1="Kredit- und Finanzierungsrechner"
+  faq={[
+    {
+      q: 'Welcher Rechner passt zu meiner Finanzierung?',
+      a: 'Für Ratenkredite mit fester Laufzeit – etwa für ein Auto oder eine Anschaffung – eignet sich der Kreditrechner. Für Baufinanzierungen mit anfänglicher Tilgung und Zinsbindung nutzen Sie den Tilgungsrechner, der zusätzlich die Restschuld nach Ablauf der Zinsbindung zeigt.',
+    },
+    {
+      q: 'Mit welchem Zinssatz rechnen die Kreditrechner?',
+      a: 'Beide Rechner verwenden den nominalen Sollzins. Der effektive Jahreszins eines Angebots enthält zusätzlich bestimmte Kosten und ist deshalb meist etwas höher. Zum Vergleich verschiedener Angebote eignet sich der effektive Jahreszins besser.',
+    },
+    {
+      q: 'Sind die Ergebnisse verbindlich?',
+      a: 'Nein. Die Rechner liefern unverbindliche Modellrechnungen auf Basis Ihrer Eingaben. Verbindlich sind nur die Konditionen, die Ihnen eine Bank im Kreditvertrag anbietet.',
+    },
+  ]}
+>
+  <p>
+    Bevor Sie einen Kredit unterschreiben, sollten Sie wissen, was er Sie tatsächlich kostet. Mit unseren Rechnern ermitteln Sie Monatsrate,
+    Zinskosten und Restschuld – für Ratenkredite ebenso wie für Baufinanzierungen.
+  </p>
+
+  <Fragment slot="guide">
+    <h2>Was Sie bei einer Finanzierung beachten sollten</h2>
+    <p>
+      Ob Autokredit, Umschuldung oder Immobilienfinanzierung: Die meisten Kredite in Deutschland sind <strong>Annuitätendarlehen</strong>. Sie
+      zahlen eine gleichbleibende Monatsrate, die aus einem Zins- und einem Tilgungsanteil besteht. Weil die Zinsen immer auf die aktuelle
+      Restschuld berechnet werden, sinkt der Zinsanteil mit jeder Rate – und der Tilgungsanteil steigt.
+    </p>
+    <h3>Laufzeit und Rate gegeneinander abwägen</h3>
+    <p>
+      Eine längere Laufzeit senkt die monatliche Belastung, erhöht aber die Zinskosten insgesamt. Eine höhere Rate oder eine höhere anfängliche
+      Tilgung macht Sie schneller schuldenfrei und spart Zinsen. Planen Sie die Rate so, dass auch bei unerwarteten Ausgaben ein Puffer bleibt.
+    </p>
+    <h3>Sondertilgungen nutzen</h3>
+    <p>
+      Viele Kreditverträge erlauben zusätzliche Zahlungen. Jede Sondertilgung senkt die Restschuld sofort und damit alle künftigen Zinsen. In
+      beiden Rechnern können Sie eine jährliche Sondertilgung eintragen und sehen direkt, wie stark sich Laufzeit und Zinskosten verringern.
+      Welche Sondertilgungen ohne Zusatzkosten möglich sind, regelt Ihr Vertrag.
+    </p>
+    <h3>Zinsbindung bei Baufinanzierungen</h3>
+    <p>
+      Bei Immobilienkrediten ist der Zins meist für 5 bis 20 Jahre fest vereinbart. Danach brauchen Sie für die verbleibende Restschuld eine
+      Anschlussfinanzierung. Der <a href="/tilgungsrechner/">Tilgungsrechner</a> zeigt Ihnen, wie hoch diese Restschuld voraussichtlich ist –
+      eine wichtige Größe, um das Risiko steigender Zinsen einzuschätzen.
+    </p>
+  </Fragment>
+</CategoryPage>

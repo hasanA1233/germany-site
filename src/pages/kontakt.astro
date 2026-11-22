@@ -1,0 +1,45 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+import OwnerField from '../components/ui/OwnerField.astro';
+import { site, isPlaceholder } from '../data/site';
+const email = site.owner.email;
+---
+
+<ProseLayout
+  title="Kontakt"
+  description="Kontakt zu QuickRechner: Fragen, Feedback oder einen Fehler in einem Rechner entdeckt? So erreichen Sie uns per E-Mail."
+  h1="Kontakt"
+  breadcrumb="Kontakt"
+  lead="Sie haben eine Frage, einen Verbesserungsvorschlag oder einen Fehler entdeckt? Wir freuen uns über Ihre Nachricht."
+>
+  <h2>Per E-Mail</h2>
+  <p>
+    Am schnellsten erreichen Sie uns per E-Mail:
+    {
+      isPlaceholder(email) ? (
+        <OwnerField value={email} />
+      ) : (
+        <a href={`mailto:${email}`}>{email}</a>
+      )
+    }
+  </p>
+
+  <h2>Hinweise zu Rechnern</h2>
+  <p>Wenn Ihnen ein Ergebnis unplausibel erscheint, helfen uns folgende Angaben bei der Prüfung:</p>
+  <ul>
+    <li>der betroffene Rechner bzw. die URL der Seite,</li>
+    <li>Ihre Eingaben,</li>
+    <li>das angezeigte und – falls bekannt – das erwartete Ergebnis.</li>
+  </ul>
+
+  <h2>Bitte beachten Sie</h2>
+  <p>
+    Wir können keine individuelle Finanz-, Steuer- oder Rechtsberatung leisten und keine persönlichen Berechnungen für Sie durchführen. Für
+    individuelle Fragen wenden Sie sich bitte an eine Steuerberaterin bzw. einen Steuerberater, eine Verbraucherzentrale oder eine unabhängige
+    Finanzberatung.
+  </p>
+  <p>
+    Informationen zur Verarbeitung Ihrer Daten bei einer Kontaktaufnahme finden Sie in unserer <a href="/datenschutz/">Datenschutzerklärung</a>.
+    Die vollständigen Anbieterangaben stehen im <a href="/impressum/">Impressum</a>.
+  </p>
+</ProseLayout>

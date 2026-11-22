@@ -1,0 +1,70 @@
+---
+import CalculatorShell from '../calculator/CalculatorShell.astro';
+import NumberField from '../calculator/NumberField.astro';
+import ResultMain from '../calculator/ResultMain.astro';
+import ResultList from '../calculator/ResultList.astro';
+import DataTable from '../calculator/DataTable.astro';
+const p = 'kr';
+---
+
+<CalculatorShell
+  slug="kreditrate"
+  title="Kreditrate berechnen"
+  note="Berechnung mit dem nominalen Sollzins und gleichbleibender Monatsrate (Annuität). Gebühren, Restschuldversicherungen und abweichende Zinsmethoden einzelner Banken sind nicht berücksichtigt. Die Ergebnisse sind unverbindliche Schätzungen."
+>
+  <NumberField idPrefix={p} name="amount" label="Kreditbetrag" value="20.000" suffix="€" />
+  <NumberField idPrefix={p} name="ratePct" label="Zinssatz pro Jahr (Sollzins)" value="6,5" suffix="% p. a." decimals={3} hint="Nominaler Jahreszins laut Angebot. Bei 0 % wird ein zinsloser Kredit berechnet." />
+  <NumberField idPrefix={p} name="years" label="Laufzeit" value="5" suffix="Jahre" decimals={2} hint="Zum Beispiel 4,5 für 54 Monate." />
+  <NumberField idPrefix={p} name="yearlyExtra" label="Jährliche Sondertilgung" suffix="€" optional placeholder="0" hint="Zusätzliche Zahlung am Ende jedes Jahres. Die Rate bleibt gleich, die Laufzeit verkürzt sich." />
+
+  <Fragment slot="results">
+    <ResultMain label="Monatliche Rate" out="monthly" sub="Anzahl Monatsraten:" subOut="count" />
+    <ResultList
+      items={[
+        { label: 'Kreditbetrag', out: 'amount' },
+        { label: 'Zinskosten', out: 'interest' },
+        { label: 'Sondertilgungen gesamt', out: 'extraTotal' },
+        { label: 'Gesamtrückzahlung', out: 'total', strong: true },
+      ]}
+    />
+    <p class="mt-4 rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-700" data-out="savings" hidden></p>
+  </Fragment>
+
+  <Fragment slot="details">
+    <h3 class="mb-3 text-base font-bold text-navy-900">Rückzahlungsplan nach Jahren</h3>
+    <DataTable id="kr-plan" caption="Rückzahlungsplan nach Jahren" columns={['Jahr', 'Zinsen', 'Tilgung', 'Sondertilgung', 'Restschuld']} />
+  </Fragment>
+</CalculatorShell>
+
+<script>
+  import { mountCalculator, fillTable } from '../../scripts/calc-runtime';
+  import { calculateLoan } from '../../lib/calc/loan';
+  import { formatEUR, formatInt, formatDuration } from '../../lib/format';
+
+  mountCalculator('kreditrate', (c) => {
+    const r = calculateLoan({ amount: c.num('amount'), ratePct: c.num('ratePct'), years: c.num('years'), yearlyExtra: c.num('yearlyExtra') });
+    if (!r.ok) return r.errors;
+
+    c.out('monthly', formatEUR(r.monthlyPayment));
+    c.out('count', `${formatInt(r.actualPayments)} (${formatDuration(r.actualPayments)})`);
+    c.out('amount', formatEUR(r.amount));
+    c.out('interest', formatEUR(r.totalInterest));
+    c.out('extraTotal', formatEUR(r.totalExtra));
+    c.out('total', formatEUR(r.totalPaid));
+
+    const savings = c.el<HTMLElement>('[data-out="savings"]');
+    if (savings) {
+      const saved = r.interestWithoutExtra - r.totalInterest;
+      savings.hidden = r.totalExtra <= 0;
+      if (r.totalExtra > 0) {
+        savings.textContent = `Durch die Sondertilgungen sparen Sie rund ${formatEUR(saved)} Zinsen und sind ${formatDuration(r.plannedPayments - r.actualPayments)} früher schuldenfrei.`;
+      }
+    }
+
+    fillTable(
+      c.el('[data-table="kr-plan"]'),
+      r.rows.map((row) => [String(row.year), formatEUR(row.interest), formatEUR(row.principal), formatEUR(row.extra), formatEUR(row.balance)]),
+    );
+    return null;
+  });
+</script>

@@ -1,0 +1,57 @@
+---
+import CalculatorShell from '../calculator/CalculatorShell.astro';
+import NumberField from '../calculator/NumberField.astro';
+import ResultMain from '../calculator/ResultMain.astro';
+import ResultList from '../calculator/ResultList.astro';
+const p = 'gm';
+---
+
+<CalculatorShell
+  slug="gewinnmarge"
+  title="Gewinnmarge berechnen"
+  note="Marge und Aufschlag beziehen sich auf unterschiedliche Basiswerte: die Marge auf den Umsatz (Verkaufspreis), der Aufschlag auf die Kosten (Einkaufspreis). Verwenden Sie für beide Werte entweder Netto- oder Bruttobeträge."
+>
+  <NumberField idPrefix={p} name="revenue" label="Umsatz bzw. Verkaufspreis" value="200" suffix="€" />
+  <NumberField idPrefix={p} name="costs" label="Kosten bzw. Einkaufspreis" value="150" suffix="€" />
+
+  <Fragment slot="results">
+    <ResultMain label="Gewinnmarge" out="margin" stateKey="margin" />
+    <ResultList
+      items={[
+        { label: 'Gewinn', out: 'profit', strong: true },
+        { label: 'Kostenquote (Kosten ÷ Umsatz)', out: 'costRatio' },
+        { label: 'Aufschlag (Gewinn ÷ Kosten)', out: 'markup' },
+      ]}
+    />
+    <p class="mt-4 rounded-xl bg-warn-50 px-4 py-3 text-sm text-warn-700 ring-1 ring-amber-200" data-out="notice" hidden></p>
+  </Fragment>
+</CalculatorShell>
+
+<script>
+  import { mountCalculator } from '../../scripts/calc-runtime';
+  import { calculateMargin } from '../../lib/calc/business';
+  import { formatEUR, formatPercent } from '../../lib/format';
+
+  mountCalculator('gewinnmarge', (c) => {
+    const r = calculateMargin({ revenue: c.num('revenue'), costs: c.num('costs') });
+    if (!r.ok) return r.errors;
+
+    const undef = 'nicht definiert';
+    c.out('margin', r.marginPct === null ? undef : formatPercent(r.marginPct));
+    c.state('margin', r.marginPct !== null && r.marginPct < 0 ? 'negativ' : '');
+    c.out('profit', formatEUR(r.profit));
+    c.out('costRatio', r.costRatioPct === null ? undef : formatPercent(r.costRatioPct));
+    c.out('markup', r.markupPct === null ? undef : formatPercent(r.markupPct));
+
+    const notice = c.el<HTMLElement>('[data-out="notice"]');
+    if (notice) {
+      let text = '';
+      if (r.marginPct === null) text = 'Bei einem Umsatz von 0 € lässt sich keine Marge berechnen, weil durch null geteilt werden müsste.';
+      else if (r.marginPct < 0) text = 'Negative Marge: Die Kosten liegen über dem Umsatz – Sie machen mit jedem Verkauf Verlust.';
+      else if (r.markupPct === null) text = 'Bei Kosten von 0 € ist kein prozentualer Aufschlag berechenbar.';
+      notice.textContent = text;
+      notice.hidden = !text;
+    }
+    return null;
+  });
+</script>

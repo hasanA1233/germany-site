@@ -1,0 +1,53 @@
+---
+import CategoryPage from '../components/layout/CategoryPage.astro';
+---
+
+<CategoryPage
+  id="sparen-investieren"
+  h1="Rechner für Sparen und Investieren"
+  faq={[
+    {
+      q: 'Was ist der Unterschied zwischen Zinseszinsrechner und Sparplanrechner?',
+      a: 'Der Zinseszinsrechner geht von einem festen Zinssatz aus, wie bei Tagesgeld oder Festgeld, und rechnet mit Einzahlungen am Monatsende. Der Sparplanrechner ist für regelmäßige Einzahlungen in Anlagen mit schwankender Rendite gedacht und rechnet mit einer angenommenen Durchschnittsrendite und Einzahlungen zu Monatsbeginn.',
+    },
+    {
+      q: 'Sind die berechneten Renditen garantiert?',
+      a: 'Nein. Nur bei festverzinslichen Anlagen steht der Zins von vornherein fest. Bei Wertpapieren sind alle Renditen Annahmen. Die tatsächliche Wertentwicklung kann deutlich abweichen und auch negativ sein.',
+    },
+    {
+      q: 'Werden Steuern und Inflation berücksichtigt?',
+      a: 'Nein. Alle Rechner zeigen Werte vor Steuern, Kosten und Inflation. So bleiben die Ergebnisse für jede persönliche Situation vergleichbar. Berücksichtigen Sie diese Faktoren bei Ihrer Planung zusätzlich.',
+    },
+  ]}
+>
+  <p>
+    Wie viel wird aus Ihrem Ersparten? Berechnen Sie den Zinseszinseffekt, planen Sie einen Sparplan oder bewerten Sie, wie rentabel eine
+    Investition war – mit transparenten Formeln und klar benannten Annahmen.
+  </p>
+
+  <Fragment slot="guide">
+    <h2>Grundlagen für Ihre Spar- und Anlageplanung</h2>
+    <p>
+      Vermögensaufbau folgt einem einfachen Prinzip: Erträge, die angelegt bleiben, erwirtschaften selbst weitere Erträge. Dieser
+      <a href="/zinseszins-rechner/">Zinseszinseffekt</a> ist im ersten Jahr kaum zu bemerken, wird über Jahrzehnte aber zum wichtigsten Faktor.
+      Deshalb gilt: Je früher Sie beginnen, desto weniger müssen Sie für dasselbe Ziel monatlich zurücklegen.
+    </p>
+    <h3>Feste Zinsen oder schwankende Renditen?</h3>
+    <p>
+      Bei Tagesgeld, Festgeld oder Sparbriefen kennen Sie den Zinssatz – zumindest für einen bestimmten Zeitraum. Bei Aktien, Fonds oder ETFs
+      gibt es dagegen keine feste Rendite. Wer hier mit einem <a href="/sparplan-rechner/">Sparplanrechner</a> plant, sollte mehrere Szenarien
+      durchrechnen: ein vorsichtiges, ein mittleres und ein optimistisches.
+    </p>
+    <h3>Ergebnisse richtig einordnen</h3>
+    <ul>
+      <li><strong>Inflation:</strong> Ein höherer Betrag in 20 Jahren hat nicht dieselbe Kaufkraft wie heute.</li>
+      <li><strong>Kosten:</strong> Laufende Fonds- und Depotkosten schmälern die Rendite jedes Jahr.</li>
+      <li><strong>Steuern:</strong> Kapitalerträge sind grundsätzlich steuerpflichtig, soweit sie den Sparer-Pauschbetrag übersteigen.</li>
+      <li><strong>Risiko:</strong> Höhere erwartete Renditen gehen in der Regel mit höheren Schwankungen einher.</li>
+    </ul>
+    <p>
+      Den Erfolg einer abgeschlossenen Investition bewerten Sie mit dem <a href="/roi-rechner/">ROI-Rechner</a> – inklusive der
+      durchschnittlichen Rendite pro Jahr.
+    </p>
+  </Fragment>
+</CategoryPage>

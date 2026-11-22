@@ -1,0 +1,158 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------
+   QuickRechner Design System
+   ------------------------------------------------------------------ */
+@theme {
+  --color-navy-950: #0a1726;
+  --color-navy-900: #10243a; /* Primary */
+  --color-navy-800: #1a3452;
+  --color-navy-700: #25466b;
+  --color-navy-100: #e3eaf3;
+  --color-navy-50: #f2f6fa;
+
+  --color-brand-700: #15803d;
+  --color-brand-600: #16a34a; /* Secondary */
+  --color-brand-100: #dcfce7;
+  --color-brand-50: #f0fdf4;
+
+  --color-ink: #1f2937;
+  --color-muted: #4b5563;
+  --color-line: #e5e7eb;
+  --color-surface: #f7f8fa;
+
+  --color-danger-700: #b91c1c;
+  --color-danger-50: #fef2f2;
+  --color-warn-50: #fffbeb;
+  --color-warn-700: #a16207;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans', sans-serif;
+
+  --radius-card: 1rem;
+  --shadow-card: 0 1px 2px rgb(16 36 58 / 0.04), 0 4px 16px rgb(16 36 58 / 0.06);
+  --shadow-card-hover: 0 2px 4px rgb(16 36 58 / 0.06), 0 10px 28px rgb(16 36 58 / 0.1);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    @apply bg-white font-sans text-ink antialiased;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-brand-600);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  [hidden] {
+    display: none !important;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+}
+
+/* Wiederverwendbare Bausteine (als @utility, damit sie per @apply kombinierbar sind) */
+@utility container-page {
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+}
+@utility card {
+  @apply rounded-[var(--radius-card)] border border-line bg-white shadow-[var(--shadow-card)];
+}
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-colors;
+}
+@utility btn-primary {
+  @apply btn bg-brand-700 text-white hover:bg-navy-900;
+}
+@utility btn-secondary {
+  @apply btn border border-line bg-white text-navy-900 hover:border-navy-700 hover:bg-navy-50;
+}
+@utility eyebrow {
+  @apply text-xs font-semibold uppercase tracking-wider text-brand-700;
+}
+@utility field-input {
+  @apply w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-base text-ink tabular-nums shadow-sm transition-colors placeholder:text-gray-400 hover:border-gray-400 focus:border-brand-600 focus:outline-none focus:ring-4 focus:ring-brand-100;
+  &[aria-invalid='true'] {
+    @apply border-danger-700 focus:ring-danger-50;
+  }
+}
+
+@layer components {
+  /* Langtext-Inhalte (Markdown) */
+  .prose-qr {
+    @apply max-w-none text-[1.0625rem] leading-relaxed text-ink;
+  }
+  .prose-qr h2 {
+    @apply mt-12 mb-4 scroll-mt-24 text-2xl font-bold tracking-tight text-navy-900 sm:text-[1.75rem];
+  }
+  .prose-qr h3 {
+    @apply mt-8 mb-3 text-xl font-semibold text-navy-900;
+  }
+  .prose-qr p {
+    @apply my-4;
+  }
+  .prose-qr ul {
+    @apply my-4 list-disc space-y-2 pl-6;
+  }
+  .prose-qr ol {
+    @apply my-4 list-decimal space-y-2 pl-6;
+  }
+  .prose-qr li::marker {
+    @apply text-brand-600;
+  }
+  .prose-qr a {
+    @apply font-medium text-navy-700 underline decoration-brand-600/50 underline-offset-2 hover:text-brand-700;
+  }
+  .prose-qr strong {
+    @apply font-semibold text-navy-900;
+  }
+  .prose-qr blockquote {
+    @apply my-6 rounded-r-xl border-l-4 border-brand-600 bg-brand-50 px-5 py-4 text-ink;
+  }
+  .prose-qr blockquote p {
+    @apply my-1;
+  }
+  .prose-qr code {
+    @apply rounded bg-navy-50 px-1.5 py-0.5 font-mono text-[0.9em] text-navy-900;
+  }
+  .prose-qr pre {
+    @apply my-6 overflow-x-auto rounded-xl bg-navy-900 p-5 text-sm leading-relaxed text-white;
+  }
+  .prose-qr pre code {
+    @apply bg-transparent p-0 text-white;
+  }
+  .prose-qr table {
+    @apply my-6 block w-full overflow-x-auto border-collapse text-sm sm:table;
+  }
+  .prose-qr th {
+    @apply border-b-2 border-line bg-surface px-3 py-2 text-left font-semibold text-navy-900;
+  }
+  .prose-qr td {
+    @apply border-b border-line px-3 py-2 tabular-nums;
+  }
+  .prose-qr hr {
+    @apply my-10 border-line;
+  }
+
+  /* Hervorhebung für vom Seitenbetreiber auszufüllende Angaben */
+  .owner-placeholder {
+    @apply rounded bg-warn-50 px-1 font-mono text-[0.95em] text-warn-700 ring-1 ring-amber-300;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

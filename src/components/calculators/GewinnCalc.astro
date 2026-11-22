@@ -1,0 +1,67 @@
+---
+import CalculatorShell from '../calculator/CalculatorShell.astro';
+import NumberField from '../calculator/NumberField.astro';
+import ResultMain from '../calculator/ResultMain.astro';
+import ResultList from '../calculator/ResultList.astro';
+const p = 'gw';
+---
+
+<CalculatorShell
+  slug="gewinn"
+  title="Gewinn berechnen"
+  note="Vereinfachte Rechnung: Gewinn = Umsatz − Kosten. Für steuerliche Gewinnermittlungen (z. B. Einnahmenüberschussrechnung) gelten zusätzliche Regeln, etwa zu Abschreibungen und zum Zeitpunkt von Zahlungen."
+>
+  <NumberField idPrefix={p} name="revenue" label="Umsatz (Einnahmen)" value="50.000" suffix="€" hint="Zum Beispiel Nettoerlöse eines Jahres, Monats oder Projekts." />
+  <NumberField idPrefix={p} name="costs" label="Kosten (Ausgaben)" value="32.000" suffix="€" hint="Alle Kosten desselben Zeitraums, z. B. Material, Personal, Miete." />
+
+  <Fragment slot="results">
+    <ResultMain label="Gewinn" labelOut="mainLabel" out="main" stateKey="profit" sub="Ergebnis:" subOut="status" />
+    <ResultList
+      items={[
+        { label: 'Umsatz', out: 'revenue' },
+        { label: 'Kosten', out: 'costs' },
+        { label: 'Gewinnmarge (Gewinn ÷ Umsatz)', out: 'margin' },
+      ]}
+    />
+    <div class="mt-5 space-y-3" aria-hidden="true">
+      <div>
+        <div class="mb-1 flex justify-between text-xs text-muted"><span>Umsatz</span></div>
+        <div class="h-3 rounded-full bg-gray-200"><div data-bar="revenue" class="h-3 rounded-full bg-navy-900" style="width:0%"></div></div>
+      </div>
+      <div>
+        <div class="mb-1 flex justify-between text-xs text-muted"><span>Kosten</span></div>
+        <div class="h-3 rounded-full bg-gray-200"><div data-bar="costs" class="h-3 rounded-full bg-amber-500" style="width:0%"></div></div>
+      </div>
+    </div>
+  </Fragment>
+</CalculatorShell>
+
+<script>
+  import { mountCalculator } from '../../scripts/calc-runtime';
+  import { calculateProfit } from '../../lib/calc/business';
+  import { formatEUR, formatPercent } from '../../lib/format';
+
+  mountCalculator('gewinn', (c) => {
+    const r = calculateProfit({ revenue: c.num('revenue'), costs: c.num('costs') });
+    if (!r.ok) return r.errors;
+
+    const labels = { gewinn: 'Gewinn', verlust: 'Verlust', ausgeglichen: 'Ausgeglichen' } as const;
+    c.out('mainLabel', labels[r.status]);
+    c.out('main', formatEUR(r.profit));
+    c.out(
+      'status',
+      r.status === 'gewinn' ? 'Ihre Einnahmen übersteigen die Kosten.' : r.status === 'verlust' ? 'Die Kosten sind höher als die Einnahmen.' : 'Einnahmen und Kosten sind gleich hoch.',
+    );
+    c.state('profit', r.status === 'gewinn' ? 'positiv' : r.status === 'verlust' ? 'negativ' : '');
+    c.out('revenue', formatEUR(r.revenue));
+    c.out('costs', formatEUR(r.costs));
+    c.out('margin', r.marginPct === null ? 'nicht definiert (Umsatz = 0)' : formatPercent(r.marginPct));
+
+    const max = Math.max(r.revenue, r.costs, 1);
+    const rb = c.el<HTMLElement>('[data-bar="revenue"]');
+    const cb = c.el<HTMLElement>('[data-bar="costs"]');
+    if (rb) rb.style.width = `${(r.revenue / max) * 100}%`;
+    if (cb) cb.style.width = `${(r.costs / max) * 100}%`;
+    return null;
+  });
+</script>

@@ -1,0 +1,85 @@
+---
+import CalculatorShell from '../calculator/CalculatorShell.astro';
+import NumberField from '../calculator/NumberField.astro';
+import ResultMain from '../calculator/ResultMain.astro';
+import ResultList from '../calculator/ResultList.astro';
+import ChartBox from '../calculator/ChartBox.astro';
+const p = 'be';
+---
+
+<CalculatorShell
+  slug="breakeven"
+  title="Break-Even-Punkt berechnen"
+  note="Modellannahmen: konstanter Verkaufspreis, konstante variable Stückkosten und unveränderte Fixkosten im betrachteten Zeitraum. Die Break-Even-Menge wird auf ganze Stück aufgerundet."
+>
+  <NumberField idPrefix={p} name="fixedCosts" label="Fixkosten (für den Zeitraum)" value="6.000" suffix="€" hint="Kosten, die unabhängig von der Menge anfallen, z. B. Miete, Gehälter, Versicherungen." />
+  <NumberField idPrefix={p} name="price" label="Verkaufspreis pro Stück (netto)" value="25" suffix="€" />
+  <NumberField idPrefix={p} name="variableCost" label="Variable Kosten pro Stück" value="10" suffix="€" hint="Kosten, die mit jedem Stück entstehen, z. B. Material, Versand, Provision." />
+  <NumberField idPrefix={p} name="plannedUnits" label="Geplante Absatzmenge" suffix="Stück" optional integer placeholder="z. B. 500" hint="Zeigt, welcher Gewinn oder Verlust bei dieser Menge entsteht." />
+
+  <Fragment slot="results">
+    <ResultMain label="Break-Even-Menge" out="units" sub="Break-Even-Umsatz:" subOut="revenue" />
+    <ResultList
+      items={[
+        { label: 'Deckungsbeitrag pro Stück', out: 'cm', strong: true },
+        { label: 'Deckungsbeitragsquote', out: 'cmr' },
+        { label: 'Exakte Gewinnschwelle', out: 'exact' },
+        { label: 'Ergebnis bei geplanter Menge', out: 'planned' },
+      ]}
+    />
+  </Fragment>
+
+  <Fragment slot="details">
+    <ChartBox
+      id="be-chart"
+      title="Erlöse und Gesamtkosten nach Absatzmenge"
+      legend={[
+        { color: '#16A34A', label: 'Erlöse' },
+        { color: '#10243A', label: 'Gesamtkosten' },
+      ]}
+    />
+  </Fragment>
+</CalculatorShell>
+
+<script>
+  import { mountCalculator } from '../../scripts/calc-runtime';
+  import { renderLines } from '../../scripts/charts';
+  import { calculateBreakEven } from '../../lib/calc/business';
+  import { formatEUR, formatInt, formatNumber, formatPercent } from '../../lib/format';
+
+  mountCalculator('breakeven', (c) => {
+    const fixedCosts = c.num('fixedCosts');
+    const price = c.num('price');
+    const variableCost = c.num('variableCost');
+    const plannedUnits = c.optional('plannedUnits');
+    const r = calculateBreakEven({ fixedCosts, price, variableCost, plannedUnits });
+    if (!r.ok) return r.errors;
+
+    c.out('units', `${formatInt(r.breakEvenUnits)} Stück`);
+    c.out('revenue', formatEUR(r.breakEvenRevenue));
+    c.out('cm', formatEUR(r.contributionMargin));
+    c.out('cmr', formatPercent(r.contributionMarginRatioPct));
+    c.out('exact', `${formatNumber(r.breakEvenUnitsExact, 2)} Stück`);
+    c.out(
+      'planned',
+      r.plannedProfit === null ? '–' : `${r.plannedProfit >= 0 ? 'Gewinn' : 'Verlust'} ${formatEUR(Math.abs(r.plannedProfit))}`,
+    );
+
+    const maxX = Math.max(r.breakEvenUnitsExact * 2, plannedUnits ?? 0, 10);
+    const steps = 20;
+    const xs = Array.from({ length: steps + 1 }, (_, i) => (maxX / steps) * i);
+    renderLines(
+      c.el('[data-chart="be-chart"]'),
+      [
+        { label: 'Erlöse', color: '#16A34A', points: xs.map((x) => [x, x * price]) },
+        { label: 'Gesamtkosten', color: '#10243A', points: xs.map((x) => [x, fixedCosts + x * variableCost]) },
+      ],
+      {
+        summary: `Liniendiagramm: Erlöse und Gesamtkosten schneiden sich bei ${formatNumber(r.breakEvenUnitsExact, 2)} Stück und ${formatEUR(r.breakEvenRevenue)} Umsatz.`,
+        xLabel: 'Absatzmenge (Stück)',
+        marker: [r.breakEvenUnitsExact, r.breakEvenRevenue],
+      },
+    );
+    return null;
+  });
+</script>

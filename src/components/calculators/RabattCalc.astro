@@ -1,0 +1,63 @@
+---
+import CalculatorShell from '../calculator/CalculatorShell.astro';
+import NumberField from '../calculator/NumberField.astro';
+import ChoiceField from '../calculator/ChoiceField.astro';
+import ResultMain from '../calculator/ResultMain.astro';
+import ResultList from '../calculator/ResultList.astro';
+const p = 'rb';
+---
+
+<CalculatorShell slug="rabatt" title="Rabatt berechnen" note="Beträge werden auf volle Cent gerundet. Bei mehreren aufeinanderfolgenden Rabatten wird jeder Rabatt auf den bereits reduzierten Preis angewendet – rechnen Sie dann schrittweise.">
+  <ChoiceField
+    idPrefix={p}
+    name="mode"
+    legend="Was möchten Sie berechnen?"
+    value="percent"
+    options={[
+      { value: 'percent', label: 'Endpreis' },
+      { value: 'reverse', label: 'Rabatt in %' },
+    ]}
+  />
+  <NumberField idPrefix={p} name="original" label="Originalpreis" value="79,99" suffix="€" />
+  <div data-show-when="mode=percent">
+    <NumberField idPrefix={p} name="discountPct" label="Rabatt" value="20" suffix="%" decimals={2} />
+  </div>
+  <div data-show-when="mode=reverse" hidden>
+    <NumberField idPrefix={p} name="finalPrice" label="Reduzierter Preis" value="59,99" suffix="€" />
+  </div>
+
+  <Fragment slot="results">
+    <ResultMain label="Endpreis" labelOut="mainLabel" out="main" />
+    <ResultList
+      items={[
+        { label: 'Originalpreis', out: 'original' },
+        { label: 'Ersparnis in Euro', out: 'amount', strong: true },
+        { label: 'Rabatt in Prozent', out: 'pct' },
+        { label: 'Endpreis', out: 'final' },
+      ]}
+    />
+  </Fragment>
+</CalculatorShell>
+
+<script>
+  import { mountCalculator } from '../../scripts/calc-runtime';
+  import { calculateDiscount } from '../../lib/calc/business';
+  import { formatEUR, formatPercent } from '../../lib/format';
+
+  mountCalculator('rabatt', (c) => {
+    const mode = c.choice('mode') === 'reverse' ? 'reverse' : 'percent';
+    const r =
+      mode === 'percent'
+        ? calculateDiscount({ mode, original: c.num('original'), discountPct: c.num('discountPct') })
+        : calculateDiscount({ mode, original: c.num('original'), finalPrice: c.num('finalPrice') });
+    if (!r.ok) return r.errors;
+
+    c.out('mainLabel', mode === 'percent' ? 'Endpreis' : 'Rabatt in Prozent');
+    c.out('main', mode === 'percent' ? formatEUR(r.finalPrice) : formatPercent(r.discountPct));
+    c.out('original', formatEUR(r.original));
+    c.out('amount', formatEUR(r.discountAmount));
+    c.out('pct', formatPercent(r.discountPct));
+    c.out('final', formatEUR(r.finalPrice));
+    return null;
+  });
+</script>

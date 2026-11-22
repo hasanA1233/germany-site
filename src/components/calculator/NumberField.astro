@@ -1,0 +1,57 @@
+---
+/**
+ * Zahlenfeld im deutschen Format. Verwendet type="text" + inputmode="decimal",
+ * damit Komma-Eingaben (z. B. „3,5“) auf allen Geräten funktionieren.
+ */
+interface Props {
+  name: string;
+  label: string;
+  /** Standardwert im deutschen Format, z. B. "25.000" */
+  value?: string;
+  suffix?: string;
+  hint?: string;
+  optional?: boolean;
+  decimals?: number;
+  placeholder?: string;
+  /** Formular-ID-Präfix, damit IDs eindeutig bleiben */
+  idPrefix: string;
+  integer?: boolean;
+}
+
+const { name, label, value = '', suffix, hint, optional = false, decimals = 2, placeholder, idPrefix, integer = false } = Astro.props;
+const id = `${idPrefix}-${name}`;
+const describedBy = [hint ? `${id}-hint` : null, `${id}-error`].filter(Boolean).join(' ');
+---
+
+<div class="flex flex-col gap-1.5">
+  <label for={id} class="text-sm font-semibold text-navy-900">
+    {label}
+    {optional && <span class="font-normal text-muted"> (optional)</span>}
+  </label>
+  <div class="relative">
+    <input
+      id={id}
+      name={name}
+      type="text"
+      inputmode={integer ? 'numeric' : 'decimal'}
+      autocomplete="off"
+      spellcheck="false"
+      value={value}
+      placeholder={placeholder}
+      data-num
+      data-decimals={integer ? 0 : decimals}
+      data-optional={optional ? '' : undefined}
+      aria-describedby={describedBy}
+      class:list={['field-input', suffix && 'pr-16']}
+    />
+    {
+      suffix && (
+        <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-sm font-medium text-muted" aria-hidden="true">
+          {suffix}
+        </span>
+      )
+    }
+  </div>
+  {hint && <p id={`${id}-hint`} class="text-xs leading-snug text-muted">{hint}</p>}
+  <p id={`${id}-error`} data-error-for={name} class="text-sm font-medium text-danger-700" aria-live="polite" hidden></p>
+</div>

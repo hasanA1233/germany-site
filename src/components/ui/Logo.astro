@@ -1,0 +1,17 @@
+---
+interface Props {
+  inverted?: boolean;
+}
+const { inverted = false } = Astro.props;
+---
+
+<span class="inline-flex items-center gap-2.5">
+  <svg width="34" height="34" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+    <rect width="64" height="64" rx="16" fill={inverted ? '#ffffff' : '#10243A'}></rect>
+    <path d="M18 42l10-10 7 7 12-14" fill="none" stroke="#16A34A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path d="M40 25h7v7" fill="none" stroke="#16A34A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path>
+  </svg>
+  <span class:list={['text-lg font-extrabold tracking-tight', inverted ? 'text-white' : 'text-navy-900']}>
+    Quick<span class={inverted ? 'text-brand-100' : 'text-brand-700'}>Rechner</span>
+  </span>
+</span>

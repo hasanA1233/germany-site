@@ -1,0 +1,26 @@
+---
+/** Sichtbare FAQ als aufklappbare Liste (natives <details>) */
+interface Props {
+  items: { q: string; a: string }[];
+  heading?: string;
+  id?: string;
+}
+const { items, heading = 'Häufige Fragen', id = 'faq' } = Astro.props;
+---
+
+<section aria-labelledby={`${id}-heading`} id={id} class="scroll-mt-24">
+  <h2 id={`${id}-heading`} class="text-2xl font-bold tracking-tight text-navy-900 sm:text-[1.75rem]">{heading}</h2>
+  <div class="mt-6 divide-y divide-line rounded-2xl border border-line bg-white">
+    {
+      items.map((item, i) => (
+        <details class="group px-5 py-1" open={i === 0}>
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-semibold text-navy-900 [&::-webkit-details-marker]:hidden">
+            {item.q}
+            <span class="text-xl leading-none text-brand-700 transition-transform group-open:rotate-45" aria-hidden="true">+</span>
+          </summary>
+          <p class="pb-5 leading-relaxed text-ink">{item.a}</p>
+        </details>
+      ))
+    }
+  </div>
+</section>

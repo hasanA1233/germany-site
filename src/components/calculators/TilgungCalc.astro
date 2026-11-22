@@ -1,0 +1,94 @@
+---
+import CalculatorShell from '../calculator/CalculatorShell.astro';
+import NumberField from '../calculator/NumberField.astro';
+import ChoiceField from '../calculator/ChoiceField.astro';
+import ResultMain from '../calculator/ResultMain.astro';
+import ResultList from '../calculator/ResultList.astro';
+import DataTable from '../calculator/DataTable.astro';
+const p = 'tg';
+---
+
+<CalculatorShell
+  slug="tilgung"
+  title="Tilgungsplan berechnen"
+  note="Annuitätendarlehen mit monatlicher Rate und nominalem Sollzins (Monatszins = Sollzins ÷ 12). Für die Zeit nach der Zinsbindung wird vereinfachend derselbe Zinssatz angenommen – tatsächlich wird der Zins dann neu verhandelt. Unverbindliche Schätzung."
+>
+  <NumberField idPrefix={p} name="amount" label="Darlehensbetrag" value="300.000" suffix="€" />
+  <NumberField idPrefix={p} name="ratePct" label="Sollzins pro Jahr" value="3,5" suffix="% p. a." decimals={3} />
+  <ChoiceField
+    idPrefix={p}
+    name="mode"
+    legend="Rate festlegen über"
+    value="tilgung"
+    options={[
+      { value: 'tilgung', label: 'Anfängliche Tilgung' },
+      { value: 'rate', label: 'Monatsrate' },
+    ]}
+  />
+  <div data-show-when="mode=tilgung">
+    <NumberField idPrefix={p} name="initialRepaymentPct" label="Anfängliche Tilgung" value="2" suffix="% p. a." decimals={3} hint="Anteil des Darlehens, der im ersten Jahr getilgt wird." />
+  </div>
+  <div data-show-when="mode=rate" hidden>
+    <NumberField idPrefix={p} name="monthlyPayment" label="Monatsrate" value="1.375" suffix="€" hint="Muss höher sein als die monatlichen Zinsen im ersten Monat." />
+  </div>
+  <NumberField idPrefix={p} name="yearlyExtra" label="Jährliche Sondertilgung" suffix="€" optional placeholder="0" />
+  <NumberField idPrefix={p} name="fixedYears" label="Zinsbindung" value="10" suffix="Jahre" integer optional hint="Für die Anzeige der Restschuld nach Ablauf der Zinsbindung." />
+
+  <Fragment slot="results">
+    <ResultMain label="Monatliche Rate" out="monthly" sub="Anfängliche Tilgung:" subOut="tilgungPct" />
+    <ResultList
+      items={[
+        { label: 'Laufzeit bis zur vollständigen Tilgung', out: 'duration' },
+        { label: 'Restschuld nach Zinsbindung', out: 'balanceFixed', strong: true },
+        { label: 'Zinsen während der Zinsbindung', out: 'interestFixed' },
+        { label: 'Zinsen über die gesamte Laufzeit', out: 'interest' },
+        { label: 'Gesamtaufwand (Raten + Sondertilgungen)', out: 'total' },
+      ]}
+    />
+  </Fragment>
+
+  <Fragment slot="details">
+    <h3 class="mb-3 text-base font-bold text-navy-900">Tilgungsplan nach Jahren</h3>
+    <DataTable id="tg-plan" caption="Tilgungsplan nach Jahren" columns={['Jahr', 'Restschuld (Jahresende)', 'Tilgung', 'Sondertilgung', 'Zinsen']} />
+  </Fragment>
+</CalculatorShell>
+
+<script>
+  import { mountCalculator, fillTable } from '../../scripts/calc-runtime';
+  import { calculateRepayment } from '../../lib/calc/loan';
+  import { formatEUR, formatPercent, formatDuration } from '../../lib/format';
+
+  mountCalculator('tilgung', (c) => {
+    const mode = c.choice('mode') === 'rate' ? 'rate' : 'tilgung';
+    const r = calculateRepayment({
+      amount: c.num('amount'),
+      ratePct: c.num('ratePct'),
+      mode,
+      initialRepaymentPct: mode === 'tilgung' ? c.num('initialRepaymentPct') : undefined,
+      monthlyPayment: mode === 'rate' ? c.num('monthlyPayment') : undefined,
+      yearlyExtra: c.num('yearlyExtra'),
+      fixedYears: c.num('fixedYears'),
+    });
+    if (!r.ok) return r.errors;
+
+    c.out('monthly', formatEUR(r.monthlyPayment));
+    c.out('tilgungPct', formatPercent(r.initialRepaymentPct, 2));
+    c.out('duration', formatDuration(r.months));
+    c.out('balanceFixed', r.fixedYears > 0 ? formatEUR(r.balanceAfterFixed) : 'keine Angabe');
+    c.out('interestFixed', r.fixedYears > 0 ? formatEUR(r.interestDuringFixed) : 'keine Angabe');
+    c.out('interest', formatEUR(r.totalInterest));
+    c.out('total', formatEUR(r.totalPaid));
+
+    fillTable(
+      c.el('[data-table="tg-plan"]'),
+      r.rows.map((row) => [
+        row.year === r.fixedYears ? `${row.year} (Ende Zinsbindung)` : String(row.year),
+        formatEUR(row.balance),
+        formatEUR(row.principal),
+        formatEUR(row.extra),
+        formatEUR(row.interest),
+      ]),
+    );
+    return null;
+  });
+</script>

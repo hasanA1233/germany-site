@@ -1,0 +1,23 @@
+---
+/** Liste weiterer Ergebniswerte als Beschreibungsliste */
+interface Props {
+  items: { label: string; out: string; hint?: string; strong?: boolean }[];
+}
+const { items } = Astro.props;
+---
+
+<dl class="mt-4 divide-y divide-line rounded-2xl border border-line bg-white">
+  {
+    items.map((i) => (
+      <div class="flex items-baseline justify-between gap-4 px-4 py-3">
+        <dt class="text-sm text-muted">
+          {i.label}
+          {i.hint && <span class="block text-xs text-gray-500">{i.hint}</span>}
+        </dt>
+        <dd class:list={['text-right tabular-nums', i.strong ? 'font-bold text-navy-900' : 'font-semibold text-ink']} data-out={i.out}>
+          –
+        </dd>
+      </div>
+    ))
+  }
+</dl>

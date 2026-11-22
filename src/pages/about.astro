@@ -1,0 +1,67 @@
+---
+import ProseLayout from '../layouts/ProseLayout.astro';
+import OwnerField from '../components/ui/OwnerField.astro';
+import { calculators } from '../data/calculators';
+import { site } from '../data/site';
+---
+
+<ProseLayout
+  title="Über uns"
+  description="Über QuickRechner: Wer hinter den kostenlosen Finanz- und Business-Rechnern steht, wie wir rechnen und welche Grundsätze wir bei Inhalten verfolgen."
+  h1="Über QuickRechner"
+  breadcrumb="Über uns"
+  lead="QuickRechner bietet kostenlose Online-Rechner für Finanzen und Business – verständlich erklärt, nachvollziehbar gerechnet und ohne Anmeldung."
+>
+  <h2>Unser Ziel</h2>
+  <p>
+    Finanzielle Entscheidungen sind oft wichtiger, als sie auf den ersten Blick wirken: Ein Prozentpunkt mehr Tilgung, eine falsch berechnete
+    Marge oder eine übersehene Zinsbindung können über Jahre tausende Euro ausmachen. Wir möchten, dass Sie solche Zusammenhänge schnell
+    durchrechnen <em>und</em> verstehen können.
+  </p>
+  <p>
+    Deshalb zeigt jeder unserer derzeit {calculators.length} Rechner nicht nur ein Ergebnis, sondern auch die verwendete Formel, die getroffenen
+    Annahmen und ein nachvollziehbares Rechenbeispiel.
+  </p>
+
+  <h2>Wer hinter QuickRechner steht</h2>
+  <p>
+    <OwnerField value="[Kurze Vorstellung: Wer betreibt QuickRechner, welcher fachliche Hintergrund besteht, seit wann gibt es das Projekt?]" />
+  </p>
+
+  <h2>So arbeiten wir</h2>
+  <ul>
+    <li>
+      <strong>Transparente Formeln:</strong> Wir verwenden gängige, nachvollziehbare Rechenmethoden und schreiben sie auf jeder Rechnerseite aus.
+    </li>
+    <li>
+      <strong>Klare Annahmen:</strong> Jeder Rechner nennt, was er berücksichtigt – und was nicht, zum Beispiel Steuern, Gebühren oder Inflation.
+    </li>
+    <li>
+      <strong>Geprüfte Berechnungen:</strong> Die Rechenlogik wird mit automatisierten Tests gegen bekannte Referenzwerte und Sonderfälle geprüft,
+      etwa zinslose Kredite oder einen Umsatz von 0 €.
+    </li>
+    <li>
+      <strong>Keine erfundenen Fakten:</strong> Rechtliche Angaben belegen wir mit Verweisen auf die jeweiligen Gesetzestexte. Wo die richtige Lösung
+      vom Einzelfall abhängt, sagen wir das.
+    </li>
+    <li><strong>Datensparsam:</strong> Alle Berechnungen laufen in Ihrem Browser. Ihre Eingaben werden nicht übertragen oder gespeichert.</li>
+  </ul>
+
+  <h2>Unabhängigkeit und Finanzierung</h2>
+  <p>
+    QuickRechner ist kostenlos. Derzeit zeigen wir keine Werbung. Falls wir die Website künftig über Anzeigen oder Partnerlinks finanzieren, werden
+    diese klar gekennzeichnet – und sie haben keinen Einfluss auf Rechenwege oder Ergebnisse.
+  </p>
+
+  <h2>Wichtiger Hinweis</h2>
+  <p>
+    Unsere Rechner liefern unverbindliche Schätzungen und ersetzen keine individuelle Beratung. Mehr dazu im
+    <a href="/haftungsausschluss/">Haftungsausschluss</a>.
+  </p>
+
+  <h2>Feedback</h2>
+  <p>
+    Sie haben einen Fehler gefunden oder wünschen sich einen bestimmten Rechner? Schreiben Sie uns gern über die <a href="/kontakt/">Kontaktseite</a>.
+    Jeder Hinweis hilft, {site.name} besser zu machen.
+  </p>
+</ProseLayout>

@@ -1,0 +1,33 @@
+---
+/**
+ * Optionale, klar gekennzeichnete Produktempfehlung mit Affiliate-Link.
+ * Wird aktuell NICHT verwendet. Nur mit echten, geprüften Partnerangeboten einsetzen.
+ *
+ * <AffiliateBox title="…" text="…" href="https://…" cta="Zum Angebot" partner="Anbietername" />
+ */
+interface Props {
+  title: string;
+  text: string;
+  href: string;
+  cta: string;
+  partner: string;
+  /** "Anzeige" (Standard) oder "Werbung" */
+  label?: 'Anzeige' | 'Werbung';
+}
+const { title, text, href, cta, partner, label = 'Anzeige' } = Astro.props;
+---
+
+<aside class="my-8 rounded-2xl border border-line bg-surface p-5" aria-label={`${label}: ${partner}`}>
+  <p class="mb-2 inline-block rounded-md bg-white px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-muted ring-1 ring-line">
+    {label} · Affiliate-Link
+  </p>
+  <p class="text-base font-semibold text-navy-900">{title}</p>
+  <p class="mt-1 text-sm text-muted">{text}</p>
+  <a href={href} rel="sponsored nofollow noopener" target="_blank" class="btn-secondary mt-4">
+    {cta} <span class="sr-only">(externer Link, öffnet in neuem Tab)</span>
+  </a>
+  <p class="mt-3 text-xs text-muted">
+    Wenn Sie über diesen Link abschließen, erhalten wir ggf. eine Provision. Für Sie entstehen keine Mehrkosten. Die Berechnungen auf
+    QuickRechner bleiben davon unberührt.
+  </p>
+</aside>

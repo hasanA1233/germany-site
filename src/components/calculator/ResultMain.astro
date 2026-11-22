@@ -1,0 +1,33 @@
+---
+/**
+ * Hervorgehobenes Hauptergebnis – wird Screenreadern bei Änderung vorgelesen.
+ * - labelOut: Schlüssel, um das Label dynamisch zu ändern
+ * - stateKey: über ctx.state(stateKey, 'negativ'|'positiv') färbt sich die Box (z. B. Verlust = rot)
+ */
+interface Props {
+  label: string;
+  out: string;
+  labelOut?: string;
+  sub?: string;
+  subOut?: string;
+  stateKey?: string;
+}
+const { label, out, labelOut, sub, subOut, stateKey } = Astro.props;
+---
+
+<div
+  class="rounded-2xl bg-navy-900 p-5 text-white shadow-[var(--shadow-card)] transition-colors data-[state=negativ]:bg-danger-700 data-[state=positiv]:bg-brand-700"
+  data-state-for={stateKey}
+  aria-live="polite"
+  aria-atomic="true"
+>
+  <p class="text-sm font-medium text-white/80" data-out={labelOut}>{label}</p>
+  <p class="mt-1 text-3xl font-bold tracking-tight break-words tabular-nums sm:text-4xl" data-out={out}>–</p>
+  {
+    sub && (
+      <p class="mt-2 text-sm text-white/80">
+        {sub} <span class="font-semibold text-white" data-out={subOut} />
+      </p>
+    )
+  }
+</div>

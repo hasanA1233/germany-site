@@ -1,0 +1,10 @@
+---
+/** Gibt eine Betreiberangabe aus; Platzhalter "[…]" werden gelb hervorgehoben. */
+import { isPlaceholder } from '../../data/site';
+interface Props {
+  value: string;
+}
+const { value } = Astro.props;
+---
+
+{isPlaceholder(value) ? <span class="owner-placeholder">{value}</span> : <span>{value}</span>}

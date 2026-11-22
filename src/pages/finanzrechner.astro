@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CalculatorCard from '../components/ui/CalculatorCard.astro';
+import Icon from '../components/ui/Icon.astro';
+import { calculators } from '../data/calculators';
+import { categories } from '../data/categories';
+import { site } from '../data/site';
+
+const title = 'Finanzrechner – alle Rechner im Überblick';
+const description =
+  'Alle Finanzrechner von QuickRechner im Überblick: Kredit, Tilgung, Zinseszins, Sparplan, Umsatzsteuer, Gewinn, Marge, ROI, Break-Even und Rabatt – kostenlos.';
+
+const groups = categories
+  .map((cat) => ({ cat, items: calculators.filter((c) => c.category === cat.id) }))
+  .filter((g) => g.items.length > 0);
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Finanzrechner',
+    description,
+    url: new URL('/finanzrechner/', site.url).href,
+    inLanguage: 'de-DE',
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: calculators.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, url: new URL(c.href, site.url).href })),
+    },
+  },
+];
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={[{ name: 'Finanzrechner' }]} schema={schema}>
+  <div class="container-page">
+    <header class="max-w-3xl pt-6 pb-8">
+      <h1 class="text-3xl font-extrabold tracking-tight text-navy-900 sm:text-4xl">Alle Finanzrechner im Überblick</h1>
+      <p class="mt-4 text-lg leading-relaxed text-muted">
+        Hier finden Sie alle Rechner von QuickRechner – nach Themen sortiert. Jeder Rechner zeigt Ihnen nicht nur das Ergebnis, sondern erklärt auch
+        die Formel, die Annahmen und ein Rechenbeispiel.
+      </p>
+    </header>
+
+    <div class="max-w-xl">
+      <label for="filter" class="text-sm font-semibold text-navy-900">Rechner filtern</label>
+      <div class="relative mt-1.5">
+        <Icon name="search" size={20} class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-muted" />
+        <input id="filter" type="search" autocomplete="off" placeholder="z. B. Zinsen, Kredit, Marge …" class="field-input pl-11" data-filter />
+      </div>
+      <p class="mt-2 text-sm text-muted" aria-live="polite" data-filter-status></p>
+    </div>
+
+    {
+      groups.map((g) => (
+        <section class="mt-12" aria-labelledby={`grp-${g.cat.id}`} data-filter-group>
+          <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id={`grp-${g.cat.id}`} class="text-2xl font-bold tracking-tight text-navy-900">
+              {g.cat.name}
+            </h2>
+            <a href={g.cat.href} class="text-sm font-semibold text-brand-700 hover:underline">
+              Zur Kategorie {g.cat.name}
+            </a>
+          </div>
+          <p class="mt-2 text-muted">{g.cat.short}</p>
+          <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {g.items.map((c) => (
+              <div data-filter-item data-terms={`${c.name} ${c.description} ${c.keywords.join(' ')} ${g.cat.name}`.toLowerCase()}>
+                <CalculatorCard calc={c} />
+              </div>
+            ))}
+          </div>
+        </section>
+      ))
+    }
+    <p data-filter-empty hidden class="mt-10 rounded-2xl border border-line bg-surface p-6 text-muted">
+      Kein Rechner passt zu Ihrem Suchbegriff. Versuchen Sie es mit einem allgemeineren Begriff.
+    </p>
+
+    <section class="prose-qr mt-16 max-w-3xl">
+      <h2>So nutzen Sie die Rechner</h2>
+      <p>
+        Alle Rechner arbeiten direkt in Ihrem Browser: Sobald Sie einen Wert ändern, wird das Ergebnis neu berechnet. Ihre Eingaben werden dabei
+        nicht an uns übertragen oder gespeichert. Zahlen können Sie im deutschen Format eingeben, etwa <code>25.000</code> oder <code>3,5</code>.
+      </p>
+      <p>
+        Jeder Rechner nennt die Annahmen, auf denen er beruht – zum Beispiel, ob Zinsen jährlich oder monatlich gutgeschrieben werden. Die
+        Ergebnisse sind Modellrechnungen und ersetzen keine individuelle Beratung.
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  const input = document.querySelector<HTMLInputElement>('[data-filter]');
+  const status = document.querySelector<HTMLElement>('[data-filter-status]');
+  const empty = document.querySelector<HTMLElement>('[data-filter-empty]');
+  if (input) {
+    input.addEventListener('input', () => {
+      const tokens = input.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
+      let visible = 0;
+      document.querySelectorAll<HTMLElement>('[data-filter-group]').forEach((group) => {
+        let groupVisible = 0;
+        group.querySelectorAll<HTMLElement>('[data-filter-item]').forEach((item) => {
+          const terms = item.dataset.terms ?? '';
+          const match = tokens.every((t) => terms.includes(t));
+          item.hidden = !match;
+          if (match) groupVisible++;
+        });
+        group.hidden = groupVisible === 0;
+        visible += groupVisible;
+      });
+      if (empty) empty.hidden = visible > 0;
+      if (status) status.textContent = tokens.length ? `${visible} Rechner gefunden` : '';
+    });
+  }
+</script>

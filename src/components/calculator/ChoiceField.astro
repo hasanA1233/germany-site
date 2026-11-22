@@ -1,0 +1,29 @@
+---
+/** Segmentierte Auswahl (Radio-Gruppe) – tastaturbedienbar über Pfeiltasten */
+interface Props {
+  name: string;
+  legend: string;
+  options: { value: string; label: string }[];
+  value: string;
+  idPrefix: string;
+  hint?: string;
+}
+const { name, legend, options, value, idPrefix, hint } = Astro.props;
+---
+
+<fieldset class="flex flex-col gap-1.5">
+  <legend class="mb-1.5 text-sm font-semibold text-navy-900">{legend}</legend>
+  <div class="grid gap-1 rounded-xl bg-surface p-1 ring-1 ring-line" style={`grid-template-columns: repeat(${options.length}, minmax(0, 1fr));`}>
+    {
+      options.map((o) => (
+        <label class="relative cursor-pointer">
+          <input type="radio" name={name} value={o.value} checked={o.value === value} class="peer sr-only" id={`${idPrefix}-${name}-${o.value}`} />
+          <span class="block rounded-lg px-2 py-2.5 text-center text-sm font-medium text-muted transition-colors peer-checked:bg-white peer-checked:text-navy-900 peer-checked:shadow-sm peer-checked:ring-1 peer-checked:ring-line peer-focus-visible:outline-3 peer-focus-visible:outline-brand-600 hover:text-navy-900">
+            {o.label}
+          </span>
+        </label>
+      ))
+    }
+  </div>
+  {hint && <p class="text-xs text-muted">{hint}</p>}
+</fieldset>

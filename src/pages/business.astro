@@ -1,0 +1,48 @@
+---
+import CategoryPage from '../components/layout/CategoryPage.astro';
+---
+
+<CategoryPage
+  id="business"
+  h1="Business-Rechner für Selbstständige und Unternehmen"
+  faq={[
+    {
+      q: 'Sollte ich mit Netto- oder Bruttowerten rechnen?',
+      a: 'Für vorsteuerabzugsberechtigte Unternehmen ist die Rechnung mit Nettowerten üblich, weil die Umsatzsteuer für sie ein durchlaufender Posten ist. Entscheidend ist, dass Sie innerhalb einer Rechnung einheitlich vorgehen.',
+    },
+    {
+      q: 'Was ist der Unterschied zwischen Gewinn und Gewinnmarge?',
+      a: 'Der Gewinn ist ein Betrag in Euro: Umsatz minus Kosten. Die Gewinnmarge setzt diesen Gewinn ins Verhältnis zum Umsatz und wird in Prozent angegeben. Sie macht unterschiedlich große Umsätze vergleichbar.',
+    },
+    {
+      q: 'Ersetzen die Rechner meine Buchhaltung?',
+      a: 'Nein. Die Rechner helfen bei schnellen Kalkulationen und Entscheidungen. Für Steuererklärung, Jahresabschluss und steuerliche Gewinnermittlung gelten eigene Regeln – dafür sind Buchhaltung und gegebenenfalls eine steuerliche Beratung zuständig.',
+    },
+  ]}
+>
+  <p>
+    Gewinn, Marge, Gewinnschwelle, Rendite und Umsatzsteuer: Mit diesen Rechnern treffen Sie Preis- und Investitionsentscheidungen auf einer
+    soliden Zahlenbasis – schnell und ohne Tabellenkalkulation.
+  </p>
+
+  <Fragment slot="guide">
+    <h2>Die wichtigsten Kennzahlen im Überblick</h2>
+    <p>
+      Wer ein Unternehmen führt oder selbstständig arbeitet, braucht einige Kennzahlen immer wieder. Jede beantwortet eine andere Frage – erst
+      zusammen ergeben sie ein vollständiges Bild:
+    </p>
+    <ul>
+      <li><a href="/gewinn-rechner/">Gewinn</a>: Was bleibt nach Abzug aller Kosten übrig?</li>
+      <li><a href="/gewinnmarge-rechner/">Gewinnmarge</a>: Wie viel Prozent vom Umsatz sind Gewinn – und wie unterscheidet sich das vom Aufschlag?</li>
+      <li><a href="/break-even-rechner/">Break-Even-Punkt</a>: Ab welcher Absatzmenge sind alle Kosten gedeckt?</li>
+      <li><a href="/roi-rechner/">ROI</a>: Hat sich eine Investition im Verhältnis zum eingesetzten Kapital gelohnt?</li>
+      <li><a href="/umsatzsteuer-rechner/">Umsatzsteuer</a>: Welcher Betrag steht netto und brutto auf der Rechnung?</li>
+    </ul>
+    <h3>Typischer Ablauf einer Kalkulation</h3>
+    <p>
+      Ein praktischer Weg, ein neues Produkt oder Angebot zu prüfen: Ermitteln Sie zuerst den Deckungsbeitrag und die Gewinnschwelle mit dem
+      Break-Even-Rechner. Prüfen Sie dann, ob der geplante Preis die gewünschte Marge erreicht. Rechnen Sie den Nettopreis anschließend in den
+      Bruttopreis für Privatkunden um. Nach Ablauf eines Zeitraums zeigen Gewinn- und ROI-Rechner, ob die Planung aufgegangen ist.
+    </p>
+  </Fragment>
+</CategoryPage>

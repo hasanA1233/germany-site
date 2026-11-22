@@ -1,0 +1,80 @@
+---
+import CalculatorShell from '../calculator/CalculatorShell.astro';
+import NumberField from '../calculator/NumberField.astro';
+import ChoiceField from '../calculator/ChoiceField.astro';
+import ResultMain from '../calculator/ResultMain.astro';
+import ResultList from '../calculator/ResultList.astro';
+const p = 'ust';
+---
+
+<CalculatorShell
+  slug="umsatzsteuer"
+  title="Umsatzsteuer berechnen"
+  note="Ergebnisse werden kaufmännisch auf volle Cent gerundet. Welcher Steuersatz für Ihren Umsatz gilt, hängt vom konkreten Geschäftsvorfall ab – im Zweifel fragen Sie eine Steuerberaterin oder einen Steuerberater."
+>
+  <ChoiceField
+    idPrefix={p}
+    name="mode"
+    legend="Rechenrichtung"
+    value="net-to-gross"
+    options={[
+      { value: 'net-to-gross', label: 'Netto → Brutto' },
+      { value: 'gross-to-net', label: 'Brutto → Netto' },
+    ]}
+  />
+  <NumberField idPrefix={p} name="amount" label="Betrag" value="100" suffix="€" hint="Bei „Netto → Brutto“ den Nettobetrag, bei „Brutto → Netto“ den Bruttobetrag eingeben." />
+  <ChoiceField
+    idPrefix={p}
+    name="rateChoice"
+    legend="Steuersatz"
+    value="19"
+    options={[
+      { value: '19', label: '19 %' },
+      { value: '7', label: '7 %' },
+      { value: 'custom', label: 'Eigener' },
+    ]}
+  />
+  <div data-show-when="rateChoice=custom" hidden>
+    <NumberField idPrefix={p} name="ratePct" label="Eigener Steuersatz" value="16" suffix="%" decimals={2} />
+  </div>
+
+  <Fragment slot="results">
+    <ResultMain label="Bruttobetrag" labelOut="mainLabel" out="main" />
+    <ResultList
+      items={[
+        { label: 'Nettobetrag', out: 'net' },
+        { label: 'Umsatzsteuer', out: 'vat', hint: '', strong: true },
+        { label: 'Bruttobetrag', out: 'gross' },
+      ]}
+    />
+    <p class="mt-4 text-sm text-muted" data-out="sentence"></p>
+  </Fragment>
+</CalculatorShell>
+
+<script>
+  import { mountCalculator } from '../../scripts/calc-runtime';
+  import { calculateVat } from '../../lib/calc/business';
+  import { formatEUR, formatPercent } from '../../lib/format';
+
+  mountCalculator('umsatzsteuer', (c) => {
+    const mode = c.choice('mode') === 'gross-to-net' ? 'gross-to-net' : 'net-to-gross';
+    const choice = c.choice('rateChoice');
+    const ratePct = choice === 'custom' ? c.num('ratePct') : Number(choice);
+    const r = calculateVat({ amount: c.num('amount'), mode, ratePct });
+    if (!r.ok) return r.errors;
+
+    const toGross = mode === 'net-to-gross';
+    c.out('mainLabel', toGross ? 'Bruttobetrag' : 'Nettobetrag');
+    c.out('main', formatEUR(toGross ? r.gross : r.net));
+    c.out('net', formatEUR(r.net));
+    c.out('vat', `${formatEUR(r.vat)} (${formatPercent(r.ratePct)})`);
+    c.out('gross', formatEUR(r.gross));
+    c.out(
+      'sentence',
+      toGross
+        ? `${formatEUR(r.net)} netto zzgl. ${formatPercent(r.ratePct)} USt (${formatEUR(r.vat)}) = ${formatEUR(r.gross)} brutto.`
+        : `${formatEUR(r.gross)} brutto enthalten ${formatEUR(r.vat)} USt (${formatPercent(r.ratePct)}); netto sind das ${formatEUR(r.net)}.`,
+    );
+    return null;
+  });
+</script>

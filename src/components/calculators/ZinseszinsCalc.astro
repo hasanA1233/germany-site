@@ -1,0 +1,94 @@
+---
+import CalculatorShell from '../calculator/CalculatorShell.astro';
+import NumberField from '../calculator/NumberField.astro';
+import ChoiceField from '../calculator/ChoiceField.astro';
+import ResultMain from '../calculator/ResultMain.astro';
+import ResultList from '../calculator/ResultList.astro';
+import DataTable from '../calculator/DataTable.astro';
+import ChartBox from '../calculator/ChartBox.astro';
+const p = 'zz';
+---
+
+<CalculatorShell
+  slug="zinseszins"
+  title="Zinseszins berechnen"
+  note="Annahmen: fester Zinssatz über die gesamte Laufzeit, Einzahlungen jeweils am Monatsende. Steuern (z. B. Abgeltungsteuer), Inflation und Gebühren sind nicht berücksichtigt."
+>
+  <NumberField idPrefix={p} name="principal" label="Anfangskapital" value="10.000" suffix="€" />
+  <NumberField idPrefix={p} name="ratePct" label="Jährlicher Zinssatz" value="3" suffix="% p. a." decimals={3} />
+  <NumberField idPrefix={p} name="years" label="Laufzeit" value="10" suffix="Jahre" integer />
+  <NumberField idPrefix={p} name="monthlyDeposit" label="Monatliche Einzahlung" suffix="€" optional placeholder="0" />
+  <ChoiceField
+    idPrefix={p}
+    name="compounding"
+    legend="Zinsgutschrift"
+    value="yearly"
+    options={[
+      { value: 'yearly', label: 'Jährlich' },
+      { value: 'monthly', label: 'Monatlich' },
+    ]}
+    hint="Bei Sparkonten ist die jährliche Zinsgutschrift üblich, manche Tagesgeldkonten schreiben monatlich gut."
+  />
+
+  <Fragment slot="results">
+    <ResultMain label="Endkapital" out="final" />
+    <ResultList
+      items={[
+        { label: 'Einzahlungen gesamt', hint: 'Anfangskapital + monatliche Einzahlungen', out: 'deposits' },
+        { label: 'Zinserträge', out: 'interest', strong: true },
+        { label: 'Wachstum bezogen auf die Einzahlungen', out: 'growth' },
+      ]}
+    />
+  </Fragment>
+
+  <Fragment slot="details">
+    <div class="grid gap-6">
+      <ChartBox
+        id="zz-chart"
+        title="Entwicklung des Kapitals"
+        legend={[
+          { color: '#10243A', label: 'Einzahlungen' },
+          { color: '#16A34A', label: 'Zinsen' },
+        ]}
+      />
+      <div>
+        <h3 class="mb-3 text-base font-bold text-navy-900">Entwicklung nach Jahren</h3>
+        <DataTable id="zz-table" caption="Kapitalentwicklung nach Jahren" columns={['Jahr', 'Einzahlungen (kumuliert)', 'Zinsen (kumuliert)', 'Kapital am Jahresende']} />
+      </div>
+    </div>
+  </Fragment>
+</CalculatorShell>
+
+<script>
+  import { mountCalculator, fillTable } from '../../scripts/calc-runtime';
+  import { renderStackedBars } from '../../scripts/charts';
+  import { calculateCompound } from '../../lib/calc/savings';
+  import { formatEUR, formatPercent } from '../../lib/format';
+
+  mountCalculator('zinseszins', (c) => {
+    const r = calculateCompound({
+      principal: c.num('principal'),
+      ratePct: c.num('ratePct'),
+      years: c.num('years'),
+      monthlyDeposit: c.num('monthlyDeposit'),
+      compounding: c.choice('compounding') === 'monthly' ? 'monthly' : 'yearly',
+    });
+    if (!r.ok) return r.errors;
+
+    c.out('final', formatEUR(r.finalBalance));
+    c.out('deposits', formatEUR(r.totalDeposits));
+    c.out('interest', formatEUR(r.interest));
+    c.out('growth', `+ ${formatPercent(r.growthPct)}`);
+
+    renderStackedBars(
+      c.el('[data-chart="zz-chart"]'),
+      r.rows.map((row) => ({ label: String(row.year), a: row.deposits, b: row.interest })),
+      `Säulendiagramm: Kapital wächst in ${r.rows.length} Jahren auf ${formatEUR(r.finalBalance)}, davon ${formatEUR(r.interest)} Zinsen.`,
+    );
+    fillTable(
+      c.el('[data-table="zz-table"]'),
+      r.rows.map((row) => [String(row.year), formatEUR(row.deposits), formatEUR(row.interest), formatEUR(row.balance)]),
+    );
+    return null;
+  });
+</script>

@@ -1,0 +1,33 @@
+---
+/** Responsive Tabelle, deren Zeilen per JavaScript gefüllt werden (tbody[data-table=id]) */
+interface Props {
+  id: string;
+  caption: string;
+  columns: string[];
+}
+const { id, caption, columns } = Astro.props;
+---
+
+<div class="overflow-hidden rounded-2xl border border-line">
+  <div class="max-h-[32rem] overflow-auto" tabindex="0" role="region" aria-label={caption}>
+    <table class="w-full min-w-[34rem] border-collapse text-sm">
+      <caption class="sr-only">{caption}</caption>
+      <thead class="sticky top-0 z-10 bg-surface">
+        <tr>
+          {
+            columns.map((c, i) => (
+              <th scope="col" class:list={['border-b border-line px-4 py-3 font-semibold text-navy-900', i === 0 ? 'text-left' : 'text-right']}>
+                {c}
+              </th>
+            ))
+          }
+        </tr>
+      </thead>
+      <tbody
+        data-table={id}
+        class="[&_td]:border-b [&_td]:border-line [&_td]:px-4 [&_td]:py-2.5 [&_td]:text-right [&_td]:tabular-nums [&_th]:border-b [&_th]:border-line [&_th]:px-4 [&_th]:py-2.5 [&_th]:text-left [&_th]:font-medium [&_tr:nth-child(even)]:bg-surface/60"
+      >
+      </tbody>
+    </table>
+  </div>
+</div>

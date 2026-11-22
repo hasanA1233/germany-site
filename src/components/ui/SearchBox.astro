@@ -1,0 +1,147 @@
+---
+/**
+ * Rechnersuche (clientseitig). Der Index wird beim Build aus data/calculators.ts erzeugt
+ * und als JSON in die Seite eingebettet (wenige KB).
+ */
+import Icon from './Icon.astro';
+import { buildSearchIndex } from '../../data/calculators';
+
+interface Props {
+  id: string;
+  size?: 'lg' | 'md';
+  autofocus?: boolean;
+  /** Suchbegriff aus ?q= übernehmen */
+  readQuery?: boolean;
+}
+const { id, size = 'md', autofocus = false, readQuery = false } = Astro.props;
+const index = buildSearchIndex();
+---
+
+<div class="qr-search relative w-full" data-search data-read-query={readQuery ? '' : undefined}>
+  <form role="search" class="relative" action="/" method="get">
+    <label for={id} class="sr-only">Rechner suchen</label>
+    <Icon name="search" size={22} class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-muted" />
+    <input
+      id={id}
+      name="q"
+      type="search"
+      autocomplete="off"
+      placeholder="Welchen Rechner suchst du?"
+      autofocus={autofocus}
+      aria-controls={`${id}-results`}
+      aria-describedby={`${id}-status`}
+      class:list={[
+        'w-full rounded-2xl border border-gray-300 bg-white pl-12 text-ink shadow-sm placeholder:text-gray-500 focus:border-brand-600 focus:ring-4 focus:ring-brand-100 focus:outline-none',
+        size === 'lg' ? 'py-4 pr-4 text-lg' : 'py-3 pr-3 text-base',
+      ]}
+    />
+  </form>
+  <p id={`${id}-status`} class="sr-only" aria-live="polite" data-search-status></p>
+  <ul id={`${id}-results`} data-search-results class="mt-2 hidden divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white text-left shadow-[var(--shadow-card-hover)]"></ul>
+  <p data-search-empty hidden class="mt-2 rounded-2xl border border-line bg-white px-4 py-3 text-left text-sm text-muted">
+    Kein passender Rechner gefunden. Versuchen Sie einen anderen Begriff, z.&nbsp;B. „Kredit“, „Zinsen“ oder „Mehrwertsteuer“.
+  </p>
+  <script type="application/json" data-search-index set:html={JSON.stringify(index)} />
+</div>
+
+<script>
+  type Entry = { n: string; d: string; h: string; k: string; c: string };
+
+  const norm = (s: string) =>
+    s
+      .toLowerCase()
+      .replace(/ä/g, 'ae')
+      .replace(/ö/g, 'oe')
+      .replace(/ü/g, 'ue')
+      .replace(/ß/g, 'ss')
+      .replace(/[^a-z0-9%]+/g, ' ')
+      .trim();
+
+  function score(e: Entry, tokens: string[]): number {
+    const name = norm(e.n);
+    const hay = norm(`${e.n} ${e.d} ${e.k} ${e.c}`);
+    const compact = hay.replace(/ /g, '');
+    let total = 0;
+    for (const t of tokens) {
+      if (!hay.includes(t) && !compact.includes(t)) return 0;
+      total += name.includes(t) ? 3 : norm(e.k).includes(t) ? 2 : 1;
+    }
+    return total;
+  }
+
+  function setup(root: HTMLElement) {
+    const input = root.querySelector<HTMLInputElement>('input[type="search"]')!;
+    const list = root.querySelector<HTMLUListElement>('[data-search-results]')!;
+    const empty = root.querySelector<HTMLElement>('[data-search-empty]')!;
+    const status = root.querySelector<HTMLElement>('[data-search-status]')!;
+    const index: Entry[] = JSON.parse(root.querySelector('[data-search-index]')!.textContent || '[]');
+
+    const render = () => {
+      const q = norm(input.value);
+      if (!q) {
+        list.classList.add('hidden');
+        list.replaceChildren();
+        empty.hidden = true;
+        status.textContent = '';
+        return;
+      }
+      const tokens = q.split(' ').filter(Boolean);
+      const hits = index
+        .map((e) => ({ e, s: score(e, tokens) }))
+        .filter((x) => x.s > 0)
+        .sort((a, b) => b.s - a.s);
+
+      list.replaceChildren(
+        ...hits.map(({ e }) => {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = e.h;
+          a.className = 'block px-4 py-3 hover:bg-navy-50 focus:bg-navy-50 focus:outline-none';
+          const title = document.createElement('span');
+          title.className = 'block font-semibold text-navy-900';
+          title.textContent = e.n;
+          const meta = document.createElement('span');
+          meta.className = 'block text-sm text-muted';
+          meta.textContent = `${e.c} · ${e.d}`;
+          a.append(title, meta);
+          li.appendChild(a);
+          return li;
+        }),
+      );
+      list.classList.toggle('hidden', hits.length === 0);
+      empty.hidden = hits.length > 0;
+      status.textContent = hits.length === 0 ? 'Keine Treffer.' : `${hits.length} Rechner gefunden.`;
+    };
+
+    input.addEventListener('input', render);
+    root.querySelector('form')!.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const first = list.querySelector<HTMLAnchorElement>('a');
+      if (first) window.location.href = first.href;
+    });
+    // Pfeiltasten-Navigation in der Trefferliste
+    root.addEventListener('keydown', (ev) => {
+      const links = [...list.querySelectorAll<HTMLAnchorElement>('a')];
+      if (!links.length) return;
+      const i = links.indexOf(document.activeElement as HTMLAnchorElement);
+      if (ev.key === 'ArrowDown') {
+        ev.preventDefault();
+        links[Math.min(i + 1, links.length - 1)].focus();
+      } else if (ev.key === 'ArrowUp') {
+        ev.preventDefault();
+        if (i <= 0) input.focus();
+        else links[i - 1].focus();
+      }
+    });
+
+    if (root.hasAttribute('data-read-query')) {
+      const q = new URLSearchParams(window.location.search).get('q');
+      if (q) {
+        input.value = q;
+        render();
+      }
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-search]').forEach(setup);
+</script>

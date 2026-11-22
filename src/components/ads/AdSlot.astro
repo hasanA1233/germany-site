@@ -1,0 +1,56 @@
+---
+/**
+ * Wiederverwendbare Anzeigenfläche.
+ * Rendert standardmäßig NICHTS. Siehe ads-config.ts zum Aktivieren.
+ *
+ * Verwendung: <AdSlot slot="1234567890" placement="after-results" />
+ * `slot` ist die Anzeigenblock-ID aus Ihrem AdSense-Konto.
+ */
+import AdPlaceholder from './AdPlaceholder.astro';
+import { adsEnabled, adsenseClient, showAdPlaceholders } from './ads-config';
+
+type Placement = 'after-results' | 'in-content' | 'sidebar' | 'before-related';
+
+interface Props {
+  placement: Placement;
+  /** AdSense-Anzeigenblock-ID (data-ad-slot) */
+  slot?: string;
+  class?: string;
+}
+
+const { placement, slot = '', class: className = '' } = Astro.props;
+
+// Reservierte Höhe verhindert Layout-Verschiebungen (CLS), sobald Anzeigen aktiv sind
+const minHeights: Record<Placement, number> = {
+  'after-results': 280,
+  'in-content': 280,
+  sidebar: 600,
+  'before-related': 250,
+};
+const minHeight = minHeights[placement];
+const render = (adsEnabled && slot !== '') || showAdPlaceholders;
+---
+
+{
+  render && (
+    <aside class:list={['my-8', className]} aria-label="Anzeige" data-ad-placement={placement}>
+      {adsEnabled && slot ? (
+        <>
+          <p class="mb-1 text-center text-[11px] uppercase tracking-wider text-muted">Anzeige</p>
+          <div style={`min-height:${minHeight}px`}>
+            <ins
+              class="adsbygoogle block"
+              data-ad-client={adsenseClient}
+              data-ad-slot={slot}
+              data-ad-format={placement === 'sidebar' ? 'vertical' : 'auto'}
+              data-full-width-responsive="true"
+            />
+          </div>
+          <script is:inline>(window.adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </>
+      ) : (
+        <AdPlaceholder label={placement} minHeight={minHeight} />
+      )}
+    </aside>
+  )
+}

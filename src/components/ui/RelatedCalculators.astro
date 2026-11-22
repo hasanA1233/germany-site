@@ -1,0 +1,26 @@
+---
+import CalculatorCard from './CalculatorCard.astro';
+import { getCalculator, type CalculatorSlug } from '../../data/calculators';
+
+interface Props {
+  slugs: CalculatorSlug[];
+  heading?: string;
+}
+const { slugs, heading = 'Passende Rechner' } = Astro.props;
+const items = slugs.map(getCalculator);
+---
+
+{
+  items.length > 0 && (
+    <section aria-labelledby="related-heading">
+      <h2 id="related-heading" class="text-2xl font-bold tracking-tight text-navy-900">
+        {heading}
+      </h2>
+      <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {items.map((c) => (
+          <CalculatorCard calc={c} />
+        ))}
+      </div>
+    </section>
+  )
+}

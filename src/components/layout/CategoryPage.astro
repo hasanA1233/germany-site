@@ -1,0 +1,103 @@
+---
+/**
+ * Vorlage für Kategorieseiten. Default-Slot = Einleitung, Slot "guide" = Ratgebertext unter den Rechnern.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CalculatorCard from '../ui/CalculatorCard.astro';
+import FaqList from '../ui/FaqList.astro';
+import Icon from '../ui/Icon.astro';
+import { calculatorsInCategory } from '../../data/calculators';
+import { categories, getCategory, type CategoryId } from '../../data/categories';
+import { site } from '../../data/site';
+
+interface Props {
+  id: CategoryId;
+  h1: string;
+  faq?: { q: string; a: string }[];
+}
+const { id, h1, faq = [] } = Astro.props;
+const category = getCategory(id);
+const items = calculatorsInCategory(id);
+const others = categories.filter((c) => c.id !== id);
+
+const schema: Record<string, unknown>[] = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: h1,
+    description: category.metaDescription,
+    url: new URL(category.href, site.url).href,
+    inLanguage: 'de-DE',
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: items.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, url: new URL(c.href, site.url).href })),
+    },
+  },
+];
+if (faq.length) {
+  schema.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  });
+}
+---
+
+<BaseLayout title={category.seoTitle} description={category.metaDescription} breadcrumbs={[{ name: category.name }]} schema={schema}>
+  <div class="container-page">
+    <header class="max-w-3xl pt-6 pb-10">
+      <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-700 ring-1 ring-brand-100">
+        <Icon name={category.icon} size={26} />
+      </span>
+      <h1 class="mt-4 text-3xl font-extrabold tracking-tight text-navy-900 sm:text-4xl">{h1}</h1>
+      <div class="prose-qr mt-4 text-lg text-muted [&_p]:my-3">
+        <slot />
+      </div>
+    </header>
+
+    <section aria-labelledby="rechner-heading">
+      <h2 id="rechner-heading" class="text-2xl font-bold tracking-tight text-navy-900">
+        {items.length === 1 ? 'Rechner in dieser Kategorie' : `${items.length} Rechner in dieser Kategorie`}
+      </h2>
+      <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((c) => <CalculatorCard calc={c} />)}
+      </div>
+    </section>
+
+    {
+      Astro.slots.has('guide') && (
+        <article class="prose-qr mt-16 max-w-3xl">
+          <slot name="guide" />
+        </article>
+      )
+    }
+
+    {
+      faq.length > 0 && (
+        <div class="mt-16 max-w-3xl">
+          <FaqList items={faq} />
+        </div>
+      )
+    }
+
+    <nav aria-labelledby="weitere-heading" class="mt-16">
+      <h2 id="weitere-heading" class="text-xl font-bold text-navy-900">Weitere Kategorien</h2>
+      <ul class="mt-4 flex flex-wrap gap-2">
+        <li>
+          <a href="/finanzrechner/" class="inline-flex rounded-full border border-line bg-white px-4 py-2 text-sm font-medium text-navy-900 hover:border-navy-700">
+            Alle Finanzrechner
+          </a>
+        </li>
+        {
+          others.map((c) => (
+            <li>
+              <a href={c.href} class="inline-flex rounded-full border border-line bg-white px-4 py-2 text-sm font-medium text-navy-900 hover:border-navy-700">
+                {c.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</BaseLayout>

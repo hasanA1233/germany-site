@@ -1,0 +1,48 @@
+---
+/**
+ * VORLAGE – bitte vor Veröffentlichung vervollständigen und rechtlich prüfen lassen.
+ * Die Angaben werden zentral in src/data/site.ts gepflegt (owner).
+ */
+import ProseLayout from '../layouts/ProseLayout.astro';
+import OwnerField from '../components/ui/OwnerField.astro';
+import { site } from '../data/site';
+const o = site.owner;
+---
+
+<ProseLayout title="Impressum" description="Impressum von QuickRechner.de – Angaben zum Anbieter gemäß § 5 Digitale-Dienste-Gesetz (DDG)." h1="Impressum" breadcrumb="Impressum">
+  <h2>Angaben gemäß § 5 DDG</h2>
+  <p>
+    <OwnerField value={o.name} /><br />
+    <OwnerField value={o.street} /><br />
+    <OwnerField value={o.zipCity} /><br />
+    {o.country}
+  </p>
+
+  <h2>Kontakt</h2>
+  <p>
+    E-Mail: <OwnerField value={o.email} /><br />
+    Telefon: <OwnerField value={o.phone} />
+  </p>
+
+  <h2>Umsatzsteuer-Identifikationsnummer</h2>
+  <p>
+    Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: <OwnerField value={o.vatId} />
+  </p>
+
+  <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
+  <p>
+    <OwnerField value={o.responsibleContent} /><br />
+    Anschrift wie oben
+  </p>
+
+  <h2>Verbraucherstreitbeilegung</h2>
+  <p>
+    Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
+  </p>
+
+  <h2>Haftung für Inhalte und Links</h2>
+  <p>
+    Die Inhalte dieser Website wurden mit Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte und Berechnungen
+    können wir jedoch keine Gewähr übernehmen. Einzelheiten finden Sie in unserem <a href="/haftungsausschluss/">Haftungsausschluss</a>.
+  </p>
+</ProseLayout>

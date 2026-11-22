@@ -1,0 +1,86 @@
+---
+import CalculatorShell from '../calculator/CalculatorShell.astro';
+import NumberField from '../calculator/NumberField.astro';
+import ResultMain from '../calculator/ResultMain.astro';
+import ResultList from '../calculator/ResultList.astro';
+import DataTable from '../calculator/DataTable.astro';
+import ChartBox from '../calculator/ChartBox.astro';
+const p = 'sp';
+---
+
+<CalculatorShell
+  slug="sparplan"
+  title="Sparplan berechnen"
+  note="Alle Werte sind Modellrechnungen mit einer konstanten, angenommenen Rendite. Tatsächliche Wertentwicklungen schwanken und können auch negativ sein. Kosten, Steuern und Inflation sind nicht berücksichtigt. Keine Garantie und keine Anlageberatung."
+>
+  <NumberField idPrefix={p} name="monthlyRate" label="Monatliche Sparrate" value="200" suffix="€" />
+  <NumberField idPrefix={p} name="principal" label="Anfangskapital" value="0" suffix="€" optional />
+  <NumberField idPrefix={p} name="returnPct" label="Angenommene Rendite pro Jahr" value="5" suffix="% p. a." decimals={2} hint="Eine Annahme, keine Prognose. Rechnen Sie zum Vergleich auch mit vorsichtigeren Werten." />
+  <NumberField idPrefix={p} name="years" label="Laufzeit" value="20" suffix="Jahre" integer />
+  <NumberField idPrefix={p} name="dynamicPct" label="Jährliche Erhöhung der Sparrate (Dynamik)" suffix="%" optional placeholder="0" hint="Erhöht die Sparrate einmal pro Jahr um diesen Prozentsatz." />
+
+  <Fragment slot="results">
+    <ResultMain label="Geschätztes Endkapital" out="final" />
+    <ResultList
+      items={[
+        { label: 'Eigene Einzahlungen', out: 'deposits' },
+        { label: 'Geschätzte Erträge', out: 'returns', strong: true },
+        { label: 'Sparrate im letzten Jahr', out: 'lastRate' },
+      ]}
+    />
+    <p class="mt-4 flex gap-2 rounded-xl bg-warn-50 px-4 py-3 text-xs leading-relaxed text-warn-700 ring-1 ring-amber-200">
+      Schätzung: Die Rendite einer Geldanlage ist nicht garantiert. Wertpapierkurse können fallen – auch über längere Zeiträume.
+    </p>
+  </Fragment>
+
+  <Fragment slot="details">
+    <div class="grid gap-6">
+      <ChartBox
+        id="sp-chart"
+        title="Geschätzte Entwicklung des Sparplans"
+        legend={[
+          { color: '#10243A', label: 'Einzahlungen' },
+          { color: '#16A34A', label: 'Erträge (geschätzt)' },
+        ]}
+      />
+      <div>
+        <h3 class="mb-3 text-base font-bold text-navy-900">Wachstum nach Jahren</h3>
+        <DataTable id="sp-table" caption="Geschätzte Entwicklung des Sparplans nach Jahren" columns={['Jahr', 'Einzahlungen (kumuliert)', 'Erträge (kumuliert)', 'Depotwert am Jahresende']} />
+      </div>
+    </div>
+  </Fragment>
+</CalculatorShell>
+
+<script>
+  import { mountCalculator, fillTable } from '../../scripts/calc-runtime';
+  import { renderStackedBars } from '../../scripts/charts';
+  import { calculateSavingsPlan } from '../../lib/calc/savings';
+  import { formatEUR } from '../../lib/format';
+
+  mountCalculator('sparplan', (c) => {
+    const r = calculateSavingsPlan({
+      monthlyRate: c.num('monthlyRate'),
+      principal: c.num('principal'),
+      returnPct: c.num('returnPct'),
+      years: c.num('years'),
+      dynamicPct: c.num('dynamicPct'),
+    });
+    if (!r.ok) return r.errors;
+
+    c.out('final', formatEUR(r.finalBalance));
+    c.out('deposits', formatEUR(r.totalDeposits));
+    c.out('returns', formatEUR(r.returns));
+    c.out('lastRate', `${formatEUR(r.lastMonthlyRate)} / Monat`);
+
+    renderStackedBars(
+      c.el('[data-chart="sp-chart"]'),
+      r.rows.map((row) => ({ label: String(row.year), a: row.deposits, b: row.interest })),
+      `Säulendiagramm: geschätzter Depotwert nach ${r.rows.length} Jahren ${formatEUR(r.finalBalance)}, davon ${formatEUR(r.totalDeposits)} Einzahlungen.`,
+    );
+    fillTable(
+      c.el('[data-table="sp-table"]'),
+      r.rows.map((row) => [String(row.year), formatEUR(row.deposits), formatEUR(row.interest), formatEUR(row.balance)]),
+    );
+    return null;
+  });
+</script>
