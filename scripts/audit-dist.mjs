@@ -52,6 +52,8 @@ for (const file of files) {
   for (const prop of ['og:title', 'og:description', 'og:image', 'og:url']) {
     if (!html.includes(`property="${prop}"`)) problems.push(`${rel}: ${prop} fehlt`);
   }
+  const ogImage = html.match(/<meta property="og:image" content="([^"]*)"/)?.[1];
+  if (ogImage?.startsWith(SITE) && !(await exists(ogImage.slice(SITE.length)))) problems.push(`${rel}: og:image fehlt im Build (${ogImage})`);
   if (!html.includes('name="twitter:card"')) problems.push(`${rel}: twitter:card fehlt`);
   if (!html.includes('<html lang="de"')) problems.push(`${rel}: lang fehlt`);
 

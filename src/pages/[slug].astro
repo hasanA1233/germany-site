@@ -85,6 +85,8 @@ const schema = [
   breadcrumbs={[{ name: category.name, href: category.href }, { name: meta.name }]}
   schema={schema}
   ogType="article"
+  ogImage={`/og/${meta.slug}.png`}
+  ogImageAlt={`${data.h1} – ${meta.name} von ${site.name} mit Formel: ${meta.ogFormula}`}
 >
   <div class="container-page">
     <header class="max-w-3xl pt-6 pb-8">

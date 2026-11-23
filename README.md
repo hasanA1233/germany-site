@@ -63,7 +63,7 @@ public/              robots.txt, _headers (Cloudflare), favicons, OG image
 4. Add the article in `src/content/rechner/<slug>.md`.
 5. Add the component to the `components` map in `src/pages/[slug].astro`.
 
-The search, navigation, footer, category pages and sitemap update automatically.
+The search, navigation, footer, category pages, sitemap and the page's **share image** (`/og/<slug>.png`, generated at build time from the article title, category and `ogFormula` in `src/lib/og-image.ts`) update automatically.
 
 ## Before going live: required owner details
 

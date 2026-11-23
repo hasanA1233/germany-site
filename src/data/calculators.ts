@@ -25,6 +25,8 @@ export interface CalculatorMeta {
   keywords: string[];
   icon: IconName;
   related: CalculatorSlug[];
+  /** Kernformel für das Vorschaubild (Open Graph) */
+  ogFormula: string;
   featured?: boolean;
   /** Redaktionell als beliebtes Thema hervorgehoben */
   popular?: boolean;
@@ -43,6 +45,7 @@ export const calculators: CalculatorMeta[] = [
     keywords: ['kredit', 'kreditrate', 'ratenkredit', 'darlehen', 'monatsrate', 'annuität', 'zinsen', 'autokredit', 'sondertilgung'],
     icon: 'loan',
     related: ['tilgungsrechner', 'zinseszins-rechner', 'roi-rechner'],
+    ogFormula: 'Rate = K × r × (1+r)^n ÷ ((1+r)^n − 1)',
     featured: true,
     popular: true,
     added: '2026-11-22',
@@ -57,6 +60,7 @@ export const calculators: CalculatorMeta[] = [
     keywords: ['zinseszins', 'zinsen', 'kapital', 'endkapital', 'anlage', 'tagesgeld', 'festgeld', 'verzinsung'],
     icon: 'growth',
     related: ['sparplan-rechner', 'roi-rechner', 'kreditrate-berechnen'],
+    ogFormula: 'Endkapital = Kapital × (1 + Zins)^Jahre',
     featured: true,
     popular: true,
     added: '2026-11-22',
@@ -71,6 +75,7 @@ export const calculators: CalculatorMeta[] = [
     keywords: ['sparplan', 'etf', 'sparrate', 'vermögensaufbau', 'rendite', 'altersvorsorge', 'fonds', 'sparen'],
     icon: 'piggy',
     related: ['zinseszins-rechner', 'roi-rechner', 'rabatt-rechner'],
+    ogFormula: 'Endkapital = Einzahlungen + Erträge (geschätzt)',
     featured: true,
     popular: true,
     added: '2026-11-22',
@@ -85,6 +90,7 @@ export const calculators: CalculatorMeta[] = [
     keywords: ['tilgung', 'tilgungsplan', 'baufinanzierung', 'annuitätendarlehen', 'restschuld', 'zinsbindung', 'immobilie', 'hypothek'],
     icon: 'table',
     related: ['kreditrate-berechnen', 'zinseszins-rechner', 'sparplan-rechner'],
+    ogFormula: 'Rate = Darlehen × (Sollzins + Tilgung) ÷ 12',
     featured: true,
     popular: true,
     added: '2026-11-22',
@@ -99,6 +105,7 @@ export const calculators: CalculatorMeta[] = [
     keywords: ['umsatzsteuer', 'mehrwertsteuer', 'mwst', 'ust', 'netto', 'brutto', '19 prozent', '7 prozent', 'rechnung', 'vorsteuer'],
     icon: 'receipt',
     related: ['gewinn-rechner', 'rabatt-rechner', 'gewinnmarge-rechner'],
+    ogFormula: 'Brutto = Netto × 1,19  ·  Netto = Brutto ÷ 1,19',
     featured: true,
     popular: true,
     added: '2026-11-22',
@@ -113,6 +120,7 @@ export const calculators: CalculatorMeta[] = [
     keywords: ['gewinn', 'verlust', 'umsatz', 'kosten', 'ergebnis', 'selbstständig', 'unternehmen', 'einnahmen', 'ausgaben'],
     icon: 'profit',
     related: ['gewinnmarge-rechner', 'break-even-rechner', 'roi-rechner', 'umsatzsteuer-rechner'],
+    ogFormula: 'Gewinn = Umsatz − Kosten',
     added: '2026-11-22',
   },
   {
@@ -125,6 +133,7 @@ export const calculators: CalculatorMeta[] = [
     keywords: ['marge', 'gewinnmarge', 'umsatzrendite', 'aufschlag', 'kalkulation', 'handelsspanne', 'kostenquote'],
     icon: 'margin',
     related: ['gewinn-rechner', 'break-even-rechner', 'rabatt-rechner', 'umsatzsteuer-rechner'],
+    ogFormula: 'Marge = Gewinn ÷ Umsatz × 100',
     added: '2026-11-22',
   },
   {
@@ -137,6 +146,7 @@ export const calculators: CalculatorMeta[] = [
     keywords: ['roi', 'return on investment', 'rendite', 'kapitalrendite', 'investition', 'rentabilität', 'marketing'],
     icon: 'roi',
     related: ['gewinn-rechner', 'break-even-rechner', 'zinseszins-rechner', 'sparplan-rechner'],
+    ogFormula: 'ROI = Nettogewinn ÷ Investition × 100',
     featured: true,
     added: '2026-11-22',
   },
@@ -150,6 +160,7 @@ export const calculators: CalculatorMeta[] = [
     keywords: ['break even', 'break-even', 'gewinnschwelle', 'deckungsbeitrag', 'fixkosten', 'variable kosten', 'nutzenschwelle'],
     icon: 'breakeven',
     related: ['gewinn-rechner', 'gewinnmarge-rechner', 'roi-rechner', 'umsatzsteuer-rechner'],
+    ogFormula: 'Break-Even = Fixkosten ÷ Deckungsbeitrag',
     added: '2026-11-22',
   },
   {
@@ -162,6 +173,7 @@ export const calculators: CalculatorMeta[] = [
     keywords: ['rabatt', 'prozent', 'preisnachlass', 'skonto', 'reduziert', 'sale', 'angebot', 'ersparnis', 'prozentrechner'],
     icon: 'discount',
     related: ['umsatzsteuer-rechner', 'gewinnmarge-rechner', 'gewinn-rechner'],
+    ogFormula: 'Endpreis = Preis × (1 − Rabatt ÷ 100)',
     popular: true,
     added: '2026-11-22',
   },
