@@ -7,6 +7,7 @@
 import ProseLayout from '../layouts/ProseLayout.astro';
 import OwnerField from '../components/ui/OwnerField.astro';
 import { site } from '../data/site';
+import { analyticsEnabled } from '../components/analytics/analytics-config';
 const o = site.owner;
 ---
 
@@ -55,11 +56,71 @@ const o = site.owner;
   </p>
 
   <h2>3. Cookies und lokale Speicherung</h2>
-  <p>
-    QuickRechner setzt derzeit <strong>keine Cookies</strong> zu Analyse- oder Werbezwecken und speichert keine Daten in Ihrem Browser. Es werden
-    keine externen Schriftarten, Analyse- oder Tracking-Dienste eingebunden. Cloudflare kann aus Sicherheitsgründen technisch notwendige Cookies
-    setzen (etwa zur Abwehr automatisierter Angriffe).
-  </p>
+  {
+    analyticsEnabled ? (
+      <p>
+        Cookies zu Analysezwecken setzen wir <strong>nur mit Ihrer Einwilligung</strong> (siehe Abschnitt „Google Analytics“). Um Ihre Entscheidung im
+        Einwilligungsbanner zu speichern, legen wir in Ihrem Browser einen Eintrag im lokalen Speicher (localStorage) mit dem Namen{' '}
+        <code>qr-consent</code> ab. Er enthält nur Ihre Auswahl und den Zeitpunkt. Diese Speicherung ist technisch erforderlich, damit wir Ihre
+        Entscheidung beachten können (§ 25 Abs. 2 Nr. 2 TDDDG). Werbe-Cookies setzen wir nicht. Cloudflare kann aus Sicherheitsgründen technisch
+        notwendige Cookies setzen (etwa zur Abwehr automatisierter Angriffe).
+      </p>
+    ) : (
+      <p>
+        QuickRechner setzt derzeit <strong>keine Cookies</strong> zu Analyse- oder Werbezwecken und speichert keine Daten in Ihrem Browser. Es werden
+        keine externen Schriftarten, Analyse- oder Tracking-Dienste eingebunden. Cloudflare kann aus Sicherheitsgründen technisch notwendige Cookies
+        setzen (etwa zur Abwehr automatisierter Angriffe).
+      </p>
+    )
+  }
+
+  {
+    analyticsEnabled && (
+      <>
+        <h2 id="google-analytics">Google Analytics</h2>
+        <p>
+          Mit Ihrer Einwilligung nutzen wir Google Analytics 4, einen Webanalysedienst der Google Ireland Limited, Gordon House, Barrow Street,
+          Dublin 4, Irland („Google“). Damit erfahren wir, welche Seiten und Rechner wie häufig genutzt werden, und können unser Angebot verbessern.
+        </p>
+        <p>
+          <strong>Verarbeitete Daten:</strong> u. a. aufgerufene Seiten, Verweildauer, ungefährer Standort (auf Basis der gekürzten IP-Adresse),
+          Gerätetyp, Browser, Betriebssystem und Referrer. Google Analytics 4 speichert keine vollständigen IP-Adressen. Ihre Eingaben in den Rechnern
+          werden <strong>nicht</strong> übertragen. Google Signals und werbebezogene Funktionen haben wir deaktiviert.
+        </p>
+        <p>
+          <strong>Cookies:</strong> Google Analytics setzt die Cookies <code>_ga</code> und <code>_ga_&lt;ID&gt;</code>, die bis zu 2 Jahre
+          gespeichert werden können.
+        </p>
+        <p>
+          <strong>Rechtsgrundlage:</strong> Ihre Einwilligung nach § 25 Abs. 1 TDDDG und Art. 6 Abs. 1 lit. a DSGVO. Ohne Einwilligung wird Google
+          Analytics nicht geladen.
+        </p>
+        <p>
+          <strong>Datenübermittlung in die USA:</strong> Google kann Daten auch in den USA verarbeiten.{' '}
+          <OwnerField value="[Grundlage prüfen und eintragen, z. B.: Google LLC ist nach dem EU-U.S. Data Privacy Framework zertifiziert; ergänzend gelten Standardvertragsklauseln]" />
+        </p>
+        <p>
+          <strong>Speicherdauer:</strong> Die Daten in Google Analytics werden nach{' '}
+          <OwnerField value="[eingestellte Aufbewahrungsdauer, z. B. 2 Monate oder 14 Monate]" /> automatisch gelöscht.
+        </p>
+        <p>
+          <strong>Widerruf:</strong> Sie können Ihre Einwilligung jederzeit mit Wirkung für die Zukunft widerrufen:{' '}
+          <a href="#google-analytics" data-consent-settings>
+            Cookie-Einstellungen öffnen
+          </a>
+          . Weitere Informationen:{' '}
+          <a href="https://policies.google.com/privacy" rel="noopener" target="_blank">
+            Datenschutzerklärung von Google
+          </a>
+          .
+        </p>
+        <p>
+          Mit Google haben wir einen Vertrag zur Auftragsverarbeitung abgeschlossen:{' '}
+          <OwnerField value="[In Google Analytics unter Verwaltung → Kontoeinstellungen den Zusatz zur Datenverarbeitung akzeptieren und hier bestätigen]" />
+        </p>
+      </>
+    )
+  }
 
   <h2>4. Rechner und Eingaben</h2>
   <p>

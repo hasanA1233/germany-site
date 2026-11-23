@@ -3,6 +3,7 @@ import Logo from '../ui/Logo.astro';
 import { categories } from '../../data/categories';
 import { calculators } from '../../data/calculators';
 import { site } from '../../data/site';
+import { analyticsEnabled } from '../analytics/analytics-config';
 
 const year = new Date().getFullYear();
 ---
@@ -41,6 +42,15 @@ const year = new Date().getFullYear();
         <li><a class="hover:text-brand-700 hover:underline" href="/impressum/">Impressum</a></li>
         <li><a class="hover:text-brand-700 hover:underline" href="/datenschutz/">Datenschutz</a></li>
         <li><a class="hover:text-brand-700 hover:underline" href="/haftungsausschluss/">Haftungsausschluss</a></li>
+        {
+          analyticsEnabled && (
+            <li>
+              <a class="hover:text-brand-700 hover:underline" href="/datenschutz/#google-analytics" data-consent-settings>
+                Cookie-Einstellungen
+              </a>
+            </li>
+          )
+        }
       </ul>
     </nav>
   </div>

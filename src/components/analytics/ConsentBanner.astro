@@ -1,0 +1,133 @@
+---
+/**
+ * Einwilligungsbanner für Google Analytics.
+ * - Lädt gtag.js ausschließlich nach Klick auf „Akzeptieren“.
+ * - „Ablehnen“ ist gleichwertig gestaltet (gleiche Größe, gleiche Ebene).
+ * - Über [data-consent-settings] (Footer-Link) kann die Entscheidung jederzeit geändert werden.
+ * - Gespeichert wird nur die Entscheidung selbst (localStorage, technisch erforderlich).
+ */
+import { analyticsEnabled, gaMeasurementId, CONSENT_KEY, CONSENT_VERSION } from './analytics-config';
+---
+
+{
+  analyticsEnabled && (
+    <>
+      <section
+        id="consent-banner"
+        class="consent-banner card fixed inset-x-3 bottom-3 z-50 mx-auto max-w-2xl p-5 shadow-2xl sm:inset-x-6 sm:bottom-6"
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="consent-title"
+        aria-describedby="consent-text"
+        hidden
+      >
+        <h2 id="consent-title" class="text-base font-bold text-navy-900">
+          Datenschutz-Einstellungen
+        </h2>
+        <p id="consent-text" class="mt-2 text-sm leading-relaxed text-ink">
+          Wir möchten mit Google Analytics Nutzungsstatistiken erheben, um zu verstehen, welche Rechner hilfreich sind. Dafür werden Cookies
+          gesetzt und Daten an Google übertragen – auch in die USA. Das geschieht nur mit Ihrer Einwilligung, die Sie jederzeit widerrufen können.
+          Ihre Eingaben in den Rechnern werden dabei nicht übertragen. Mehr in der{' '}
+          <a href="/datenschutz/#google-analytics" class="font-medium underline">
+            Datenschutzerklärung
+          </a>
+          .
+        </p>
+        <div class="mt-4 grid grid-cols-2 gap-3">
+          <button type="button" class="btn-secondary w-full" data-consent="denied">
+            Ablehnen
+          </button>
+          <button type="button" class="btn-secondary w-full" data-consent="granted">
+            Akzeptieren
+          </button>
+        </div>
+      </section>
+
+      <script is:inline define:vars={{ gaId: gaMeasurementId, key: CONSENT_KEY, version: CONSENT_VERSION }}>
+        (function () {
+          var banner = document.getElementById('consent-banner');
+          var loaded = false;
+
+          function read() {
+            try {
+              var v = JSON.parse(localStorage.getItem(key) || 'null');
+              return v && v.v === version ? v.choice : null;
+            } catch (e) {
+              return null;
+            }
+          }
+          function save(choice) {
+            try {
+              localStorage.setItem(key, JSON.stringify({ v: version, choice: choice, at: new Date().toISOString() }));
+            } catch (e) {}
+          }
+          function loadGa() {
+            if (loaded) return;
+            loaded = true;
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function () {
+              window.dataLayer.push(arguments);
+            };
+            // Consent Mode v2: Analyse erlaubt, sämtliche Werbefunktionen aus
+            window.gtag('consent', 'default', {
+              analytics_storage: 'granted',
+              ad_storage: 'denied',
+              ad_user_data: 'denied',
+              ad_personalization: 'denied',
+            });
+            window.gtag('js', new Date());
+            window.gtag('config', gaId, { allow_google_signals: false, allow_ad_personalization_signals: false });
+            var s = document.createElement('script');
+            s.async = true;
+            s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(gaId);
+            document.head.appendChild(s);
+          }
+          function deleteGaCookies() {
+            var host = location.hostname.replace(/^www\./, '');
+            document.cookie.split(';').forEach(function (c) {
+              var name = c.split('=')[0].trim();
+              if (name === '_ga' || name.indexOf('_ga_') === 0) {
+                ['', '; domain=' + host, '; domain=.' + host].forEach(function (d) {
+                  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/' + d;
+                });
+              }
+            });
+          }
+          function show() {
+            banner.hidden = false;
+          }
+          function hide() {
+            banner.hidden = true;
+          }
+
+          banner.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-consent]');
+            if (!btn) return;
+            var choice = btn.getAttribute('data-consent');
+            var previous = read();
+            save(choice);
+            hide();
+            if (choice === 'granted') loadGa();
+            else if (previous === 'granted') {
+              // Widerruf: Cookies löschen und Seite neu laden, damit gtag.js nicht weiterläuft
+              deleteGaCookies();
+              location.reload();
+            }
+          });
+
+          document.addEventListener('click', function (e) {
+            if (e.target.closest('[data-consent-settings]')) {
+              e.preventDefault();
+              show();
+              banner.querySelector('[data-consent="denied"]').focus();
+            }
+          });
+
+          var current = read();
+          if (current === 'granted') loadGa();
+          else if (current === null) show();
+        })();
+      </script>
+    </>
+  )
+}

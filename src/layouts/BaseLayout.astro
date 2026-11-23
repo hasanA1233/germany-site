@@ -5,6 +5,8 @@ import Footer from '../components/layout/Footer.astro';
 import Breadcrumbs, { type Crumb } from '../components/layout/Breadcrumbs.astro';
 import { site } from '../data/site';
 import { adsEnabled, adsenseClient } from '../components/ads/ads-config';
+import ConsentBanner from '../components/analytics/ConsentBanner.astro';
+import { analyticsEnabled } from '../components/analytics/analytics-config';
 
 interface Props {
   /** Seitentitel ohne Markenzusatz – " | QuickRechner" wird automatisch ergänzt */
@@ -93,6 +95,7 @@ const jsonLd = [...schema, breadcrumbSchema].filter(Boolean);
         />
       )
     }
+    {analyticsEnabled && <link rel="preconnect" href="https://www.googletagmanager.com" />}
   </head>
   <body class="flex min-h-screen flex-col">
     <!-- Dekorative CSS-Wolken (Theme „Cloudy Sky“) -->
@@ -112,5 +115,6 @@ const jsonLd = [...schema, breadcrumbSchema].filter(Boolean);
       <slot />
     </main>
     <Footer />
+    <ConsentBanner />
   </body>
 </html>
