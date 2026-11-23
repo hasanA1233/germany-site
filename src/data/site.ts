@@ -14,7 +14,7 @@ export const site = {
   tagline: 'Finanzen einfach berechnen',
   description:
     'Kostenlose Online-Rechner für Kredite, Sparen, Investitionen, Steuern und Unternehmen – mit verständlichen Erklärungen, Formeln und Beispielen.',
-  themeColor: '#10243A',
+  themeColor: '#BFE3FF',
   ogImage: '/og-default.png',
   /** Stand der redaktionellen Inhalte (ISO-Datum) */
   contentUpdated: '2026-11-22',

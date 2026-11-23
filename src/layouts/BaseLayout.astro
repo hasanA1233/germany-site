@@ -52,7 +52,8 @@ const jsonLd = [...schema, breadcrumbSchema].filter(Boolean);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, follow" />}
-    <meta name="theme-color" content={site.themeColor} />
+    <meta name="theme-color" content={site.themeColor} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#07142B" media="(prefers-color-scheme: dark)" />
     <meta name="format-detection" content="telephone=no" />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -91,7 +92,9 @@ const jsonLd = [...schema, breadcrumbSchema].filter(Boolean);
     }
   </head>
   <body class="flex min-h-screen flex-col">
-    <a href="#inhalt" class="sr-only z-50 rounded-lg bg-navy-900 px-4 py-2 text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3">
+    <!-- Dekorative CSS-Wolken (Theme „Cloudy Sky“) -->
+    <div class="sky-clouds" aria-hidden="true"></div>
+    <a href="#inhalt" class="btn-primary sr-only z-50 focus:not-sr-only focus:fixed focus:top-3 focus:left-3">
       Zum Inhalt springen
     </a>
     <Header />

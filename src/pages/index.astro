@@ -89,25 +89,21 @@ const schema = [
 
 <BaseLayout title="QuickRechner – Kostenlose Finanz- und Business-Rechner" rawTitle description={site.description} schema={schema}>
   <!-- Hero -->
-  <section class="relative overflow-hidden bg-navy-900 text-white">
-    <div class="pointer-events-none absolute inset-0 opacity-40" aria-hidden="true">
-      <div class="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-brand-600/30 blur-3xl"></div>
-      <div class="absolute -bottom-32 -left-16 h-96 w-96 rounded-full bg-navy-700 blur-3xl"></div>
-    </div>
+  <section class="hero relative">
     <div class="container-page relative py-16 sm:py-24">
       <div class="mx-auto max-w-3xl text-center">
-        <p class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold tracking-wide text-brand-100 ring-1 ring-white/15">
+        <p class="inline-flex items-center gap-2 rounded-full bg-card/70 px-3 py-1 text-xs font-semibold tracking-wide text-brand-700 ring-1 ring-line">
           <Icon name="check" size={14} /> Kostenlos · Ohne Anmeldung · Berechnung im Browser
         </p>
-        <h1 class="mt-5 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">Finanzen einfach berechnen</h1>
-        <p class="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-navy-100 sm:text-xl">
+        <h1 class="mt-5 text-4xl font-extrabold tracking-tight text-navy-900 sm:text-5xl lg:text-6xl">Finanzen einfach berechnen</h1>
+        <p class="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-ink-soft sm:text-xl">
           Kostenlose Online-Rechner für Kredite, Sparen, Investitionen, Steuern und Unternehmen.
         </p>
         <div class="mx-auto mt-8 max-w-xl text-ink">
           <SearchBox id="hero-search" size="lg" readQuery />
         </div>
         <div class="mt-6">
-          <a href="#rechner" class="btn bg-brand-700 text-white hover:bg-brand-600">
+          <a href="#rechner" class="btn-primary">
             Rechner entdecken <Icon name="arrow-right" size={18} />
           </a>
         </div>
@@ -142,7 +138,7 @@ const schema = [
             const count = calculatorsInCategory(cat.id).length;
             return (
               <a href={cat.href} class="group card flex items-start gap-4 p-5 transition-shadow hover:shadow-[var(--shadow-card-hover)]">
-                <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-navy-900 text-white">
+                <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 ring-1 ring-brand-100">
                   <Icon name={cat.icon} />
                 </span>
                 <span>
@@ -171,7 +167,7 @@ const schema = [
       <section aria-labelledby="recent-heading">
         <p class="eyebrow">Neu</p>
         <h2 id="recent-heading" class="mt-1 text-2xl font-bold tracking-tight text-navy-900 sm:text-3xl">Zuletzt hinzugefügt</h2>
-        <ul class="mt-6 divide-y divide-line rounded-2xl border border-line bg-white">
+        <ul class="mt-6 divide-y divide-line rounded-2xl border border-line bg-card">
           {
             recentList.map((c) => (
               <li>
@@ -213,7 +209,7 @@ const schema = [
               { t: 'Selbstständigkeit', d: 'Gewinn, Marge und Umsatzsteuer für Angebote und Rechnungen.', l: '/business/' },
               { t: 'Kalkulation', d: 'Break-Even, ROI und Rabatte für Preisentscheidungen.', l: '/prozent-rechner/' },
             ].map((x) => (
-              <li class="rounded-2xl bg-white p-5 ring-1 ring-line">
+              <li class="rounded-2xl bg-card p-5 ring-1 ring-line">
                 <a href={x.l} class="font-semibold text-navy-900 hover:underline">
                   {x.t}
                 </a>

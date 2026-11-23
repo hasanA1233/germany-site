@@ -18,7 +18,7 @@ const { title, text, href, cta, partner, label = 'Anzeige' } = Astro.props;
 ---
 
 <aside class="my-8 rounded-2xl border border-line bg-surface p-5" aria-label={`${label}: ${partner}`}>
-  <p class="mb-2 inline-block rounded-md bg-white px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-muted ring-1 ring-line">
+  <p class="mb-2 inline-block rounded-md bg-card px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-muted ring-1 ring-line">
     {label} · Affiliate-Link
   </p>
   <p class="text-base font-semibold text-navy-900">{title}</p>

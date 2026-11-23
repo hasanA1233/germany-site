@@ -84,14 +84,14 @@ if (faq.length) {
       <h2 id="weitere-heading" class="text-xl font-bold text-navy-900">Weitere Kategorien</h2>
       <ul class="mt-4 flex flex-wrap gap-2">
         <li>
-          <a href="/finanzrechner/" class="inline-flex rounded-full border border-line bg-white px-4 py-2 text-sm font-medium text-navy-900 hover:border-navy-700">
+          <a href="/finanzrechner/" class="inline-flex rounded-full border border-line bg-card px-4 py-2 text-sm font-medium text-navy-900 hover:border-navy-700">
             Alle Finanzrechner
           </a>
         </li>
         {
           others.map((c) => (
             <li>
-              <a href={c.href} class="inline-flex rounded-full border border-line bg-white px-4 py-2 text-sm font-medium text-navy-900 hover:border-navy-700">
+              <a href={c.href} class="inline-flex rounded-full border border-line bg-card px-4 py-2 text-sm font-medium text-navy-900 hover:border-navy-700">
                 {c.name}
               </a>
             </li>

@@ -7,11 +7,11 @@ import { site } from '../../data/site';
 const year = new Date().getFullYear();
 ---
 
-<footer class="mt-20 bg-navy-900 text-navy-100">
+<footer class="site-footer mt-20">
   <div class="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
     <div class="lg:col-span-1">
       <a href="/" aria-label="QuickRechner – zur Startseite" class="inline-block rounded-lg">
-        <Logo inverted />
+        <Logo />
       </a>
       <p class="mt-4 max-w-xs text-sm leading-relaxed">
         Kostenlose Online-Rechner für Finanzen und Business – mit nachvollziehbaren Formeln und verständlichen Erklärungen.
@@ -19,32 +19,32 @@ const year = new Date().getFullYear();
     </div>
 
     <nav aria-label="Kategorien">
-      <h2 class="text-sm font-semibold text-white">Kategorien</h2>
+      <h2 class="text-sm font-semibold text-navy-900">Kategorien</h2>
       <ul class="mt-4 space-y-2.5 text-sm">
-        <li><a class="hover:text-white hover:underline" href="/finanzrechner/">Alle Finanzrechner</a></li>
-        {categories.map((c) => <li><a class="hover:text-white hover:underline" href={c.href}>{c.name}</a></li>)}
+        <li><a class="hover:text-brand-700 hover:underline" href="/finanzrechner/">Alle Finanzrechner</a></li>
+        {categories.map((c) => <li><a class="hover:text-brand-700 hover:underline" href={c.href}>{c.name}</a></li>)}
       </ul>
     </nav>
 
     <nav aria-label="Rechner">
-      <h2 class="text-sm font-semibold text-white">Rechner</h2>
+      <h2 class="text-sm font-semibold text-navy-900">Rechner</h2>
       <ul class="mt-4 grid grid-cols-1 gap-2.5 text-sm">
-        {calculators.map((c) => <li><a class="hover:text-white hover:underline" href={c.href}>{c.name}</a></li>)}
+        {calculators.map((c) => <li><a class="hover:text-brand-700 hover:underline" href={c.href}>{c.name}</a></li>)}
       </ul>
     </nav>
 
     <nav aria-label="Rechtliches und Informationen">
-      <h2 class="text-sm font-semibold text-white">QuickRechner</h2>
+      <h2 class="text-sm font-semibold text-navy-900">QuickRechner</h2>
       <ul class="mt-4 space-y-2.5 text-sm">
-        <li><a class="hover:text-white hover:underline" href="/about/">Über uns</a></li>
-        <li><a class="hover:text-white hover:underline" href="/kontakt/">Kontakt</a></li>
-        <li><a class="hover:text-white hover:underline" href="/impressum/">Impressum</a></li>
-        <li><a class="hover:text-white hover:underline" href="/datenschutz/">Datenschutz</a></li>
-        <li><a class="hover:text-white hover:underline" href="/haftungsausschluss/">Haftungsausschluss</a></li>
+        <li><a class="hover:text-brand-700 hover:underline" href="/about/">Über uns</a></li>
+        <li><a class="hover:text-brand-700 hover:underline" href="/kontakt/">Kontakt</a></li>
+        <li><a class="hover:text-brand-700 hover:underline" href="/impressum/">Impressum</a></li>
+        <li><a class="hover:text-brand-700 hover:underline" href="/datenschutz/">Datenschutz</a></li>
+        <li><a class="hover:text-brand-700 hover:underline" href="/haftungsausschluss/">Haftungsausschluss</a></li>
       </ul>
     </nav>
   </div>
-  <div class="border-t border-white/10">
+  <div class="border-t border-line">
     <div class="container-page flex flex-col gap-2 py-6 text-xs sm:flex-row sm:items-center sm:justify-between">
       <p>© {year} {site.name} · {site.domain}</p>
       <p>Alle Berechnungen ohne Gewähr. Kein Ersatz für eine individuelle Finanz-, Steuer- oder Rechtsberatung.</p>

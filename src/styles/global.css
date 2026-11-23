@@ -1,49 +1,244 @@
 @import 'tailwindcss';
 
+/* ==================================================================
+   QuickRechner – Theme „Cloudy Sky“
+   ------------------------------------------------------------------
+   1. Design-Tokens (:root, hell)
+   2. Night Sky (Dark Mode)
+   3. Tailwind-Theme-Mapping (Utilities → Tokens)
+   4. Basis (Hintergrund, Typografie, Fokus)
+   5. Wolken (nur CSS, animiert)
+   6. Bausteine (@utility: card, btn, field-input …)
+   7. Komponenten (Header, Footer, Hero, Ergebnisbox, Diagramme)
+   8. Langtext (Markdown)
+   9. Reduzierte Bewegung
+   ================================================================== */
+
 /* ------------------------------------------------------------------
-   QuickRechner Design System
+   1. Design-Tokens – hell („Clear Sky“)
+   Hinweis Kontrast (WCAG AA):
+   - --primary (#2B7BD6) erreicht mit weißer Schrift nur ~4,3:1 und wird
+     daher für Flächen/Rahmen/Icons genutzt; Buttons nutzen --btn-bg.
+   - Fließtext-Links/Eyebrows nutzen --primary-ink (≥ 5:1 auch auf --sky-top).
+   - --text-muted ist leicht abgedunkelt (≥ 4,5:1 auch auf --sky-top).
+   ------------------------------------------------------------------ */
+:root {
+  color-scheme: light dark;
+
+  /* Himmel */
+  --sky-top: #bfe3ff;
+  --sky-mid: #ddf0ff;
+  --sky-bottom: #f5faff;
+
+  /* Marke */
+  --primary: #2b7bd6;
+  --primary-hover: #1e63b5;
+  --primary-ink: #1a5aa6;
+  --btn-bg: #1e63b5;
+  --btn-bg-hover: #174f93;
+  --btn-text: #ffffff;
+  --btn-shadow: 0 4px 14px rgb(30 99 181 / 0.25);
+  --btn-shadow-hover: 0 10px 24px rgb(30 99 181 / 0.32);
+
+  /* Sonne (nur Hervorhebungen/Ergebnisse) */
+  --accent: #ffc857;
+  --accent-soft: #fff3d1;
+  --accent-border: #f3d48a;
+  --accent-ink: #6b4a00;
+
+  /* Text */
+  --text: #1f2d3d;
+  --text-soft: #3e4e62;
+  --text-muted: #4f5f73;
+
+  /* Flächen */
+  --card-bg: rgba(255, 255, 255, 0.75);
+  --card-bg-fallback: rgba(255, 255, 255, 0.95);
+  --card-solid: #ffffff;
+  --header-bg: rgba(255, 255, 255, 0.6);
+  --header-bg-fallback: rgba(255, 255, 255, 0.96);
+  --surface: #eef6ff;
+  --sky-tint: #eaf4ff;
+  --ring-soft: rgba(43, 123, 214, 0.25);
+  --code-bg: #10243a;
+  --track: #dbe9f8;
+
+  /* Linien & Eingaben */
+  --border: rgba(43, 123, 214, 0.15);
+  --input-bg: #ffffff;
+  --input-border: #8fb6e3;
+  --input-border-hover: #5b95d6;
+  --focus-ring: rgba(43, 123, 214, 0.28);
+
+  /* Status */
+  --danger: #b91c1c;
+  --danger-soft: #fdecec;
+  --danger-bar: #d64545;
+  --danger-ring: rgba(185, 28, 28, 0.18);
+  --success-ink: #146c36;
+  --success-soft: #e6f6ec;
+  --success-bar: #2f9e5b;
+
+  /* Schatten (blau getönt) */
+  --shadow-card: 0 1px 2px rgb(43 123 214 / 0.06), 0 8px 24px rgb(43 123 214 / 0.1);
+  --shadow-card-hover: 0 2px 4px rgb(43 123 214 / 0.08), 0 14px 36px rgb(43 123 214 / 0.16);
+
+  /* Wolken */
+  --cloud: rgba(255, 255, 255, 0.95);
+  --cloud-opacity: 1;
+
+  /* Diagramme */
+  --chart-a: #1f3a5f;
+  --chart-b: #2b7bd6;
+  --chart-grid: #dbe7f5;
+  --chart-label: #4f5f73;
+}
+
+/* ------------------------------------------------------------------
+   2. Night Sky – automatischer Dark Mode
+   ------------------------------------------------------------------ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --sky-top: #07142b;
+    --sky-mid: #0a1a35;
+    --sky-bottom: #0e1e3a;
+
+    --primary: #6db3ff;
+    --primary-hover: #8cc4ff;
+    --primary-ink: #8cc4ff;
+    --btn-bg: #8cc4ff;
+    --btn-bg-hover: #b3d8ff;
+    --btn-text: #0b1a33;
+    --btn-shadow: 0 4px 14px rgb(0 0 0 / 0.35);
+    --btn-shadow-hover: 0 10px 24px rgb(0 0 0 / 0.45);
+
+    --accent: #ffc857;
+    --accent-soft: rgba(255, 200, 87, 0.13);
+    --accent-border: rgba(255, 200, 87, 0.35);
+    --accent-ink: #ffd98a;
+
+    --text: #e6eef8;
+    --text-soft: #c6d3e3;
+    --text-muted: #a9b8cb;
+
+    --card-bg: rgba(20, 36, 64, 0.72);
+    --card-bg-fallback: rgba(20, 36, 64, 0.97);
+    --card-solid: #14243f;
+    --header-bg: rgba(7, 20, 43, 0.6);
+    --header-bg-fallback: rgba(7, 20, 43, 0.97);
+    --surface: #172a47;
+    --sky-tint: rgba(140, 196, 255, 0.1);
+    --ring-soft: rgba(140, 196, 255, 0.3);
+    --code-bg: #050e1f;
+    --track: #24395a;
+
+    --border: rgba(140, 196, 255, 0.18);
+    --input-bg: #0f1d35;
+    --input-border: #4f74a5;
+    --input-border-hover: #7aa3d6;
+    --focus-ring: rgba(140, 196, 255, 0.35);
+
+    --danger: #fca5a5;
+    --danger-soft: rgba(248, 113, 113, 0.14);
+    --danger-bar: #f87171;
+    --danger-ring: rgba(248, 113, 113, 0.3);
+    --success-ink: #86efac;
+    --success-soft: rgba(74, 222, 128, 0.12);
+    --success-bar: #4ade80;
+
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
+    --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.35), 0 14px 36px rgb(0 0 0 / 0.45);
+
+    --cloud: rgba(190, 210, 240, 0.9);
+    --cloud-opacity: 0.14;
+
+    --chart-a: #a9c8ee;
+    --chart-b: #ffc857;
+    --chart-grid: #24395a;
+    --chart-label: #a9b8cb;
+  }
+}
+
+/* ------------------------------------------------------------------
+   3. Tailwind-Theme-Mapping
+   Die bestehenden Klassen im Markup (text-navy-900, bg-brand-50 …)
+   zeigen auf die Tokens oben – so wechseln sie automatisch mit dem
+   Farbschema, ohne dass das Markup geändert werden muss.
    ------------------------------------------------------------------ */
 @theme {
-  --color-navy-950: #0a1726;
-  --color-navy-900: #10243a; /* Primary */
-  --color-navy-800: #1a3452;
-  --color-navy-700: #25466b;
-  --color-navy-100: #e3eaf3;
-  --color-navy-50: #f2f6fa;
+  --color-navy-950: #07142b;
+  --color-navy-900: var(--text); /* Überschriften */
+  --color-navy-800: var(--primary-ink);
+  --color-navy-700: var(--primary-ink);
+  --color-navy-100: var(--text-soft);
+  --color-navy-50: var(--sky-tint); /* Hover-Tönung */
 
-  --color-brand-700: #15803d;
-  --color-brand-600: #16a34a; /* Secondary */
-  --color-brand-100: #dcfce7;
-  --color-brand-50: #f0fdf4;
+  --color-brand-700: var(--primary-ink); /* Links, Eyebrows, Icons */
+  --color-brand-600: var(--primary); /* Fokus, Marker, Rahmen */
+  --color-brand-100: var(--ring-soft);
+  --color-brand-50: var(--sky-tint);
 
-  --color-ink: #1f2937;
-  --color-muted: #4b5563;
-  --color-line: #e5e7eb;
-  --color-surface: #f7f8fa;
+  --color-ink: var(--text);
+  --color-ink-soft: var(--text-soft);
+  --color-muted: var(--text-muted);
+  --color-line: var(--border);
+  --color-surface: var(--surface);
+  --color-card: var(--card-solid);
 
-  --color-danger-700: #b91c1c;
-  --color-danger-50: #fef2f2;
-  --color-warn-50: #fffbeb;
-  --color-warn-700: #a16207;
+  --color-danger-700: var(--danger);
+  --color-danger-50: var(--danger-soft);
+  --color-warn-50: var(--accent-soft);
+  --color-warn-700: var(--accent-ink);
+
+  --color-gray-200: var(--track);
+  --color-gray-300: var(--input-border);
+  --color-gray-400: var(--input-border-hover);
+  --color-gray-500: var(--text-muted);
+  --color-amber-200: var(--accent-border);
+  --color-amber-300: var(--accent-border);
+  --color-amber-500: var(--accent);
 
   --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
     'Noto Sans', sans-serif;
 
-  --radius-card: 1rem;
-  --shadow-card: 0 1px 2px rgb(16 36 58 / 0.04), 0 4px 16px rgb(16 36 58 / 0.06);
-  --shadow-card-hover: 0 2px 4px rgb(16 36 58 / 0.06), 0 10px 28px rgb(16 36 58 / 0.1);
+  --radius-card: 1.125rem; /* 18px */
 }
 
+/* ------------------------------------------------------------------
+   4. Basis
+   ------------------------------------------------------------------ */
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
     scroll-padding-top: 5rem;
+    background-color: var(--sky-bottom);
   }
   body {
-    @apply bg-white font-sans text-ink antialiased;
+    position: relative;
+    isolation: isolate; /* Wolken (z-index:-1) liegen hinter allen Inhalten */
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    color: var(--text);
+    /* Himmelsverlauf: oben Himmelblau, ab ~48rem fast Weiß */
+    background: linear-gradient(180deg, var(--sky-top) 0, var(--sky-mid) 20rem, var(--sky-bottom) 48rem) no-repeat
+      var(--sky-bottom);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+  ::selection {
+    background: var(--accent);
+    color: #1f2d3d;
   }
   :focus-visible {
-    outline: 3px solid var(--color-brand-600);
+    outline: 3px solid var(--primary);
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -57,36 +252,286 @@
   }
 }
 
-/* Wiederverwendbare Bausteine (als @utility, damit sie per @apply kombinierbar sind) */
-@utility container-page {
-  @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+/* ------------------------------------------------------------------
+   5. Wolken – reine CSS-Radialverläufe, keine Bilddateien
+   Zwei Ebenen (200 % breit, Kachel = 50 %) werden per transform
+   verschoben → nahtlose Schleife, nur Compositing, kein Layout-Shift.
+   ------------------------------------------------------------------ */
+.sky-clouds {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 34rem;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+  opacity: var(--cloud-opacity);
+  contain: layout paint;
+  -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent);
+  mask-image: linear-gradient(180deg, #000 55%, transparent);
 }
-@utility card {
-  @apply rounded-[var(--radius-card)] border border-line bg-white shadow-[var(--shadow-card)];
+.sky-clouds::before,
+.sky-clouds::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background-repeat: repeat-x;
+  background-size: 50% 100%;
+  will-change: transform;
+  animation: cloud-drift 120s linear infinite;
 }
-@utility btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-colors;
+/* vordere Ebene – größere Wolken */
+.sky-clouds::before {
+  background-image:
+    radial-gradient(ellipse min(13%, 10rem) 2.4rem at 20% 5.6rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse min(7%, 5.5rem) 2.6rem at 23% 4.4rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse min(6%, 4.5rem) 2rem at 16% 4.9rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse min(15%, 12rem) 2.8rem at 62% 10rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse min(8%, 6.5rem) 3rem at 65% 8.6rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse min(6%, 5rem) 2.2rem at 57% 9.2rem, var(--cloud) 35%, transparent 72%);
 }
-@utility btn-primary {
-  @apply btn bg-brand-700 text-white hover:bg-navy-900;
+/* hintere Ebene – kleiner, blasser, langsamer */
+.sky-clouds::after {
+  opacity: 0.65;
+  animation-duration: 190s;
+  background-image:
+    radial-gradient(ellipse min(8%, 6rem) 1.6rem at 88% 3.6rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse min(4%, 3rem) 1.5rem at 90% 2.9rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse min(11%, 8rem) 2rem at 36% 16rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse min(6%, 4.5rem) 2.2rem at 39% 14.9rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse min(9%, 7rem) 1.8rem at 80% 21rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse min(5%, 3.5rem) 1.8rem at 82% 20rem, var(--cloud) 35%, transparent 72%);
 }
-@utility btn-secondary {
-  @apply btn border border-line bg-white text-navy-900 hover:border-navy-700 hover:bg-navy-50;
-}
-@utility eyebrow {
-  @apply text-xs font-semibold uppercase tracking-wider text-brand-700;
-}
-@utility field-input {
-  @apply w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-base text-ink tabular-nums shadow-sm transition-colors placeholder:text-gray-400 hover:border-gray-400 focus:border-brand-600 focus:outline-none focus:ring-4 focus:ring-brand-100;
-  &[aria-invalid='true'] {
-    @apply border-danger-700 focus:ring-danger-50;
+@keyframes cloud-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
+/* ------------------------------------------------------------------
+   6. Bausteine (als @utility, damit sie per @apply kombinierbar sind)
+   ------------------------------------------------------------------ */
+@utility container-page {
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+}
+
+/* Glas-Karte mit Fallback ohne backdrop-filter */
+@utility card {
+  @apply shadow-[var(--shadow-card)];
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  background-color: var(--card-bg-fallback);
+  @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    background-color: var(--card-bg);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    backdrop-filter: blur(12px) saturate(140%);
+  }
+}
+
+/* Pill-Buttons mit sanftem Anheben */
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.75rem 1.375rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+  &:hover {
+    transform: translateY(-2px);
+  }
+  &:active {
+    transform: translateY(0);
+  }
+}
+@utility btn-primary {
+  @apply btn;
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  box-shadow: var(--btn-shadow);
+  &:hover {
+    background-color: var(--btn-bg-hover);
+    box-shadow: var(--btn-shadow-hover);
+  }
+}
+@utility btn-secondary {
+  @apply btn;
+  background-color: var(--card-solid);
+  color: var(--primary-ink);
+  border: 1px solid var(--input-border);
+  box-shadow: 0 1px 2px rgb(43 123 214 / 0.06);
+  &:hover {
+    border-color: var(--primary);
+    background-color: var(--sky-tint);
+    box-shadow: var(--btn-shadow);
+  }
+}
+@utility eyebrow {
+  @apply text-xs font-semibold uppercase tracking-wider;
+  color: var(--primary-ink);
+}
+
+/* Eingabefelder: weiß, abgerundet, hellblauer Rahmen, blauer Fokusring */
+@utility field-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.875rem;
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+  color: var(--text);
+  font-size: 1rem; /* ≥16px verhindert Auto-Zoom auf iOS */
+  line-height: 1.5rem;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 1px 2px rgb(43 123 214 / 0.06);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+  &::placeholder {
+    color: var(--text-muted);
+    opacity: 1;
+  }
+  &:hover {
+    border-color: var(--input-border-hover);
+  }
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--focus-ring);
+  }
+  &[aria-invalid='true'] {
+    border-color: var(--danger);
+  }
+  &[aria-invalid='true']:focus {
+    box-shadow: 0 0 0 4px var(--danger-ring);
+  }
+}
+
+/* ------------------------------------------------------------------
+   7. Komponenten
+   ------------------------------------------------------------------ */
 @layer components {
-  /* Langtext-Inhalte (Markdown) */
+  /* Header – Glasleiste */
+  .site-header {
+    background-color: var(--header-bg-fallback);
+    border-bottom: 1px solid var(--border);
+  }
+  @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    .site-header {
+      background-color: var(--header-bg);
+      -webkit-backdrop-filter: blur(14px) saturate(150%);
+      backdrop-filter: blur(14px) saturate(150%);
+    }
+  }
+
+  /* Hero – transparent, damit Himmel & Wolken durchscheinen */
+  .hero {
+    color: var(--text);
+  }
+
+  /* Footer – heller Glasstreifen am Boden */
+  .site-footer {
+    background-color: var(--card-bg-fallback);
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  /* Ergebnisbox – Sonnenakzent; Statusfarben über data-state (JS) */
+  .result-box {
+    background-color: var(--accent-soft);
+    border: 1px solid var(--accent-border);
+    box-shadow:
+      inset 5px 0 0 var(--accent),
+      var(--shadow-card);
+    color: var(--text);
+  }
+  .result-box .result-label {
+    color: var(--accent-ink);
+  }
+  .result-box[data-state='positiv'] {
+    background-color: var(--success-soft);
+    border-color: color-mix(in srgb, var(--success-bar) 35%, transparent);
+    box-shadow:
+      inset 5px 0 0 var(--success-bar),
+      var(--shadow-card);
+  }
+  .result-box[data-state='positiv'] .result-label {
+    color: var(--success-ink);
+  }
+  .result-box[data-state='negativ'] {
+    background-color: var(--danger-soft);
+    border-color: color-mix(in srgb, var(--danger-bar) 35%, transparent);
+    box-shadow:
+      inset 5px 0 0 var(--danger-bar),
+      var(--shadow-card);
+  }
+  .result-box[data-state='negativ'] .result-label {
+    color: var(--danger);
+  }
+
+  /* Diagramme: Farben der SVG-Attribute per CSS an das Theme anpassen
+     (CSS überschreibt SVG-Präsentationsattribute – Rechenlogik unverändert) */
+  [data-chart] text {
+    fill: var(--chart-label);
+  }
+  [data-chart] line {
+    stroke: var(--chart-grid);
+  }
+  [data-chart] line[stroke-dasharray] {
+    stroke: var(--chart-label);
+  }
+  [data-chart] [fill='#10243A' i] {
+    fill: var(--chart-a);
+  }
+  [data-chart] [fill='#16A34A' i] {
+    fill: var(--chart-b);
+  }
+  [data-chart] [stroke='#10243A' i] {
+    stroke: var(--chart-a);
+  }
+  [data-chart] [stroke='#16A34A' i] {
+    stroke: var(--chart-b);
+  }
+  [data-chart] circle[fill='#fff' i] {
+    fill: var(--card-solid);
+  }
+  figcaption [style*='#10243A' i] {
+    background: var(--chart-a) !important;
+  }
+  figcaption [style*='#16A34A' i] {
+    background: var(--chart-b) !important;
+  }
+
+  /* Hervorhebung für vom Seitenbetreiber auszufüllende Angaben */
+  .owner-placeholder {
+    @apply rounded px-1 font-mono text-[0.95em] ring-1;
+    background-color: var(--accent-soft);
+    color: var(--accent-ink);
+    --tw-ring-color: var(--accent-border);
+  }
+}
+
+/* ------------------------------------------------------------------
+   8. Langtext-Inhalte (Markdown)
+   ------------------------------------------------------------------ */
+@layer components {
   .prose-qr {
-    @apply max-w-none text-[1.0625rem] leading-relaxed text-ink;
+    @apply max-w-none text-[1.0625rem] text-ink;
+    line-height: 1.7;
   }
   .prose-qr h2 {
     @apply mt-12 mb-4 scroll-mt-24 text-2xl font-bold tracking-tight text-navy-900 sm:text-[1.75rem];
@@ -104,28 +549,40 @@
     @apply my-4 list-decimal space-y-2 pl-6;
   }
   .prose-qr li::marker {
-    @apply text-brand-600;
+    color: var(--primary);
   }
   .prose-qr a {
-    @apply font-medium text-navy-700 underline decoration-brand-600/50 underline-offset-2 hover:text-brand-700;
+    @apply font-medium underline underline-offset-2;
+    color: var(--primary-ink);
+    text-decoration-color: color-mix(in srgb, var(--primary) 50%, transparent);
+  }
+  .prose-qr a:hover {
+    color: var(--primary-hover);
+    text-decoration-color: currentColor;
   }
   .prose-qr strong {
     @apply font-semibold text-navy-900;
   }
   .prose-qr blockquote {
-    @apply my-6 rounded-r-xl border-l-4 border-brand-600 bg-brand-50 px-5 py-4 text-ink;
+    @apply my-6 rounded-r-2xl border-l-4 px-5 py-4 text-ink;
+    border-color: var(--primary);
+    background-color: var(--sky-tint);
   }
   .prose-qr blockquote p {
     @apply my-1;
   }
   .prose-qr code {
-    @apply rounded bg-navy-50 px-1.5 py-0.5 font-mono text-[0.9em] text-navy-900;
+    @apply rounded px-1.5 py-0.5 font-mono text-[0.9em] text-navy-900;
+    background-color: var(--sky-tint);
   }
   .prose-qr pre {
-    @apply my-6 overflow-x-auto rounded-xl bg-navy-900 p-5 text-sm leading-relaxed text-white;
+    @apply my-6 overflow-x-auto rounded-2xl p-5 text-sm leading-relaxed;
+    background-color: var(--code-bg);
+    color: #e6eef8;
   }
   .prose-qr pre code {
-    @apply bg-transparent p-0 text-white;
+    @apply bg-transparent p-0;
+    color: inherit;
   }
   .prose-qr table {
     @apply my-6 block w-full overflow-x-auto border-collapse text-sm sm:table;
@@ -139,14 +596,21 @@
   .prose-qr hr {
     @apply my-10 border-line;
   }
-
-  /* Hervorhebung für vom Seitenbetreiber auszufüllende Angaben */
-  .owner-placeholder {
-    @apply rounded bg-warn-50 px-1 font-mono text-[0.95em] text-warn-700 ring-1 ring-amber-300;
-  }
 }
 
+/* ------------------------------------------------------------------
+   9. Reduzierte Bewegung – Wolken stehen still, keine Übergänge
+   ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
+  .sky-clouds::before,
+  .sky-clouds::after {
+    animation: none;
+  }
+  .btn:hover,
+  .btn-primary:hover,
+  .btn-secondary:hover {
+    transform: none;
+  }
   *,
   *::before,
   *::after {

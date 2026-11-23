@@ -10,7 +10,7 @@ const { items, heading = 'Häufige Fragen', id = 'faq' } = Astro.props;
 
 <section aria-labelledby={`${id}-heading`} id={id} class="scroll-mt-24">
   <h2 id={`${id}-heading`} class="text-2xl font-bold tracking-tight text-navy-900 sm:text-[1.75rem]">{heading}</h2>
-  <div class="mt-6 divide-y divide-line rounded-2xl border border-line bg-white">
+  <div class="mt-6 divide-y divide-line rounded-2xl border border-line bg-card">
     {
       items.map((item, i) => (
         <details class="group px-5 py-1" open={i === 0}>
