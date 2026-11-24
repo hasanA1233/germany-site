@@ -89,10 +89,34 @@ const schema = [
   ogImageAlt={`${data.h1} – ${meta.name} von ${site.name} mit Formel: ${meta.ogFormula}`}
 >
   <div class="container-page">
-    <header class="max-w-3xl pt-6 pb-8">
-      <p class="eyebrow">{category.name}</p>
-      <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-navy-900 sm:text-4xl">{data.h1}</h1>
-      <p class="mt-4 text-lg leading-relaxed text-muted">{data.intro}</p>
+    <header class:list={['pt-6 pb-8', data.hero ? 'lg:grid lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-center lg:gap-10' : 'max-w-3xl']}>
+      <div class="max-w-3xl">
+        <p class="eyebrow">{category.name}</p>
+        <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-navy-900 sm:text-4xl">{data.h1}</h1>
+        <p class="mt-4 text-lg leading-relaxed text-muted">{data.intro}</p>
+      </div>
+      {/* Hero nur Desktop: Mobilgeräte erhalten das 1×1-Platzhalterbild und laden die Illustration nicht */}
+      {
+        data.hero && (
+          <picture class="hidden lg:block">
+            <source
+              media="(min-width: 1024px)"
+              type="image/webp"
+              srcset={`/images/rechner/${data.hero.file}-600.webp 600w, /images/rechner/${data.hero.file}.webp 1200w`}
+              sizes="24rem"
+            />
+            <img
+              src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+              alt={data.hero.alt}
+              width="1200"
+              height="675"
+              fetchpriority="high"
+              decoding="async"
+              class="h-auto w-full rounded-[var(--radius-card)] border border-line shadow-[var(--shadow-card)]"
+            />
+          </picture>
+        )
+      }
     </header>
 
     <Calculator />

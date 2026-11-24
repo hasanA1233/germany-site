@@ -1,0 +1,3 @@
+# Cloudflare Pages – Weiterleitungen
+/mwst-rechner /umsatzsteuer-rechner/ 301
+/mwst-rechner/ /umsatzsteuer-rechner/ 301

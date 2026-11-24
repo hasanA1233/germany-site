@@ -256,6 +256,8 @@
    5. Wolken – reine CSS-Radialverläufe, keine Bilddateien
    Zwei Ebenen (200 % breit, Kachel = 50 %) werden per transform
    verschoben → nahtlose Schleife, nur Compositing, kein Layout-Shift.
+   Achtung: Größenangaben im radial-gradient nur als reine % oder Länge –
+   min()/calc() mit gemischten Einheiten verwirft Chrome (dann keine Wolken).
    ------------------------------------------------------------------ */
 .sky-clouds {
   position: absolute;
@@ -285,24 +287,32 @@
 /* vordere Ebene – größere Wolken */
 .sky-clouds::before {
   background-image:
-    radial-gradient(ellipse min(13%, 10rem) 2.4rem at 20% 5.6rem, var(--cloud) 35%, transparent 72%),
-    radial-gradient(ellipse min(7%, 5.5rem) 2.6rem at 23% 4.4rem, var(--cloud) 35%, transparent 72%),
-    radial-gradient(ellipse min(6%, 4.5rem) 2rem at 16% 4.9rem, var(--cloud) 35%, transparent 72%),
-    radial-gradient(ellipse min(15%, 12rem) 2.8rem at 62% 10rem, var(--cloud) 35%, transparent 72%),
-    radial-gradient(ellipse min(8%, 6.5rem) 3rem at 65% 8.6rem, var(--cloud) 35%, transparent 72%),
-    radial-gradient(ellipse min(6%, 5rem) 2.2rem at 57% 9.2rem, var(--cloud) 35%, transparent 72%);
+    radial-gradient(ellipse 13% 2.4rem at 20% 5.6rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse 7% 2.6rem at 23% 4.4rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse 6% 2rem at 16% 4.9rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse 15% 2.8rem at 62% 10rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse 8% 3rem at 65% 8.6rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse 6% 2.2rem at 57% 9.2rem, var(--cloud) 35%, transparent 72%);
 }
 /* hintere Ebene – kleiner, blasser, langsamer */
 .sky-clouds::after {
   opacity: 0.65;
   animation-duration: 190s;
   background-image:
-    radial-gradient(ellipse min(8%, 6rem) 1.6rem at 88% 3.6rem, var(--cloud) 35%, transparent 72%),
-    radial-gradient(ellipse min(4%, 3rem) 1.5rem at 90% 2.9rem, var(--cloud) 35%, transparent 72%),
-    radial-gradient(ellipse min(11%, 8rem) 2rem at 36% 16rem, var(--cloud) 35%, transparent 72%),
-    radial-gradient(ellipse min(6%, 4.5rem) 2.2rem at 39% 14.9rem, var(--cloud) 35%, transparent 72%),
-    radial-gradient(ellipse min(9%, 7rem) 1.8rem at 80% 21rem, var(--cloud) 35%, transparent 72%),
-    radial-gradient(ellipse min(5%, 3.5rem) 1.8rem at 82% 20rem, var(--cloud) 35%, transparent 72%);
+    radial-gradient(ellipse 8% 1.6rem at 88% 3.6rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse 4% 1.5rem at 90% 2.9rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse 11% 2rem at 36% 16rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse 6% 2.2rem at 39% 14.9rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse 9% 1.8rem at 80% 21rem, var(--cloud) 35%, transparent 72%),
+    radial-gradient(ellipse 5% 1.8rem at 82% 20rem, var(--cloud) 35%, transparent 72%);
+}
+/* Mobil: Kachel 2,5× Viewport-Breite, damit Wolken nicht zu schmalen Klecksen schrumpfen.
+   translate(-50 %) verschiebt weiterhin genau eine Kachel → nahtlose Schleife. */
+@media (max-width: 639px) {
+  .sky-clouds::before,
+  .sky-clouds::after {
+    width: 500%;
+  }
 }
 @keyframes cloud-drift {
   from {

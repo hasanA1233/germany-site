@@ -9,7 +9,7 @@ const p = 'ust';
 
 <CalculatorShell
   slug="umsatzsteuer"
-  title="Umsatzsteuer berechnen"
+  title="MwSt berechnen: Brutto ↔ Netto"
   note="Ergebnisse werden kaufmännisch auf volle Cent gerundet. Welcher Steuersatz für Ihren Umsatz gilt, hängt vom konkreten Geschäftsvorfall ab – im Zweifel fragen Sie eine Steuerberaterin oder einen Steuerberater."
 >
   <ChoiceField
@@ -43,11 +43,16 @@ const p = 'ust';
     <ResultList
       items={[
         { label: 'Nettobetrag', out: 'net' },
-        { label: 'Umsatzsteuer', out: 'vat', hint: '', strong: true },
+        { label: 'MwSt-Betrag (Umsatzsteuer)', out: 'vat', strong: true },
         { label: 'Bruttobetrag', out: 'gross' },
       ]}
     />
     <p class="mt-4 text-sm text-muted" data-out="sentence"></p>
+    <div class="mt-4 flex flex-wrap gap-2">
+      <button type="button" class="btn-secondary px-4 py-2" data-copy="vat">MwSt-Betrag kopieren</button>
+      <button type="button" class="btn-secondary px-4 py-2" data-copy="main" data-out="copyMainLabel">Bruttobetrag kopieren</button>
+    </div>
+    <p class="mt-2 min-h-5 text-sm font-medium text-brand-700" data-copy-status aria-live="polite"></p>
   </Fragment>
 </CalculatorShell>
 
@@ -66,6 +71,11 @@ const p = 'ust';
     const toGross = mode === 'net-to-gross';
     c.out('mainLabel', toGross ? 'Bruttobetrag' : 'Nettobetrag');
     c.out('main', formatEUR(toGross ? r.gross : r.net));
+    c.out('copyMainLabel', toGross ? 'Bruttobetrag kopieren' : 'Nettobetrag kopieren');
+    // Rohwerte für die Kopieren-Buttons (deutsches Zahlenformat ohne €-Zeichen, z. B. „19,00“)
+    const num = (v: number) => v.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    c.form.querySelector<HTMLElement>('[data-copy="vat"]')!.dataset.value = num(r.vat);
+    c.form.querySelector<HTMLElement>('[data-copy="main"]')!.dataset.value = num(toGross ? r.gross : r.net);
     c.out('net', formatEUR(r.net));
     c.out('vat', `${formatEUR(r.vat)} (${formatPercent(r.ratePct)})`);
     c.out('gross', formatEUR(r.gross));
@@ -76,5 +86,38 @@ const p = 'ust';
         : `${formatEUR(r.gross)} brutto enthalten ${formatEUR(r.vat)} USt (${formatPercent(r.ratePct)}); netto sind das ${formatEUR(r.net)}.`,
     );
     return null;
+  });
+
+  // Kopieren in die Zwischenablage (mit Fallback für ältere Browser / unsichere Kontexte)
+  async function copyText(text: string): Promise<boolean> {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand('copy');
+      ta.remove();
+      return ok;
+    }
+  }
+  document.querySelectorAll<HTMLFormElement>('form[data-calc="umsatzsteuer"]').forEach((form) => {
+    const status = form.querySelector<HTMLElement>('[data-copy-status]');
+    let timer = 0;
+    form.addEventListener('click', async (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-copy]');
+      if (!btn || !btn.dataset.value) return;
+      const ok = await copyText(btn.dataset.value);
+      if (status) {
+        status.textContent = ok ? `„${btn.dataset.value}“ in die Zwischenablage kopiert.` : 'Kopieren nicht möglich – bitte manuell markieren.';
+        clearTimeout(timer);
+        timer = window.setTimeout(() => (status.textContent = ''), 3000);
+      }
+    });
   });
 </script>

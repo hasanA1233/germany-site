@@ -12,7 +12,8 @@
     "test": "node --test \"tests/**/*.test.ts\"",
     "astro": "astro",
     "audit": "node scripts/audit-dist.mjs",
-    "images": "node scripts/generate-images.mjs"
+    "images": "node scripts/generate-images.mjs",
+    "images:hero": "node scripts/generate-hero-images.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.1.6",

@@ -55,6 +55,8 @@ const jsonLd = [...schema, breadcrumbSchema].filter(Boolean);
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="de-DE" href={canonical} />
+    <link rel="alternate" hreflang="x-default" href={canonical} />
     {noindex && <meta name="robots" content="noindex, follow" />}
     <meta name="theme-color" content={site.themeColor} media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#07142B" media="(prefers-color-scheme: dark)" />

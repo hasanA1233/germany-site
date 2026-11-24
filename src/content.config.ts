@@ -20,6 +20,8 @@ const rechner = defineCollection({
     updated: z.coerce.date(),
     faq: z.array(z.object({ q: z.string(), a: z.string() })).min(3),
     sources: z.array(z.object({ label: z.string(), url: z.url() })).default([]),
+    /** Optionales Hero-Bild: Dateiname ohne Endung in public/images/rechner/ (nur Desktop sichtbar) */
+    hero: z.object({ file: z.string(), alt: z.string() }).optional(),
   }),
 });
 
