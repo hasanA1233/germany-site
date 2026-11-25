@@ -8,12 +8,14 @@ interface Props {
   /** short: kürzere Bezeichnung für schmale Bildschirme (< 640 px) */
   rows: { key: string; label: string; short?: string }[];
   caption: string;
+  /** Bezeichnung der zweiten Balkengruppe (Standard: Sozialversicherung) */
+  sozialLabel?: string;
 }
-const { rows, caption } = Astro.props;
+const { rows, caption, sozialLabel = 'Sozialversicherung' } = Astro.props;
 const groups = [
   { key: 'netto', label: 'Netto', color: 'var(--primary)' },
   { key: 'steuern', label: 'Steuern', color: 'var(--accent)' },
-  { key: 'sozial', label: 'Sozialversicherung', color: 'var(--chart-a)' },
+  { key: 'sozial', label: sozialLabel, color: 'var(--chart-a)' },
 ];
 ---
 

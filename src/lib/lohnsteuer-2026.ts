@@ -78,6 +78,36 @@ export function lohnsteuerMonat(i: LohnsteuerInput): LohnsteuerResult {
   };
 }
 
+/**
+ * Lohnsteuer auf einen sonstigen Bezug (z. B. Jahressonderzahlung/Weihnachtsgeld) nach § 39b Abs. 3 EStG
+ * mit dem PAP (Felder JRE4, SONSTB → STS, SOLZS, BKS).
+ * @param jahresbruttoOhneBezug voraussichtlicher Jahresarbeitslohn ohne den sonstigen Bezug
+ */
+export function lohnsteuerSonstigerBezug(i: LohnsteuerInput, jahresbruttoOhneBezug: number, sonstigerBezug: number): LohnsteuerResult {
+  const p = new Lohnsteuer2026();
+  p.LZZ = 2;
+  p.RE4 = cent(i.bruttoMonat);
+  p.JRE4 = cent(jahresbruttoOhneBezug);
+  p.SONSTB = cent(sonstigerBezug);
+  p.STKL = i.steuerklasse;
+  p.ZKF = BigDecimal.valueOf(i.steuerklasse <= 4 ? i.kinderfreibetraege : 0);
+  p.R = i.kirche ? 1 : 0;
+  p.KRV = i.rvPflicht ? 0 : 1;
+  p.ALV = i.avPflicht ? 0 : 1;
+  p.PKV = i.kv === 'gkv' ? 0 : 1;
+  p.KVZ = BigDecimal.valueOf(i.kvZusatz ?? steuer2026.beitrag.kvZusatzDurchschnitt);
+  p.PVS = i.bundesland === 'SN' ? 1 : 0;
+  p.PVZ = i.pvKinderlos ? 1 : 0;
+  p.PVA = BigDecimal.valueOf(Math.min(4, Math.max(0, i.pvAbschlaege ?? 0)));
+  p.MAIN();
+  const bks = euro(p.BKS);
+  return {
+    lohnsteuer: euro(p.STS),
+    soli: euro(p.SOLZS),
+    kirchensteuer: i.kirche ? floorCent((bks * kirchensteuerSatz(i.bundesland)) / 100) : 0,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Einkommensteuer (Jahr) – § 32a EStG, Soli, Fünftelregelung § 34 EStG
 // ---------------------------------------------------------------------------
@@ -149,6 +179,15 @@ export interface SvResult {
   av: number;
   /** true, wenn der reduzierte AN-Anteil des Übergangsbereichs angewendet wurde */
   uebergangsbereich: boolean;
+}
+
+/** Arbeitnehmer-Beitragssätze in % (reguläre Beschäftigung) – z. B. für Einmalzahlungen */
+export function svSaetzeAn(i: Pick<SvInput, 'bundesland' | 'kvZusatz' | 'pvKinderlos' | 'pvAbschlaege'>) {
+  const b = steuer2026.beitrag;
+  let pv = b.pv / 2 + (i.bundesland === 'SN' ? b.pvAnSachsenZusatz : 0);
+  if (i.pvKinderlos) pv += b.pvKinderlosZuschlag;
+  else pv -= Math.min(4, Math.max(0, i.pvAbschlaege ?? 0)) * b.pvAbschlagJeKind;
+  return { rv: b.rv / 2, av: b.av / 2, kv: b.kv / 2 + (i.kvZusatz ?? b.kvZusatzDurchschnitt) / 2, pv };
 }
 
 export function sozialabgabenMonat(i: SvInput): SvResult {

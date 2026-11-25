@@ -621,6 +621,11 @@
   .prose-qr hr {
     @apply my-10 border-line;
   }
+  /* Eingebettete Komponenten mit eigener Tabellenlogik (z. B. Entgelttabelle mit fixierter Spalte) */
+  .prose-qr .not-prose table {
+    display: table;
+    margin: 0;
+  }
 }
 
 /* ------------------------------------------------------------------

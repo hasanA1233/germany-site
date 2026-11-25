@@ -18,6 +18,7 @@ import RoiCalc from '../components/calculators/RoiCalc.astro';
 import BreakEvenCalc from '../components/calculators/BreakEvenCalc.astro';
 import RabattCalc from '../components/calculators/RabattCalc.astro';
 import WerkstudentCalc from '../components/calculators/WerkstudentCalc.astro';
+import TvoedCalc from '../components/calculators/TvoedCalc.astro';
 
 const components: Partial<Record<CalculatorSlug, typeof KreditrateCalc>> = {
   'kreditrate-berechnen': KreditrateCalc,
@@ -31,6 +32,7 @@ const components: Partial<Record<CalculatorSlug, typeof KreditrateCalc>> = {
   'break-even-rechner': BreakEvenCalc,
   'rabatt-rechner': RabattCalc,
   'werkstudent-brutto-netto-rechner': WerkstudentCalc,
+  'tvoed-rechner': TvoedCalc,
 };
 
 export async function getStaticPaths() {

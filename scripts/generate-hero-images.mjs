@@ -162,6 +162,41 @@ const scenes = {
     <circle cx="40" cy="36" r="23" fill="none" stroke="${C.white}" stroke-width="14"/>
   </g>
   <g filter="url(#soft)">${coin(1010, 520, 28)}${coin(1010, 498, 28)}${coin(1060, 540, 22)}</g>`,
+
+  /** TVöD/TV-L: neutrales Verwaltungsgebäude (ohne Hoheitszeichen) und Gehaltstabelle */
+  'tvoed-rechner': () => `
+  ${sky()}
+  <g filter="url(#soft)">
+    <!-- Gebäude: Giebel, Säulen, Stufen -->
+    <path d="M220 270 L430 160 L640 270 Z" fill="${C.primaryDark}"/>
+    <rect x="235" y="270" width="390" height="24" rx="6" fill="${C.ink}" opacity=".85"/>
+    ${[0, 1, 2, 3, 4].map((i) => `<rect x="${262 + i * 72}" y="300" width="34" height="200" rx="8" fill="${C.white}"/>`).join('')}
+    <rect x="235" y="500" width="390" height="22" rx="6" fill="${C.ink}" opacity=".85"/>
+    <rect x="210" y="522" width="440" height="22" rx="6" fill="${C.ink}" opacity=".6"/>
+    <circle cx="430" cy="232" r="16" fill="${C.sun}"/>
+  </g>
+  <g filter="url(#soft)">
+    <!-- Gehaltstabelle -->
+    <rect x="720" y="210" width="360" height="330" rx="24" fill="${C.white}"/>
+    <rect x="720" y="210" width="360" height="56" rx="24" fill="${C.primary}"/>
+    <rect x="720" y="246" width="360" height="20" fill="${C.primary}"/>
+    ${[0, 1, 2, 3, 4].map((r) => [0, 1, 2, 3].map((c) => `<rect x="${748 + c * 82}" y="${290 + r * 48}" width="62" height="16" rx="8" fill="${r === 2 && c === 2 ? C.sun : C.ink}" opacity="${r === 2 && c === 2 ? 1 : 0.14}"/>`).join('')).join('')}
+  </g>`,
+
+  /** In-Artikel-Grafik TVöD: Tabelle mit markierter Zelle und Netto-/Abzugsbalken */
+  'tvoed-rechner-beispiel': () => `
+  ${sky()}
+  <g filter="url(#soft)">
+    <rect x="200" y="150" width="440" height="380" rx="24" fill="${C.white}"/>
+    ${[0, 1, 2, 3, 4, 5].map((r) => [0, 1, 2, 3, 4].map((c) => `<rect x="${228 + c * 82}" y="${180 + r * 56}" width="64" height="18" rx="9" fill="${r === 3 && c === 2 ? C.sun : r === 0 ? C.primary : C.ink}" opacity="${r === 3 && c === 2 ? 1 : r === 0 ? 0.6 : 0.13}"/>`).join('')).join('')}
+  </g>
+  <g filter="url(#soft)">
+    <rect x="700" y="230" width="340" height="230" rx="24" fill="${C.white}"/>
+    <rect x="735" y="275" width="190" height="40" rx="12" fill="${C.primary}"/>
+    <rect x="735" y="335" width="70" height="40" rx="12" fill="${C.sun}"/>
+    <rect x="815" y="335" width="80" height="40" rx="12" fill="${C.primaryDark}" opacity=".55"/>
+    <rect x="735" y="405" width="180" height="12" rx="6" fill="${C.ink}" opacity=".15"/>
+  </g>`,
 };
 
 await mkdir(OUT, { recursive: true });

@@ -12,7 +12,8 @@ export type CalculatorSlug =
   | 'break-even-rechner'
   | 'rabatt-rechner'
   | 'werkstudent-brutto-netto-rechner'
-  | 'prozent-rechner';
+  | 'prozent-rechner'
+  | 'tvoed-rechner';
 
 export interface CalculatorMeta {
   slug: CalculatorSlug;
@@ -191,7 +192,7 @@ export const calculators: CalculatorMeta[] = [
     alsoIn: [],
     keywords: ['werkstudent', 'werkstudentin', 'student', 'studentenjob', 'nebenjob', 'brutto netto', 'gehalt', 'lohnsteuer', 'rentenversicherung', '20 stunden', 'minijob', 'midijob'],
     icon: 'student',
-    related: ['umsatzsteuer-rechner', 'sparplan-rechner', 'zinseszins-rechner'],
+    related: ['tvoed-rechner', 'umsatzsteuer-rechner', 'sparplan-rechner'],
     ogFormula: 'Netto = Brutto − Lohnsteuer − Rentenversicherung',
     added: '2026-11-25',
   },
@@ -211,6 +212,19 @@ export const calculators: CalculatorMeta[] = [
     popular: true,
     popularRank: 1,
     added: '2026-11-25',
+  },
+  {
+    slug: 'tvoed-rechner',
+    href: '/tvoed-rechner/',
+    name: 'TVöD-Rechner',
+    description: 'TVöD Gehaltsrechner 2026: Entgeltgruppe und Stufe wählen, Netto pro Monat und Jahr inkl. Jahressonderzahlung berechnen – Bund und VKA.',
+    category: 'gehalt-steuern',
+    alsoIn: [],
+    keywords: ['tvöd', 'tvoed', 'tvod', 'öffentlicher dienst', 'gehaltsrechner', 'entgelttabelle', 'entgeltgruppe', 'stufe', 'vka', 'bund', 'kommunen', 'brutto netto', 'jahressonderzahlung', 'vbl'],
+    icon: 'building',
+    related: ['werkstudent-brutto-netto-rechner', 'prozent-rechner', 'sparplan-rechner'],
+    ogFormula: 'Netto = Tabellenentgelt − Steuern − Sozialabgaben − VBL',
+    added: '2026-11-26',
   },
 ];
 

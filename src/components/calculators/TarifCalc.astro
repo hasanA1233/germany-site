@@ -1,0 +1,191 @@
+---
+/**
+ * Gemeinsamer Tarifrechner (TVöD, TV-L): Tabellenentgelt → Netto pro Monat und Jahr inkl. Jahressonderzahlung.
+ * Tarifdaten: src/data/tarife.ts · Berechnung: src/lib/calc/tarif.ts
+ */
+import CalculatorShell from '../calculator/CalculatorShell.astro';
+import NumberField from '../calculator/NumberField.astro';
+import ChoiceField from '../calculator/ChoiceField.astro';
+import SelectField from '../calculator/SelectField.astro';
+import ResultMain from '../calculator/ResultMain.astro';
+import NettoBreakdown from '../calculator/NettoBreakdown.astro';
+import Icon from '../ui/Icon.astro';
+import { tarife, type Tarif } from '../../data/tarife';
+import { bundeslaender, steuer2026 } from '../../data/steuer-2026';
+
+interface Props {
+  tarif: Tarif['id'];
+  /** Vorauswahl Entgeltgruppe/Stufe */
+  eg?: string;
+  stufe?: number;
+}
+const { tarif: tarifId, eg = '9b', stufe = 3 } = Astro.props;
+const tarif = tarife[tarifId];
+const p = tarifId;
+const slug = `tarif-${tarifId}`;
+const zvWest = tarif.zusatzversorgung.west.toLocaleString('de-DE');
+const zvOst = tarif.zusatzversorgung.ost.toLocaleString('de-DE');
+---
+
+<CalculatorShell
+  slug={slug}
+  title={`${tarif.name}: Brutto → Netto 2026`}
+  note={`Annahmen: Vollzeitentgelt laut Tabelle × Beschäftigungsumfang, ohne Zulagen und Zuschläge; ohne Kinder wird der Kinderlosenzuschlag zur Pflegeversicherung (ab 23 Jahren) angesetzt; Jahressonderzahlung im November auf Basis des Monatsentgelts. Der steuer- und beitragspflichtige Anteil der Arbeitgeber-Umlage zur Zusatzversorgung ist nicht berücksichtigt. Alle Angaben ohne Gewähr – keine Steuer- oder Rechtsberatung.`}
+>
+  <div class="grid gap-5 sm:grid-cols-2">
+    <ChoiceField idPrefix={p} name="bereich" legend="Tarifbereich" value={tarif.bereiche[0].id} options={tarif.bereiche.map((b) => ({ value: b.id, label: b.label }))} />
+    <ChoiceField
+      idPrefix={p}
+      name="stand"
+      legend="Tabelle"
+      value="aktuell"
+      options={[
+        { value: 'aktuell', label: tarif.standLabels.aktuell },
+        { value: 'vorher', label: tarif.standLabels.vorher },
+      ]}
+    />
+  </div>
+  <div class="grid grid-cols-2 gap-3">
+    <SelectField idPrefix={p} name="eg" label="Entgeltgruppe" value={eg} options={tarif.entgeltgruppen.map((e) => ({ value: e, label: `E ${e}` }))} />
+    <SelectField idPrefix={p} name="stufe" label="Stufe" value={String(stufe)} options={[1, 2, 3, 4, 5, 6].map((s) => ({ value: String(s), label: `Stufe ${s}` }))} />
+  </div>
+  <NumberField idPrefix={p} name="teilzeit" label="Beschäftigungsumfang" value="100" suffix="%" decimals={2} hint="100 % = Vollzeit. Bei Teilzeit z. B. 50 % für die halbe Wochenarbeitszeit." />
+  <div class="grid grid-cols-2 gap-3">
+    <SelectField
+      idPrefix={p}
+      name="stkl"
+      label="Steuerklasse"
+      value="1"
+      options={[
+        { value: '1', label: 'I' },
+        { value: '2', label: 'II' },
+        { value: '3', label: 'III' },
+        { value: '4', label: 'IV' },
+        { value: '5', label: 'V' },
+        { value: '6', label: 'VI' },
+      ]}
+    />
+    <NumberField idPrefix={p} name="kinder" label="Kinder unter 25" value="0" integer />
+  </div>
+  <SelectField idPrefix={p} name="land" label="Bundesland" value="NW" options={bundeslaender.map((b) => ({ value: b.code, label: b.name }))} />
+  <ChoiceField
+    idPrefix={p}
+    name="kirche"
+    legend="Kirchensteuerpflichtig?"
+    value="nein"
+    options={[
+      { value: 'nein', label: 'Nein' },
+      { value: 'ja', label: 'Ja' },
+    ]}
+  />
+  <NumberField
+    idPrefix={p}
+    name="kvZusatz"
+    label="Zusatzbeitrag Ihrer Krankenkasse"
+    value={steuer2026.beitrag.kvZusatzDurchschnitt.toLocaleString('de-DE')}
+    suffix="%"
+    decimals={2}
+    hint="Durchschnitt 2026: 2,9 %. Den Satz Ihrer Kasse finden Sie auf deren Website."
+  />
+  <ChoiceField
+    idPrefix={p}
+    name="zvArt"
+    legend="Zusatzversorgung (Arbeitnehmeranteil)"
+    value="west"
+    options={[
+      { value: 'west', label: `VBL West ${zvWest} %` },
+      { value: 'ost', label: `VBL Ost ${zvOst} %` },
+      { value: 'eigen', label: 'Eigener' },
+    ]}
+  />
+  <div data-show-when="zvArt=eigen" hidden>
+    <NumberField idPrefix={p} name="zv" label="Arbeitnehmeranteil Ihrer Zusatzversorgungskasse" value={zvWest} suffix="%" decimals={2} hint="Kommunale Zusatzversorgungskassen (ZVK) haben teils andere Sätze – siehe Gehaltsabrechnung." />
+  </div>
+  <a href={`#${slug}-ergebnis`} class="btn-primary lg:hidden" data-jump-result>
+    Zum Ergebnis <Icon name="arrow-right" size={18} class="rotate-90" />
+  </a>
+
+  <Fragment slot="results">
+    <ResultMain label="Netto pro Monat" out="nettoMain" sub="Netto pro Jahr inkl. Jahressonderzahlung:" subOut="nettoJahrMain" />
+    <p class="mt-3 text-sm text-muted" data-out="tabelle"></p>
+    <NettoBreakdown
+      caption="Abzüge pro Monat und pro Jahr"
+      sozialLabel="Sozialversicherung & Zusatzversorgung"
+      rows={[
+        { key: 'brutto', label: 'Brutto' },
+        { key: 'lohnsteuer', label: 'Lohnsteuer' },
+        { key: 'soli', label: 'Solidaritätszuschlag', short: 'Soli' },
+        { key: 'kirchensteuer', label: 'Kirchensteuer', short: 'KiSt' },
+        { key: 'kv', label: 'Krankenversicherung', short: 'Kranken' },
+        { key: 'pv', label: 'Pflegeversicherung', short: 'Pflege' },
+        { key: 'rv', label: 'Rentenversicherung', short: 'Rente' },
+        { key: 'av', label: 'Arbeitslosenversicherung', short: 'Arbeitslos.' },
+        { key: 'zv', label: 'Zusatzversorgung (VBL/ZVK)', short: 'VBL/ZVK' },
+        { key: 'netto', label: 'Netto' },
+      ]}
+    />
+    <div class="mt-4 rounded-2xl border border-line bg-card p-4 text-sm">
+      <p class="font-semibold text-navy-900">Jahressonderzahlung (November)</p>
+      <p class="mt-1 text-ink" data-out="jsz"></p>
+    </div>
+  </Fragment>
+</CalculatorShell>
+
+<script>
+  import { mountCalculator } from '../../scripts/calc-runtime';
+  import { renderBreakdown } from '../../scripts/netto-breakdown';
+  import { calculateTarif } from '../../lib/calc/tarif';
+  import { tarife, type Tarif } from '../../data/tarife';
+  import type { Entgeltgruppe } from '../../data/tvoed-2026';
+  import { formatEUR, formatPercent } from '../../lib/format';
+  import type { Steuerklasse } from '../../lib/lohnsteuer-2026';
+  import type { BundeslandCode } from '../../data/steuer-2026';
+
+  for (const id of Object.keys(tarife) as Tarif['id'][]) {
+    const tarif = tarife[id];
+    mountCalculator(`tarif-${id}`, (c) => {
+      const bereich = tarif.bereiche.find((b) => b.id === c.choice('bereich')) ?? tarif.bereiche[0];
+      const stand = c.choice('stand') === 'vorher' ? 'vorher' : 'aktuell';
+      const eg = c.choice('eg') as Entgeltgruppe;
+      const zvArt = c.choice('zvArt');
+      const zv = zvArt === 'ost' ? tarif.zusatzversorgung.ost : zvArt === 'eigen' ? c.num('zv') : tarif.zusatzversorgung.west;
+      const jszProzent = bereich.jsz(eg);
+
+      const r = calculateTarif({
+        stufenwerte: bereich.tabellen[stand][eg],
+        stufe: Number(c.choice('stufe')),
+        teilzeitProzent: c.num('teilzeit'),
+        jszProzent,
+        zusatzversorgungProzent: zv,
+        steuerklasse: Number(c.choice('stkl')) as Steuerklasse,
+        kirche: c.choice('kirche') === 'ja',
+        bundesland: c.choice('land') as BundeslandCode,
+        kinder: c.num('kinder'),
+        kvZusatz: c.num('kvZusatz'),
+      });
+      if (!r.ok) return r.errors;
+
+      c.out('nettoMain', formatEUR(r.monat.netto));
+      c.out('nettoJahrMain', formatEUR(r.jahr.netto));
+      const tz = c.num('teilzeit');
+      c.out(
+        'tabelle',
+        `${tarif.name} ${bereich.label}, E ${eg} Stufe ${c.choice('stufe')}: Tabellenentgelt ${formatEUR(r.tabellenentgelt)}${tz < 100 ? ` × ${formatPercent(tz)} = ${formatEUR(r.monat.brutto)}` : ''} (${tarif.standLabels[stand]}).`,
+      );
+      const keys = ['brutto', 'lohnsteuer', 'soli', 'kirchensteuer', 'kv', 'pv', 'rv', 'av', 'zv', 'netto'] as const;
+      renderBreakdown(c, Object.fromEntries(keys.map((k) => [k, { m: r.monat[k], j: r.jahr[k] }])), {
+        steuern: ['lohnsteuer', 'soli', 'kirchensteuer'],
+        sozial: ['kv', 'pv', 'rv', 'av', 'zv'],
+      });
+      c.out(
+        'jsz',
+        `${formatPercent(jszProzent, 0)} des Monatsentgelts = ${formatEUR(r.jsz.brutto)} brutto, davon bleiben rund ${formatEUR(r.jsz.netto)} netto. Im Jahresnetto ist sie enthalten.`,
+      );
+      return null;
+    });
+  }
+
+  document.querySelectorAll<HTMLAnchorElement>('[data-jump-result]').forEach((a) =>
+    a.addEventListener('click', () => setTimeout(() => document.querySelector<HTMLElement>(a.hash)?.focus({ preventScroll: true }), 0)),
+  );
+</script>

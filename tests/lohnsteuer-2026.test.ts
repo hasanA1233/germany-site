@@ -110,3 +110,40 @@ test('Werkstudent: Minijob-Grenze, 20-Stunden-Grenze, Validierung', () => {
   const e = calculateWerkstudent({ bruttoMonat: 0, stundenVorlesung: 0, stundenFerien: 0, steuerklasse: 1, kirche: false, bundesland: 'NW', alter: 10, kinder: 0 });
   assert.ok(!e.ok && e.errors.brutto && e.errors.stundenVorlesung && e.errors.alter);
 });
+
+// ---------------------------------------------------------------- TVöD 2026
+import { tvoed, entgeltgruppen, jahressonderzahlungProzent, vbl } from '../src/data/tvoed-2026.ts';
+import { calculateTarif } from '../src/lib/calc/tarif.ts';
+
+test('TVöD-Tabellen: Mai 2026 = April-2025-Tabelle × 1,028 (kaufmännisch gerundet)', () => {
+  for (const [neu, alt] of [[tvoed.vka2026, tvoed.vka2025], [tvoed.bund2026, tvoed.bund2025]] as const) {
+    for (const eg of entgeltgruppen) {
+      neu[eg].forEach((v, i) => {
+        const a = alt[eg][i];
+        if (v === null || a === null) return assert.equal(v, a);
+        close(v, Math.round(a * 1.028 * 100) / 100, 0.005);
+      });
+    }
+  }
+  assert.equal(tvoed.vka2026['9b'][3], 4690.55);
+  assert.equal(tvoed.bund2026['9b'][3], 4608.13); // Bund und VKA unterscheiden sich in E 9a–9c
+});
+
+test('TVöD-Rechner: VKA E 5 Stufe 3, Steuerklasse I, Vollzeit', () => {
+  const r = calculateTarif({ stufenwerte: tvoed.vka2026['5'], stufe: 3, teilzeitProzent: 100, jszProzent: jahressonderzahlungProzent('vka', '5'), zusatzversorgungProzent: vbl.west, steuerklasse: 1, kirche: false, bundesland: 'NW', kinder: 0, kvZusatz: 2.9 });
+  assert.ok(r.ok);
+  if (!r.ok) return;
+  assert.equal(r.monat.brutto, 3449.05);
+  // KV 7,3 % + 1,45 %, PV 1,8 % + 0,6 % (kinderlos), RV 9,3 %, AV 1,3 %, VBL West 1,81 %
+  assert.deepEqual([r.monat.kv, r.monat.pv, r.monat.rv, r.monat.av, r.monat.zv], [301.79, 82.78, 320.76, 44.84, 62.43]);
+  assert.equal(r.jsz.brutto, 2931.69); // 85 %
+  assert.ok(r.jahr.netto > 12 * r.monat.netto);
+  assert.equal(jahressonderzahlungProzent('bund', '13'), 75);
+});
+
+test('TVöD-Rechner: Teilzeit und ungültige Stufe', () => {
+  const base = { jszProzent: 85, zusatzversorgungProzent: 1.81, steuerklasse: 1 as const, kirche: false, bundesland: 'NW' as const, kinder: 0, kvZusatz: 2.9 };
+  const t = calculateTarif({ ...base, stufenwerte: tvoed.vka2026['9b'], stufe: 4, teilzeitProzent: 50 });
+  assert.ok(t.ok && t.monat.brutto === 2345.28);
+  assert.ok(!calculateTarif({ ...base, stufenwerte: tvoed.vka2026['1'], stufe: 1, teilzeitProzent: 100 }).ok);
+});

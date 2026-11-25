@@ -1,0 +1,196 @@
+---
+seoTitle: "TVöD Rechner 2026: Gehalt brutto netto"
+description: "TVöD Rechner 2026: Entgeltgruppe und Stufe wählen und Netto pro Monat und Jahr berechnen – mit Entgelttabelle Bund & VKA und Jahressonderzahlung."
+h1: "TVöD Rechner 2026"
+intro: "Mit dem TVöD Rechner sehen Sie in Sekunden, was von Ihrem Gehalt im öffentlichen Dienst netto übrig bleibt. Wählen Sie Bund oder Kommunen (VKA), Entgeltgruppe und Stufe – der Rechner nutzt die offizielle Entgelttabelle ab 1. Mai 2026 und berücksichtigt Steuern, Sozialabgaben, Zusatzversorgung und Jahressonderzahlung."
+updated: 2026-11-26
+hero:
+  file: "tvoed-rechner"
+  alt: "TVöD Rechner: Verwaltungsgebäude des öffentlichen Dienstes mit Gehaltstabelle als Illustration"
+faq:
+  - q: "Wie viel verdiene ich im TVöD netto?"
+    a: "Das hängt von Entgeltgruppe, Stufe, Steuerklasse und Krankenkasse ab. Beispiel für Kommunen (VKA) ab 1. Mai 2026 in Steuerklasse I ohne Kinder: E 9b Stufe 4 ergibt 4.690,55 € brutto und rund 2.886 € netto im Monat. Der TVöD Rechner oben berechnet Ihren individuellen Wert."
+  - q: "Wann steigen die TVöD-Gehälter 2026?"
+    a: "Nach der Tarifeinigung von 2025 stiegen die Tabellenentgelte zum 1. April 2025 um 3,0 % (mindestens 110 €) und zum 1. Mai 2026 um weitere 2,8 %. Die Entgeltregelungen laufen bis zum 31. März 2027."
+  - q: "Wie hoch ist die Jahressonderzahlung im TVöD 2026?"
+    a: "Bei den Kommunen (VKA) beträgt sie einheitlich 85 % des durchschnittlichen Monatsentgelts aus Juli bis September. Beim Bund sind es 95 % in den Entgeltgruppen 1 bis 8, 90 % in E 9a bis E 12 und 75 % in E 13 bis E 15. Ausgezahlt wird sie mit dem Novembergehalt."
+  - q: "Wie lange dauert es bis zur nächsten Stufe?"
+    a: "Stufe 2 erreichen Sie nach einem Jahr in Stufe 1, Stufe 3 nach zwei weiteren Jahren, Stufe 4 nach drei, Stufe 5 nach vier und Stufe 6 nach fünf Jahren – jeweils ununterbrochen in derselben Entgeltgruppe. Ab Stufe 4 kann sich die Laufzeit je nach Leistung verkürzen oder verlängern."
+  - q: "Was ist der Unterschied zwischen TVöD Bund und TVöD VKA?"
+    a: "Der TVöD Bund gilt für Tarifbeschäftigte des Bundes, der TVöD VKA für Beschäftigte der Kommunen. Die Tabellen sind in vielen Entgeltgruppen gleich, unterscheiden sich aber in E 9a bis E 9c. Auch die Jahressonderzahlung ist unterschiedlich geregelt."
+  - q: "Wird die Zusatzversorgung vom Gehalt abgezogen?"
+    a: "Ja. Für die Betriebsrente (VBL oder kommunale Zusatzversorgungskasse) zahlen Beschäftigte einen eigenen Anteil. In der VBL West sind das 1,81 % des zusatzversorgungspflichtigen Entgelts, in der VBL Ost 4,25 %. Kommunale Kassen haben teils andere Sätze – im Rechner können Sie Ihren Satz eintragen."
+  - q: "Gilt der TVöD auch für Landesbeschäftigte?"
+    a: "Nein. Beschäftigte der Bundesländer fallen unter den TV-L, in Hessen gilt der eigene TV-H. Der TVöD gilt für den Bund und die Kommunen."
+sources:
+  - label: "VKA – TVöD Allgemeiner Teil, Lesefassung Stand 01.01.2026 (u. a. §§ 6, 8, 16, 20 und Anlage A Bund/VKA)"
+    url: "https://vka.de/wp-content/uploads/2026/04/TVoeD_AT_AETV_22_Lesefassung_Stand_01_01_2026.pdf"
+  - label: "VKA – Pressemitteilung zur Kündigung der Entgeltregelungen zum 31.03.2027"
+    url: "https://vka.de/kommunale-haushaltsdefizite-lassen-sich-nicht-wegstreiken/"
+  - label: "VBL – Finanzierung in der VBLklassik (Umlage- und Beitragssätze)"
+    url: "https://www.vbl.de/de/finanzierung"
+  - label: "BMF – Programmablaufplan Lohnsteuer 2026 (XML-Pseudocode)"
+    url: "https://www.bmf-steuerrechner.de/interface/pseudocodes.xhtml"
+---
+
+import AdSlot from '../../components/ads/AdSlot.astro';
+import ArticleFigure from '../../components/ui/ArticleFigure.astro';
+import Entgelttabelle from '../../components/ui/Entgelttabelle.astro';
+import { tvoed, entgeltgruppen, jahressonderzahlungProzent, stufenlaufzeiten, vbl } from '../../data/tvoed-2026';
+import { calculateTarif } from '../../lib/calc/tarif';
+
+export const eur = (n) => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+export const beispiel = (eg, stufe) => {
+  const r = calculateTarif({ stufenwerte: tvoed.vka2026[eg], stufe, teilzeitProzent: 100, jszProzent: jahressonderzahlungProzent('vka', eg), zusatzversorgungProzent: vbl.west, steuerklasse: 1, kirche: false, bundesland: 'NW', kinder: 0, kvZusatz: 2.9 });
+  if (!r.ok) throw new Error('Beispiel ungültig');
+  return { eg, stufe, ...r };
+};
+export const beispiele = [beispiel('5', 3), beispiel('9b', 4), beispiel('13', 2)];
+
+## So funktioniert der TVöD Rechner
+
+Der Rechner ermittelt Ihr Gehalt in drei Schritten: Zuerst liest er Ihr **Tabellenentgelt** aus der offiziellen Entgelttabelle, dann rechnet er es auf Ihren **Beschäftigungsumfang** um und zieht schließlich **Steuern, Sozialabgaben und den Beitrag zur Zusatzversorgung** ab. Sie brauchen dafür:
+
+1. **Tarifbereich:** Kommunen (VKA) oder Bund.
+2. **Tabelle:** „ab 1. Mai 2026“ (aktuell) oder „Jan.–Apr. 2026“ für die Monate vor der letzten Erhöhung.
+3. **Entgeltgruppe und Stufe** – beides steht in Ihrem Arbeitsvertrag oder auf der Gehaltsabrechnung.
+4. **Beschäftigungsumfang** in Prozent – 100 % entspricht der regelmäßigen Arbeitszeit von 39 Stunden pro Woche.
+5. **Steuerklasse, Kinder, Bundesland, Kirchensteuer und Zusatzbeitrag** Ihrer Krankenkasse.
+
+Die Lohnsteuer berechnet der TVöD Gehaltsrechner nach dem **Programmablaufplan 2026** des Bundesfinanzministeriums. Das Ergebnis zeigt Netto pro Monat und pro Jahr – im Jahresnetto ist die **Jahressonderzahlung** bereits enthalten, die als Einmalzahlung im November eigens versteuert wird.
+
+## Der TVöD einfach erklärt
+
+Der **Tarifvertrag für den öffentlichen Dienst (TVöD)** regelt Gehalt, Arbeitszeit und Urlaub der Tarifbeschäftigten von **Bund und Kommunen** – etwa in Stadtverwaltungen, Bundesbehörden, kommunalen Betrieben oder Sparkassen. Er wird zwischen den Gewerkschaften auf der einen und dem Bund (vertreten durch das Bundesinnenministerium) sowie der Vereinigung der kommunalen Arbeitgeberverbände (VKA) auf der anderen Seite ausgehandelt.
+
+Das Gehalt im TVöD heißt **Tabellenentgelt**. Es ergibt sich aus zwei Merkmalen:
+
+- **Entgeltgruppe (E 1 bis E 15):** Sie hängt von Ihrer Tätigkeit und der dafür nötigen Qualifikation ab. Grob gilt: E 1 bis E 4 für einfache Tätigkeiten, E 5 bis E 8 für Tätigkeiten mit Berufsausbildung, E 9a bis E 12 für Tätigkeiten mit Fachhochschul- oder Bachelorabschluss und E 13 bis E 15 für Tätigkeiten mit wissenschaftlichem Hochschulabschluss.
+- **Stufe (1 bis 6):** Sie bildet Ihre Berufserfahrung ab und steigt mit der Zeit automatisch.
+
+## TVöD Entgelttabelle 2026
+
+Seit dem **1. Mai 2026** gelten die folgenden Monatsentgelte für Vollzeitbeschäftigte. Die Entgeltgruppe 1 hat nur die Stufen 2 bis 6.
+
+<Entgelttabelle tabelle={tvoed.vka2026} reihenfolge={entgeltgruppen} caption="TVöD VKA (Kommunen) – Tabellenentgelt ab 1. Mai 2026, monatlich" />
+
+<Entgelttabelle tabelle={tvoed.bund2026} reihenfolge={entgeltgruppen} caption="TVöD Bund – Tabellenentgelt ab 1. Mai 2026, monatlich" />
+
+Die Tabellen von Bund und Kommunen stimmen in den meisten Entgeltgruppen überein. Unterschiede gibt es in **E 9a, E 9b und E 9c**, weil Bund und VKA diese Gruppen unterschiedlich gestaltet haben. Tabellen für den Sozial- und Erziehungsdienst (S-Tabelle) und die Pflege (P-Tabelle) sind in diesem Rechner nicht enthalten.
+
+## Erhöhungen 2025 und 2026
+
+Die Tarifeinigung von 2025 brachte zwei Erhöhungsschritte:
+
+| Zeitpunkt | Erhöhung der Tabellenentgelte |
+| --- | --- |
+| 1. April 2025 | + 3,0 %, mindestens 110 € pro Monat |
+| 1. Mai 2026 | + 2,8 % |
+
+Die Entgeltregelungen laufen bis zum **31. März 2027**. Für die Monate Januar bis April 2026 gilt noch die Tabelle vom April 2025 – im Rechner können Sie diese unter „Tabelle“ auswählen. Neu ist außerdem, dass Beschäftigte und Arbeitgeber freiwillig eine höhere Wochenarbeitszeit von bis zu 42 Stunden vereinbaren können, befristet auf jeweils bis zu 18 Monate.
+
+<AdSlot placement="in-content" />
+
+## Stufenaufstieg: Wann gibt es mehr Geld?
+
+Neue Beschäftigte ohne einschlägige Berufserfahrung starten in **Stufe 1**. Wer mindestens ein Jahr passende Erfahrung mitbringt, beginnt in Stufe 2, ab drei Jahren in der Regel in Stufe 3. Danach steigen Sie automatisch auf – vorausgesetzt, Sie arbeiten ununterbrochen in derselben Entgeltgruppe beim selben Arbeitgeber:
+
+<div class="overflow-x-auto">
+<table>
+  <thead><tr><th scope="col">Aufstieg</th><th scope="col">Laufzeit</th><th scope="col">bis zum Erreichen insgesamt</th></tr></thead>
+  <tbody>
+    {stufenlaufzeiten.map((s, i) => (
+      <tr>
+        <td>Stufe {s.von} → Stufe {s.nach}</td>
+        <td>{s.jahre} {s.jahre === 1 ? 'Jahr' : 'Jahre'}</td>
+        <td>{stufenlaufzeiten.slice(0, i + 1).reduce((a, x) => a + x.jahre, 0)} Jahre</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+</div>
+
+Bis zur Endstufe 6 dauert es also insgesamt 15 Jahre. Ab Stufe 4 kann der Arbeitgeber die Laufzeit bei **erheblich überdurchschnittlicher Leistung verkürzen** und bei erheblich unterdurchschnittlicher Leistung verlängern. Die höhere Stufe wird ab Beginn des Monats bezahlt, in dem sie erreicht wird.
+
+## Jahressonderzahlung
+
+Wer am 1. Dezember beschäftigt ist, erhält eine **Jahressonderzahlung** – umgangssprachlich das Weihnachtsgeld. Bemessungsgrundlage ist das durchschnittliche Monatsentgelt aus Juli, August und September; ausgezahlt wird mit dem Novembergehalt.
+
+| Tarifbereich | Entgeltgruppen | Jahressonderzahlung |
+| --- | --- | --- |
+| Kommunen (VKA) | alle | {jahressonderzahlungProzent('vka', '9b')} % |
+| Bund | E 1 bis E 8 | {jahressonderzahlungProzent('bund', '5')} % |
+| Bund | E 9a bis E 12 | {jahressonderzahlungProzent('bund', '9b')} % |
+| Bund | E 13 bis E 15 | {jahressonderzahlungProzent('bund', '13')} % |
+
+Für jeden Monat ohne Anspruch auf Entgelt (z. B. Elternzeit nach dem Geburtsjahr des Kindes) verringert sich die Zahlung um ein Zwölftel. Weil die Jahressonderzahlung als **sonstiger Bezug** versteuert wird, fallen darauf meist anteilig mehr Steuern an als auf ein normales Monatsgehalt.
+
+## Zulagen und Zuschläge
+
+Neben dem Tabellenentgelt gibt es Zeitzuschläge für Arbeit zu besonderen Zeiten. Sie werden auf den Stundenanteil des Tabellenentgelts der **Stufe 3** Ihrer Entgeltgruppe berechnet:
+
+| Anlass | Zuschlag |
+| --- | --- |
+| Überstunden E 1 bis E 9b / E 9c bis E 15 | 30 % / 15 % |
+| Nachtarbeit | 20 % |
+| Sonntagsarbeit | 25 % |
+| Feiertagsarbeit mit / ohne Freizeitausgleich | 35 % / 135 % |
+| 24. und 31. Dezember ab 6 Uhr | 35 % |
+| Samstag 13 bis 21 Uhr (außerhalb von Schichtarbeit) | 20 % |
+
+Fallen mehrere dieser Zeitzuschläge zusammen (z. B. Sonntag und Feiertag), wird nur der höchste gezahlt. Zuschläge sind im Rechner nicht enthalten, weil sie von Monat zu Monat schwanken.
+
+## Rechenbeispiele: E 5, E 9b und E 13
+
+Alle Beispiele: Kommunen (VKA), Tabelle ab 1. Mai 2026, Vollzeit, Steuerklasse I, keine Kinder, keine Kirchensteuer, Nordrhein-Westfalen, Zusatzbeitrag 2,9 %, VBL West.
+
+<div class="overflow-x-auto">
+<table>
+  <thead>
+    <tr><th scope="col">Entgeltgruppe</th><th scope="col">Brutto/Monat</th><th scope="col">Lohnsteuer</th><th scope="col">Sozialabgaben</th><th scope="col">VBL</th><th scope="col">Netto/Monat</th><th scope="col">Netto/Jahr*</th></tr>
+  </thead>
+  <tbody>
+    {beispiele.map((b) => (
+      <tr>
+        <td>E {b.eg} Stufe {b.stufe}</td>
+        <td>{eur(b.monat.brutto)}</td>
+        <td>{eur(b.monat.lohnsteuer + b.monat.soli)}</td>
+        <td>{eur(b.monat.kv + b.monat.pv + b.monat.rv + b.monat.av)}</td>
+        <td>{eur(b.monat.zv)}</td>
+        <td><strong>{eur(b.monat.netto)}</strong></td>
+        <td>{eur(b.jahr.netto)}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+</div>
+
+\* inklusive Jahressonderzahlung von 85 %.
+
+<ArticleFigure
+  file="tvoed-rechner-beispiel"
+  alt="TVöD Gehaltsrechner Beispiel: Gehaltstabelle mit hervorgehobener Entgeltgruppe und Stufe sowie Balken für Netto und Abzüge"
+  caption="Vom Tabellenentgelt gehen rund 35 bis 40 % für Steuern, Sozialversicherung und Zusatzversorgung ab – je nach Entgeltgruppe und Steuerklasse."
+/>
+
+**So lesen Sie die Beispiele:** Bei E 5 Stufe 3 bleiben von 3.449,05 € brutto rund {eur(beispiele[0].monat.netto)} netto. Die Sozialabgaben machen dabei mehr aus als die Lohnsteuer. In höheren Entgeltgruppen steigt der Steueranteil wegen des progressiven Tarifs deutlich an.
+
+## TVöD oder TV-L?
+
+Beide Tarifverträge sind ähnlich aufgebaut – mit Entgeltgruppen, Stufen und Jahressonderzahlung –, gelten aber für unterschiedliche Arbeitgeber:
+
+- **TVöD:** Bund und Kommunen (Städte, Gemeinden, Landkreise, kommunale Unternehmen).
+- **TV-L:** die Bundesländer, z. B. Landesbehörden, Hochschulen und Unikliniken. Hessen hat einen eigenen Tarifvertrag, den TV-H.
+
+Die Tabellenwerte, die Termine der Tariferhöhungen und die Jahressonderzahlung unterscheiden sich zwischen TVöD und TV-L. Achten Sie deshalb darauf, mit der richtigen Tabelle zu rechnen. Beamtinnen und Beamte werden nicht nach Tarifvertrag, sondern nach Besoldungsgesetzen bezahlt.
+
+## Tipps für Beschäftigte im öffentlichen Dienst
+
+- **Stufe prüfen:** Bei Einstellung kann der Arbeitgeber förderliche Berufserfahrung anrechnen. Fragen Sie danach – eine höhere Stufe wirkt sich über Jahre aus.
+- **Zusatzversorgung im Blick behalten:** Der Beitrag zur VBL oder zu Ihrer kommunalen Kasse finanziert eine spätere Betriebsrente. Den genauen Satz finden Sie auf Ihrer Gehaltsabrechnung.
+- **Teilzeit durchrechnen:** Durch den progressiven Steuertarif bleibt bei Teilzeit prozentual oft mehr netto übrig, als die Kürzung des Bruttogehalts vermuten lässt. Probieren Sie es im Rechner aus.
+- **Rücklagen bilden:** Mit dem [Sparplanrechner](/sparplan-rechner/) sehen Sie, was aus einem Teil Ihrer Jahressonderzahlung werden kann.
+
+Weitere Rechner rund ums Gehalt finden Sie in der Kategorie [Gehalt & Steuern](/gehalt-steuern/), zum Beispiel den [Werkstudent-Rechner](/werkstudent-brutto-netto-rechner/). Für allgemeine Prozentfragen – etwa „Wie viel sind 2,8 % mehr?“ – nutzen Sie den [Prozentrechner](/prozent-rechner/).
+
+> **Alle Angaben ohne Gewähr – keine Steuer- oder Rechtsberatung.** Der TVöD Rechner liefert eine Modellrechnung auf Basis der Entgelttabellen und des Programmablaufplans 2026. Ihre tatsächliche Abrechnung kann abweichen, etwa durch Zulagen, Zuschläge, Freibeträge, eine abweichende Zusatzversorgungskasse oder den steuer- und beitragspflichtigen Anteil der Arbeitgeber-Umlage.

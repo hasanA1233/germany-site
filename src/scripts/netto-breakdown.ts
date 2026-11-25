@@ -28,6 +28,6 @@ export function renderBreakdown(c: CalcContext, werte: Werte, gruppen: { steuern
   if (label)
     label.setAttribute(
       'aria-label',
-      `Aufteilung des Bruttolohns: Netto ${formatPercent((parts.netto / brutto) * 100, 1)}, Steuern ${formatPercent((parts.steuern / brutto) * 100, 1)}, Sozialversicherung ${formatPercent((parts.sozial / brutto) * 100, 1)}`,
+      `Aufteilung des Bruttolohns: Netto ${formatPercent((parts.netto / brutto) * 100, 1)}, Steuern ${formatPercent((parts.steuern / brutto) * 100, 1)}, Abgaben ${formatPercent((parts.sozial / brutto) * 100, 1)}`,
     );
 }
