@@ -58,6 +58,53 @@ export function calculateVat({ amount, mode, ratePct }: VatInput): Result<VatOut
   return { ok: true, net, vat: roundCents(gross - net), gross, ratePct };
 }
 
+export interface VatListItem {
+  amount: number;
+  ratePct: number;
+}
+export interface VatListGroup extends VatOutput {
+  count: number;
+}
+export interface VatListOutput {
+  net: number;
+  vat: number;
+  gross: number;
+  /** Summen je Steuersatz, absteigend nach Satz */
+  groups: VatListGroup[];
+}
+
+/**
+ * Mehrere Positionen: Beträge werden je Steuersatz addiert und die Steuer je Satz
+ * aus der Summe berechnet – so wie sie auf einer Rechnung ausgewiesen wird.
+ * Fehler werden unter dem Schlüssel `item<Index+1>` gemeldet.
+ */
+export function calculateVatList(items: VatListItem[], mode: VatInput['mode']): Result<VatListOutput> {
+  const errors: Errors = {};
+  items.forEach((it, i) => {
+    checkAmount(errors, `item${i + 1}`, it.amount);
+    if (!Number.isFinite(it.ratePct) || it.ratePct < 0 || it.ratePct > 100) errors[`rate${i + 1}`] = 'Ungültiger Steuersatz.';
+  });
+  if (!items.length) errors._form = 'Bitte geben Sie mindestens eine Position ein.';
+  if (Object.keys(errors).length) return { ok: false, errors };
+
+  const sums = new Map<number, { amount: number; count: number }>();
+  for (const it of items) {
+    const s = sums.get(it.ratePct) ?? { amount: 0, count: 0 };
+    s.amount = roundCents(s.amount + roundCents(it.amount));
+    s.count += 1;
+    sums.set(it.ratePct, s);
+  }
+  const groups: VatListGroup[] = [...sums.entries()]
+    .sort((a, b) => b[0] - a[0])
+    .map(([ratePct, s]) => {
+      const r = calculateVat({ amount: s.amount, mode, ratePct });
+      if (!r.ok) throw new Error('unreachable');
+      return { net: r.net, vat: r.vat, gross: r.gross, ratePct, count: s.count };
+    });
+  const sum = (k: 'net' | 'vat' | 'gross') => roundCents(groups.reduce((a, g) => a + g[k], 0));
+  return { ok: true, net: sum('net'), vat: sum('vat'), gross: sum('gross'), groups };
+}
+
 // ---------------------------------------------------------------------------
 // Gewinn
 // ---------------------------------------------------------------------------

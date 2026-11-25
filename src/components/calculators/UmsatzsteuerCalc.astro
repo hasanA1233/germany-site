@@ -4,14 +4,32 @@ import NumberField from '../calculator/NumberField.astro';
 import ChoiceField from '../calculator/ChoiceField.astro';
 import ResultMain from '../calculator/ResultMain.astro';
 import ResultList from '../calculator/ResultList.astro';
+import { ust2026 } from '../../data/ust-2026';
 const p = 'ust';
+
+/** Listenmodus: feste Anzahl vorgerenderter Zeilen (kein Layout-Sprung beim Rechnen) */
+const MAX_ROWS = 8;
+const START_ROWS = 3;
+const rows = Array.from({ length: MAX_ROWS }, (_, i) => i + 1);
+const listRates = [ust2026.regelsatz, ust2026.ermaessigt, 0];
+const pct = (n: number) => `${n} %`;
 ---
 
 <CalculatorShell
   slug="umsatzsteuer"
   title="MwSt berechnen: Brutto ↔ Netto"
-  note="Ergebnisse werden kaufmännisch auf volle Cent gerundet. Welcher Steuersatz für Ihren Umsatz gilt, hängt vom konkreten Geschäftsvorfall ab – im Zweifel fragen Sie eine Steuerberaterin oder einen Steuerberater."
+  note="Ergebnisse werden kaufmännisch auf volle Cent gerundet. Im Listenmodus wird die Steuer – wie auf einer Rechnung – je Steuersatz aus der Summe der Positionen berechnet. Welcher Steuersatz für Ihren Umsatz gilt, hängt vom konkreten Geschäftsvorfall ab – im Zweifel fragen Sie eine Steuerberaterin oder einen Steuerberater."
 >
+  <ChoiceField
+    idPrefix={p}
+    name="calc"
+    legend="Was möchten Sie berechnen?"
+    value="single"
+    options={[
+      { value: 'single', label: 'Einzelbetrag' },
+      { value: 'list', label: 'Mehrere Positionen' },
+    ]}
+  />
   <ChoiceField
     idPrefix={p}
     name="mode"
@@ -22,21 +40,74 @@ const p = 'ust';
       { value: 'gross-to-net', label: 'Brutto → Netto' },
     ]}
   />
-  <NumberField idPrefix={p} name="amount" label="Betrag" value="100" suffix="€" hint="Bei „Netto → Brutto“ den Nettobetrag, bei „Brutto → Netto“ den Bruttobetrag eingeben." />
-  <ChoiceField
-    idPrefix={p}
-    name="rateChoice"
-    legend="Steuersatz"
-    value="19"
-    options={[
-      { value: '19', label: '19 %' },
-      { value: '7', label: '7 %' },
-      { value: 'custom', label: 'Eigener' },
-    ]}
-  />
-  <div data-show-when="rateChoice=custom" hidden>
-    <NumberField idPrefix={p} name="ratePct" label="Eigener Steuersatz" value="16" suffix="%" decimals={2} />
+
+  <div data-show-when="calc=single" class="flex flex-col gap-5">
+    <NumberField idPrefix={p} name="amount" label="Betrag" value="100" suffix="€" hint="Bei „Netto → Brutto“ den Nettobetrag, bei „Brutto → Netto“ den Bruttobetrag eingeben." />
+    <ChoiceField
+      idPrefix={p}
+      name="rateChoice"
+      legend="Steuersatz"
+      value={String(ust2026.regelsatz)}
+      options={[
+        { value: String(ust2026.regelsatz), label: pct(ust2026.regelsatz) },
+        { value: String(ust2026.ermaessigt), label: pct(ust2026.ermaessigt) },
+        { value: 'custom', label: 'Eigener' },
+      ]}
+    />
+    <div data-show-when="rateChoice=custom" hidden>
+      <NumberField idPrefix={p} name="ratePct" label="Eigener Steuersatz" value="16" suffix="%" decimals={2} />
+    </div>
   </div>
+
+  <fieldset data-show-when="calc=list" hidden class="flex flex-col gap-3">
+    <legend class="mb-1.5 text-sm font-semibold text-navy-900">Positionen</legend>
+    <p class="-mt-1 text-xs text-muted">Leere Zeilen werden ignoriert. Je nach Rechenrichtung Netto- oder Bruttobeträge eingeben.</p>
+    {
+      rows.map((i) => (
+        <div data-vat-row={i} hidden={i > START_ROWS} class="flex flex-col gap-1">
+          <div class="grid grid-cols-[minmax(0,1fr)_6.5rem] gap-2">
+            <div class="relative">
+              <label for={`${p}-item${i}`} class="sr-only">
+                Betrag Position {i}
+              </label>
+              <input
+                id={`${p}-item${i}`}
+                name={`item${i}`}
+                type="text"
+                inputmode="decimal"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder={`Position ${i}`}
+                value={i === 1 ? '30' : i === 2 ? '11,90' : ''}
+                data-num
+                data-decimals="2"
+                data-optional
+                aria-describedby={`${p}-item${i}-error`}
+                class="field-input pr-10"
+              />
+              <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4 text-sm font-medium text-muted" aria-hidden="true">
+                €
+              </span>
+            </div>
+            <label for={`${p}-rate${i}`} class="sr-only">
+              Steuersatz Position {i}
+            </label>
+            <select id={`${p}-rate${i}`} name={`rate${i}`} class="field-input pl-3">
+              {listRates.map((r) => (
+                <option value={r} selected={(i === 1 ? ust2026.ermaessigt : ust2026.regelsatz) === r}>
+                  {pct(r)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <p id={`${p}-item${i}-error`} data-error-for={`item${i}`} class="text-sm font-medium text-danger-700" aria-live="polite" hidden />
+        </div>
+      ))
+    }
+    <button type="button" class="btn-secondary self-start px-4 py-2" data-add-row>
+      + Weitere Position
+    </button>
+  </fieldset>
 
   <Fragment slot="results">
     <ResultMain label="Bruttobetrag" labelOut="mainLabel" out="main" />
@@ -47,6 +118,39 @@ const p = 'ust';
         { label: 'Bruttobetrag', out: 'gross' },
       ]}
     />
+    <div data-show-when="calc=list" hidden>
+      <table class="mt-4 w-full overflow-hidden rounded-2xl border border-line bg-card text-sm">
+        <caption class="sr-only">Summen je Steuersatz</caption>
+        <thead class="bg-surface text-left text-navy-900">
+          <tr>
+            <th scope="col" class="px-3 py-2 font-semibold">Satz</th>
+            <th scope="col" class="px-3 py-2 text-right font-semibold">Netto</th>
+            <th scope="col" class="px-3 py-2 text-right font-semibold">MwSt</th>
+            <th scope="col" class="px-3 py-2 text-right font-semibold">Brutto</th>
+          </tr>
+        </thead>
+        <tbody class="tabular-nums">
+          {
+            listRates.map((r) => (
+              <tr data-vat-group={r} class="border-t border-line">
+                <th scope="row" class="px-3 py-2 text-left font-medium">
+                  {pct(r)}
+                </th>
+                <td class="px-3 py-2 text-right" data-out={`g${r}net`}>
+                  –
+                </td>
+                <td class="px-3 py-2 text-right" data-out={`g${r}vat`}>
+                  –
+                </td>
+                <td class="px-3 py-2 text-right" data-out={`g${r}gross`}>
+                  –
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
     <p class="mt-4 text-sm text-muted" data-out="sentence"></p>
     <div class="mt-4 flex flex-wrap gap-2">
       <button type="button" class="btn-secondary px-4 py-2" data-copy="vat">MwSt-Betrag kopieren</button>
@@ -58,33 +162,70 @@ const p = 'ust';
 
 <script>
   import { mountCalculator } from '../../scripts/calc-runtime';
-  import { calculateVat } from '../../lib/calc/business';
+  import { calculateVat, calculateVatList, type VatListItem } from '../../lib/calc/business';
   import { formatEUR, formatPercent } from '../../lib/format';
+
+  // Rohwerte für die Kopieren-Buttons (deutsches Zahlenformat ohne €-Zeichen, z. B. „19,00“)
+  const num = (v: number) => v.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   mountCalculator('umsatzsteuer', (c) => {
     const mode = c.choice('mode') === 'gross-to-net' ? 'gross-to-net' : 'net-to-gross';
-    const choice = c.choice('rateChoice');
-    const ratePct = choice === 'custom' ? c.num('ratePct') : Number(choice);
-    const r = calculateVat({ amount: c.num('amount'), mode, ratePct });
-    if (!r.ok) return r.errors;
-
     const toGross = mode === 'net-to-gross';
+    let net: number, vat: number, gross: number, sentence: string;
+
+    if (c.choice('calc') === 'list') {
+      const items: VatListItem[] = [];
+      const keys: number[] = [];
+      c.form.querySelectorAll<HTMLElement>('[data-vat-row]').forEach((row) => {
+        const i = Number(row.dataset.vatRow);
+        const amount = c.optional(`item${i}`);
+        if (amount === undefined) return;
+        items.push({ amount, ratePct: Number(c.choice(`rate${i}`)) });
+        keys.push(i);
+      });
+      const r = calculateVatList(items, mode);
+      if (!r.ok) {
+        // Fehlerschlüssel auf die tatsächliche Zeilennummer abbilden
+        const mapped: Record<string, string> = {};
+        for (const [k, v] of Object.entries(r.errors)) {
+          const m = k.match(/^(item|rate)(\d+)$/);
+          mapped[m ? `${m[1]}${keys[Number(m[2]) - 1]}` : k] = v;
+        }
+        return mapped;
+      }
+      ({ net, vat, gross } = r);
+      c.form.querySelectorAll<HTMLElement>('[data-vat-group]').forEach((tr) => {
+        const g = r.groups.find((x) => x.ratePct === Number(tr.dataset.vatGroup));
+        tr.hidden = !g;
+        if (!g) return;
+        const k = tr.dataset.vatGroup;
+        c.out(`g${k}net`, formatEUR(g.net));
+        c.out(`g${k}vat`, formatEUR(g.vat));
+        c.out(`g${k}gross`, formatEUR(g.gross));
+      });
+      const n = items.length;
+      sentence = `${n} ${n === 1 ? 'Position' : 'Positionen'}: ${formatEUR(net)} netto + ${formatEUR(vat)} MwSt = ${formatEUR(gross)} brutto.`;
+      c.out('vat', formatEUR(vat));
+    } else {
+      const choice = c.choice('rateChoice');
+      const ratePct = choice === 'custom' ? c.num('ratePct') : Number(choice);
+      const r = calculateVat({ amount: c.num('amount'), mode, ratePct });
+      if (!r.ok) return r.errors;
+      ({ net, vat, gross } = r);
+      c.out('vat', `${formatEUR(vat)} (${formatPercent(r.ratePct)})`);
+      sentence = toGross
+        ? `${formatEUR(net)} netto zzgl. ${formatPercent(r.ratePct)} USt (${formatEUR(vat)}) = ${formatEUR(gross)} brutto.`
+        : `${formatEUR(gross)} brutto enthalten ${formatEUR(vat)} USt (${formatPercent(r.ratePct)}); netto sind das ${formatEUR(net)}.`;
+    }
+
     c.out('mainLabel', toGross ? 'Bruttobetrag' : 'Nettobetrag');
-    c.out('main', formatEUR(toGross ? r.gross : r.net));
+    c.out('main', formatEUR(toGross ? gross : net));
     c.out('copyMainLabel', toGross ? 'Bruttobetrag kopieren' : 'Nettobetrag kopieren');
-    // Rohwerte für die Kopieren-Buttons (deutsches Zahlenformat ohne €-Zeichen, z. B. „19,00“)
-    const num = (v: number) => v.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    c.form.querySelector<HTMLElement>('[data-copy="vat"]')!.dataset.value = num(r.vat);
-    c.form.querySelector<HTMLElement>('[data-copy="main"]')!.dataset.value = num(toGross ? r.gross : r.net);
-    c.out('net', formatEUR(r.net));
-    c.out('vat', `${formatEUR(r.vat)} (${formatPercent(r.ratePct)})`);
-    c.out('gross', formatEUR(r.gross));
-    c.out(
-      'sentence',
-      toGross
-        ? `${formatEUR(r.net)} netto zzgl. ${formatPercent(r.ratePct)} USt (${formatEUR(r.vat)}) = ${formatEUR(r.gross)} brutto.`
-        : `${formatEUR(r.gross)} brutto enthalten ${formatEUR(r.vat)} USt (${formatPercent(r.ratePct)}); netto sind das ${formatEUR(r.net)}.`,
-    );
+    c.form.querySelector<HTMLElement>('[data-copy="vat"]')!.dataset.value = num(vat);
+    c.form.querySelector<HTMLElement>('[data-copy="main"]')!.dataset.value = num(toGross ? gross : net);
+    c.out('net', formatEUR(net));
+    c.out('gross', formatEUR(gross));
+    c.out('sentence', sentence);
     return null;
   });
 
@@ -108,9 +249,23 @@ const p = 'ust';
   }
   document.querySelectorAll<HTMLFormElement>('form[data-calc="umsatzsteuer"]').forEach((form) => {
     const status = form.querySelector<HTMLElement>('[data-copy-status]');
+    const addBtn = form.querySelector<HTMLButtonElement>('[data-add-row]');
+    const hiddenRows = () => [...form.querySelectorAll<HTMLElement>('[data-vat-row][hidden]')];
     let timer = 0;
+
     form.addEventListener('click', async (e) => {
-      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-copy]');
+      const target = e.target as HTMLElement;
+      // Weitere Position einblenden
+      if (target.closest('[data-add-row]')) {
+        const next = hiddenRows()[0];
+        if (next) {
+          next.hidden = false;
+          next.querySelector<HTMLInputElement>('input')?.focus();
+        }
+        if (addBtn) addBtn.hidden = hiddenRows().length === 0;
+        return;
+      }
+      const btn = target.closest<HTMLButtonElement>('[data-copy]');
       if (!btn || !btn.dataset.value) return;
       const ok = await copyText(btn.dataset.value);
       if (status) {
@@ -118,6 +273,12 @@ const p = 'ust';
         clearTimeout(timer);
         timer = window.setTimeout(() => (status.textContent = ''), 3000);
       }
+    });
+
+    // Zurücksetzen: zusätzliche Zeilen wieder ausblenden
+    form.addEventListener('reset', () => {
+      form.querySelectorAll<HTMLElement>('[data-vat-row]').forEach((row) => (row.hidden = Number(row.dataset.vatRow) > 3));
+      if (addBtn) addBtn.hidden = false;
     });
   });
 </script>

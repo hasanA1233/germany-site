@@ -1,8 +1,8 @@
 ---
-seoTitle: "MwSt Rechner 2026: Brutto Netto (19 % & 7 %)"
-description: "MwSt brutto netto rechnen 2026: Mehrwertsteuer mit 19 %, 7 % oder eigenem Satz in beide Richtungen – sofort, kostenlos, mit Kopierfunktion."
+seoTitle: "MwSt Rechner 2026: Mehrwertsteuer brutto netto"
+description: "Mehrwertsteuer Rechner 2026: MwSt brutto netto mit 19 %, 7 % oder eigenem Satz berechnen – auch für mehrere Positionen, mit Kopierfunktion."
 h1: "MwSt Brutto-Netto-Rechner 2026"
-intro: "Rechnen Sie die Mehrwertsteuer in Sekunden aus: Geben Sie einen Betrag ein, wählen Sie Netto → Brutto oder Brutto → Netto und den Steuersatz von 19 % oder 7 %. Unser MwSt Rechner rechnet brutto in netto und netto in brutto und zeigt Nettobetrag, MwSt-Betrag und Bruttobetrag sofort an – auf Wunsch zum Kopieren."
+intro: "Rechnen Sie die Mehrwertsteuer in Sekunden aus: Geben Sie einen Betrag ein, wählen Sie Netto → Brutto oder Brutto → Netto und den Steuersatz von 19 % oder 7 %. Unser Mehrwertsteuer Rechner rechnet brutto in netto und netto in brutto – auch für mehrere Positionen – und zeigt Nettobetrag, MwSt-Betrag und Bruttobetrag sofort an – auf Wunsch zum Kopieren."
 updated: 2026-11-24
 hero:
   file: "mwst-brutto-netto-rechner"
@@ -22,6 +22,10 @@ faq:
     a: "Leitungswasser fällt unter den ermäßigten Satz von 7 %. Trinkwasser in Fertigpackungen – also etwa Mineral- oder Tafelwasser in der Flasche – ist laut Anlage 2 Nr. 34 UStG ausdrücklich ausgenommen und wird mit 19 % besteuert."
   - q: "Wofür brauche ich einen MwSt Brutto Netto Rechner?"
     a: "Immer dann, wenn Sie zwischen Netto- und Bruttobeträgen wechseln müssen: beim Schreiben von Rechnungen und Angeboten (Netto → Brutto), beim Buchen von Kassenbons und Eingangsrechnungen (Brutto → Netto) oder um die enthaltene Mehrwertsteuer für die Umsatzsteuer-Voranmeldung zu ermitteln. Der Rechner vermeidet dabei den typischen Fehler, 19 % einfach vom Bruttobetrag abzuziehen."
+  - q: "Kann ich mehrere Beträge mit unterschiedlichen Steuersätzen zusammenrechnen?"
+    a: "Ja. Wählen Sie im Rechner „Mehrere Positionen“ und geben Sie jeden Betrag mit seinem Steuersatz ein. Der Rechner addiert die Beträge je Steuersatz, berechnet die Mehrwertsteuer aus der jeweiligen Summe – so wie sie auch auf einer Rechnung ausgewiesen wird – und zeigt Netto, MwSt und Brutto insgesamt sowie getrennt nach 19 % und 7 %."
+  - q: "Welche Umsatzgrenzen gelten 2026 für Kleinunternehmer?"
+    a: "Die Kleinunternehmerregelung nach § 19 UStG gilt, wenn der Gesamtumsatz im Vorjahr höchstens 25.000 € betragen hat und im laufenden Jahr 100.000 € nicht überschreitet. Wird die Grenze von 100.000 € im laufenden Jahr überschritten, ist bereits der Umsatz, mit dem sie überschritten wird, regulär steuerpflichtig. Im Gründungsjahr gilt eine Grenze von 25.000 €."
   - q: "Ist MwSt dasselbe wie Umsatzsteuer?"
     a: "Ja. Im Gesetz heißt die Steuer Umsatzsteuer (USt), umgangssprachlich wird sie meist Mehrwertsteuer (MwSt) genannt. Beide Begriffe meinen dieselbe Steuer."
 sources:
@@ -33,9 +37,16 @@ sources:
     url: "https://www.gesetze-im-internet.de/ustg_1980/__14.html"
   - label: "UStG § 19 – Besteuerung der Kleinunternehmer"
     url: "https://www.gesetze-im-internet.de/ustg_1980/__19.html"
+  - label: "BMF-Schreiben vom 18.03.2025 – Sonderregelung für Kleinunternehmer"
+    url: "https://www.bundesfinanzministerium.de/Content/DE/Downloads/BMF_Schreiben/Steuerarten/Umsatzsteuer/Umsatzsteuer-Anwendungserlass/2025-03-18-sonderregelung-kleinunternehmer.pdf"
+  - label: "BMF – Vordruckmuster Umsatzsteuer-Voranmeldung 2026 (Gründungsjahr-Grenze)"
+    url: "https://www.bundesfinanzministerium.de/Content/DE/Downloads/BMF_Schreiben/Steuerarten/Umsatzsteuer/2025-12-29-vordruckmuster-USt-voranmeldung-2026.pdf"
 ---
 
 import AdSlot from '../../components/ads/AdSlot.astro';
+import { ust2026 } from '../../data/ust-2026';
+
+export const eur = (n) => n.toLocaleString('de-DE') + ' €';
 
 ## So funktioniert der MwSt-Rechner
 
@@ -44,6 +55,8 @@ Als MwSt Rechner brutto netto arbeitet das Tool in beide Richtungen und rechnet 
 1. **Rechenrichtung wählen:** „Netto → Brutto“, wenn Sie die Mehrwertsteuer aufschlagen möchten – etwa für eine Rechnung oder ein Angebot an Privatkunden. „Brutto → Netto“, wenn Sie die Mehrwertsteuer aus einem Betrag herausrechnen möchten – etwa aus einem Kassenbon oder einer Eingangsrechnung.
 2. **Betrag eingeben:** Sie können im deutschen Format tippen, also `1.250` oder `49,90`.
 3. **Steuersatz wählen:** 19 %, 7 % oder ein eigener Satz, zum Beispiel für ausländische Steuersätze.
+
+Haben Sie mehrere Beträge – etwa einen Einkaufsbeleg oder eine Rechnung mit verschiedenen Steuersätzen –, wählen Sie oben **„Mehrere Positionen“**. Dort tragen Sie bis zu acht Beträge ein und wählen für jeden 19 %, 7 % oder 0 %.
 
 Das Ergebnis zeigt Nettobetrag, MwSt-Betrag und Bruttobetrag. Mit den Buttons **„MwSt-Betrag kopieren“** und **„Bruttobetrag kopieren“** übernehmen Sie den Wert direkt in Ihre Buchhaltung, eine Tabelle oder ein Rechnungsprogramm. Alle Beträge werden kaufmännisch auf volle Cent gerundet.
 
@@ -88,9 +101,50 @@ Der häufigste Fehler beim Herausrechnen: einfach 19 % vom Bruttobetrag abziehen
 | Getränke | 11,90 € | 19 % | 10,00 € | 1,90 € |
 | **Summe** | **41,90 €** | | **38,04 €** | **3,86 €** |
 
-Bei gemischten Rechnungen rechnen Sie jeden Steuersatz einzeln – der Rechner hilft, indem Sie die Beträge nacheinander eingeben.
+Bei gemischten Rechnungen wird jeder Steuersatz einzeln berechnet. Genau das übernimmt der Listenmodus des Rechners – mehr dazu im nächsten Abschnitt.
+
+## Brutto Netto Rechner für die Mehrwertsteuer: mehrere Positionen
+
+Auf vielen Belegen stehen Waren mit unterschiedlichen Steuersätzen: Im Supermarkt etwa werden die meisten Lebensmittel mit 7 % besteuert, Drogerieartikel und Mineralwasser in Flaschen dagegen mit 19 %. Wer die Mehrwertsteuer aus so einem Beleg herausrechnen möchte, muss die Beträge **nach Steuersatz trennen**.
+
+**Beispiel – Einkaufsbeleg (Brutto → Netto):**
+
+| Position | Brutto | Steuersatz |
+| --- | --- | --- |
+| Lebensmittel | 42,80 € | 7 % |
+| Drogerieartikel | 17,85 € | 19 % |
+| Mineralwasser (Flaschen) | 5,94 € | 19 % |
+
+Der Rechner fasst die Positionen je Steuersatz zusammen und rechnet dann:
+
+| Steuersatz | Brutto | Netto | MwSt |
+| --- | --- | --- | --- |
+| 19 % | 23,79 € | 19,99 € | 3,80 € |
+| 7 % | 42,80 € | 40,00 € | 2,80 € |
+| **Summe** | **66,59 €** | **59,99 €** | **6,60 €** |
+
+**Warum je Steuersatz und nicht je Position?** Auf einer Rechnung wird die Umsatzsteuer für jeden Steuersatz aus dem Gesamtbetrag dieses Satzes ausgewiesen. Rechnet man jede Position einzeln und rundet sie auf Cent, können sich Rundungsdifferenzen von einigen Cent ergeben. Der Listenmodus folgt deshalb dem Vorgehen auf der Rechnung.
+
+**Tipp für Selbstständige:** Im Listenmodus können Sie auch Ihre eigenen Rechnungspositionen netto eingeben und erhalten den Rechnungsbetrag mit getrennt ausgewiesener Steuer – praktisch, um eine Rechnung vor dem Versand zu prüfen.
 
 <AdSlot placement="in-content" />
+
+## Umsatzsteuer oder Mehrwertsteuer – wo ist der Unterschied?
+
+Rechtlich gibt es keinen: Das Gesetz kennt nur die **Umsatzsteuer** (USt), geregelt im Umsatzsteuergesetz. **Mehrwertsteuer** (MwSt) ist der umgangssprachliche Name und beschreibt, wie die Steuer funktioniert: Jedes Unternehmen in der Lieferkette zahlt wirtschaftlich nur auf den *Mehrwert*, den es selbst schafft. Möglich macht das der **Vorsteuerabzug** – Unternehmen ziehen die Umsatzsteuer, die sie beim Einkauf gezahlt haben, von der Umsatzsteuer auf ihre Verkäufe ab.
+
+Ein vereinfachtes Beispiel mit 19 %:
+
+| Stufe | Verkauf netto | Umsatzsteuer | abzüglich Vorsteuer | an das Finanzamt |
+| --- | --- | --- | --- | --- |
+| Holzhandel verkauft Holz an Tischlerei | 200 € | 38 € | 0 € | 38 € |
+| Tischlerei verkauft Tisch an Möbelhaus | 500 € | 95 € | 38 € | 57 € |
+| Möbelhaus verkauft Tisch an Kundin | 800 € | 152 € | 95 € | 57 € |
+| **Summe** | | | | **152 €** |
+
+Die Kundin zahlt 952 € brutto. Die darin enthaltenen 152 € Steuer sind genau 19 % des Endpreises von 800 € – sie wurden aber stückweise von allen drei Unternehmen ans Finanzamt abgeführt. Getragen wird die Steuer am Ende von der Endverbraucherin, denn sie kann keine Vorsteuer abziehen.
+
+Für den Rechner spielt der Name keine Rolle: Ob Sie „Umsatzsteuer berechnen“ oder „Mehrwertsteuer berechnen“ wollen – die Formeln sind identisch.
 
 ## 19 % oder 7 %? Beispiele für 2026
 
@@ -109,6 +163,25 @@ Das Umsatzsteuergesetz kennt zwei allgemeine Steuersätze. Der **Regelsatz von 1
 
 Die Abgrenzung ist im Detail oft kompliziert. Gehen Sie deshalb nicht pauschal davon aus, dass ein Produkt mit 7 % besteuert wird – maßgeblich sind der konkrete Umsatz und die geltenden steuerlichen Regeln.
 
+## Kleinunternehmerregelung 2026: Grenzen und Folgen
+
+Kleine Unternehmen können sich von der Umsatzsteuer befreien lassen. Seit 2025 gelten dafür nach § 19 UStG neue Grenzen, die auch 2026 unverändert sind:
+
+| Voraussetzung | Grenze (Gesamtumsatz) |
+| --- | --- |
+| Vorjahr | höchstens {eur(ust2026.kleinunternehmer.vorjahr)} |
+| Laufendes Jahr | höchstens {eur(ust2026.kleinunternehmer.laufendesJahr)} |
+| Gründungsjahr | höchstens {eur(ust2026.kleinunternehmer.gruendungsjahr)} |
+
+Wichtig sind zwei Details:
+
+- **Die Grenze im laufenden Jahr wirkt sofort.** Überschreitet Ihr Umsatz im laufenden Jahr {eur(ust2026.kleinunternehmer.laufendesJahr)}, unterliegt bereits der Umsatz, mit dem Sie die Grenze überschreiten, der regulären Umsatzsteuer – nicht erst das Folgejahr.
+- **Im Gründungsjahr gilt die niedrigere Grenze.** Wer neu startet, darf im ersten Jahr höchstens {eur(ust2026.kleinunternehmer.gruendungsjahr)} Umsatz machen, um Kleinunternehmer zu bleiben.
+
+**Was bedeutet das für Ihre Rechnungen?** Als Kleinunternehmer weisen Sie keine Umsatzsteuer aus und verlangen den Endbetrag ohne Aufschlag – auf der Rechnung steht stattdessen ein Hinweis auf die Steuerbefreiung. Im Gegenzug können Sie sich die Umsatzsteuer aus Ihren Einkäufen nicht als Vorsteuer vom Finanzamt erstatten lassen. Für Sie ist deshalb der **Bruttopreis** Ihrer Einkäufe die maßgebliche Größe.
+
+**Rechnen Sie nach:** Wer hauptsächlich an Unternehmen verkauft und viel investiert, kann mit der Regelbesteuerung besser fahren, weil dann die Vorsteuer zurückfließt. Wer vor allem an Privatkunden verkauft, kann als Kleinunternehmer günstiger anbieten. Auf die Kleinunternehmerregelung kann man verzichten (§ 19 Abs. 3 UStG) – lassen Sie sich vor dieser Entscheidung beraten.
+
 ## Tipps für Selbstständige und Unternehmen
 
 - **Netto kalkulieren:** Wer vorsteuerabzugsberechtigt ist, kalkuliert Preise und Kosten in der Regel netto, weil die MwSt für das Unternehmen ein durchlaufender Posten ist.
@@ -118,4 +191,4 @@ Die Abgrenzung ist im Detail oft kompliziert. Gehen Sie deshalb nicht pauschal d
 
 Was nach Abzug aller Kosten übrig bleibt, berechnen Sie mit dem [Gewinnrechner](/gewinn-rechner/). Wie viel Prozent Ihres Nettoumsatzes Gewinn sind, zeigt der [Gewinnmargenrechner](/gewinnmarge-rechner/). Für Preisnachlässe nutzen Sie den [Rabattrechner](/rabatt-rechner/).
 
-> **Alle Angaben ohne Gewähr – keine Steuer- oder Rechtsberatung.** Der Rechner hilft Ihnen, Beträge schnell und korrekt zu berechnen, sobald der richtige Steuersatz feststeht. Ob ein Umsatz mit 19 %, 7 % oder gar nicht besteuert wird, klären Sie im Zweifel mit einer Steuerberaterin oder einem Steuerberater.
+> **Alle Angaben ohne Gewähr – keine Steuer-, Rechts- oder Finanzberatung.** Der Rechner hilft Ihnen, Beträge schnell und korrekt zu berechnen, sobald der richtige Steuersatz feststeht. Ob ein Umsatz mit 19 %, 7 % oder gar nicht besteuert wird, klären Sie im Zweifel mit einer Steuerberaterin oder einem Steuerberater.

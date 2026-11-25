@@ -6,6 +6,7 @@ import { annuityPayment, calculateLoan, calculateRepayment } from '../src/lib/ca
 import { calculateCompound, calculateSavingsPlan } from '../src/lib/calc/savings.ts';
 import {
   calculateVat,
+  calculateVatList,
   calculateProfit,
   calculateMargin,
   calculateRoi,
@@ -164,6 +165,18 @@ test('Umsatzsteuer: netto ↔ brutto', () => {
   assert.equal(d.vat, 0.02);
   assert.ok(fail(calculateVat({ amount: -5, mode: 'net-to-gross', ratePct: 19 })).amount);
   assert.ok(fail(calculateVat({ amount: 5, mode: 'net-to-gross', ratePct: 120 })).ratePct);
+});
+
+test('Umsatzsteuer Listenmodus: Restaurantrechnung 7 % + 19 % (brutto → netto)', () => {
+  const r = ok(calculateVatList([{ amount: 30, ratePct: 7 }, { amount: 11.9, ratePct: 19 }], 'gross-to-net'));
+  assert.deepEqual([r.net, r.vat, r.gross], [38.04, 3.86, 41.9]);
+  assert.deepEqual(r.groups.map((g) => [g.ratePct, g.net, g.vat]), [[19, 10, 1.9], [7, 28.04, 1.96]]);
+  // Gleicher Satz: Steuer aus der Summe, nicht je Position
+  const s = ok(calculateVatList([{ amount: 0.1, ratePct: 19 }, { amount: 0.1, ratePct: 19 }, { amount: 0.1, ratePct: 19 }], 'net-to-gross'));
+  assert.deepEqual([s.net, s.vat, s.gross], [0.3, 0.06, 0.36]);
+  assert.equal(s.groups[0].count, 3);
+  assert.ok(fail(calculateVatList([], 'net-to-gross'))._form);
+  assert.ok(fail(calculateVatList([{ amount: 5, ratePct: 19 }, { amount: -1, ratePct: 7 }], 'net-to-gross')).item2);
 });
 
 // ---------------------------------------------------------------- Gewinn / Marge

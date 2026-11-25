@@ -429,6 +429,21 @@
   &[aria-invalid='true']:focus {
     box-shadow: 0 0 0 4px var(--danger-ring);
   }
+  /* Auswahlfelder ohne natives Systemdesign (schneller gerendert, einheitlich in hell/dunkel);
+     Pfeil aus zwei Verläufen – keine Bilddatei */
+  &:is(select) {
+    appearance: none;
+    cursor: pointer;
+    padding-right: 2.25rem;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+      linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+    background-position:
+      calc(100% - 1.15rem) 52%,
+      calc(100% - 0.8rem) 52%;
+    background-size: 0.35rem 0.35rem;
+    background-repeat: no-repeat;
+  }
 }
 
 /* ------------------------------------------------------------------
