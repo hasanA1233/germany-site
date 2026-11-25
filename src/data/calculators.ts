@@ -11,7 +11,8 @@ export type CalculatorSlug =
   | 'roi-rechner'
   | 'break-even-rechner'
   | 'rabatt-rechner'
-  | 'werkstudent-brutto-netto-rechner';
+  | 'werkstudent-brutto-netto-rechner'
+  | 'prozent-rechner';
 
 export interface CalculatorMeta {
   slug: CalculatorSlug;
@@ -31,6 +32,8 @@ export interface CalculatorMeta {
   featured?: boolean;
   /** Redaktionell als beliebtes Thema hervorgehoben */
   popular?: boolean;
+  /** Reihenfolge unter „Häufige Rechenfragen“ auf der Startseite (kleiner = weiter vorn) */
+  popularRank?: number;
   /** Veröffentlichungsdatum (ISO) */
   added: string;
 }
@@ -105,10 +108,11 @@ export const calculators: CalculatorMeta[] = [
     alsoIn: ['business', 'prozent-rechner'],
     keywords: ['mwst', 'mwst rechner', 'mehrwertsteuer', 'umsatzsteuer', 'ust', 'brutto netto', 'netto brutto', '19 prozent', '7 prozent', 'rechnung', 'vorsteuer'],
     icon: 'receipt',
-    related: ['gewinn-rechner', 'rabatt-rechner', 'gewinnmarge-rechner'],
+    related: ['prozent-rechner', 'rabatt-rechner', 'gewinnmarge-rechner', 'gewinn-rechner'],
     ogFormula: 'Brutto = Netto × 1,19  ·  Netto = Brutto ÷ 1,19',
     featured: true,
     popular: true,
+    popularRank: 2,
     added: '2026-11-22',
   },
   {
@@ -173,7 +177,7 @@ export const calculators: CalculatorMeta[] = [
     alsoIn: [],
     keywords: ['rabatt', 'prozent', 'preisnachlass', 'skonto', 'reduziert', 'sale', 'angebot', 'ersparnis', 'prozentrechner'],
     icon: 'discount',
-    related: ['umsatzsteuer-rechner', 'gewinnmarge-rechner', 'gewinn-rechner'],
+    related: ['prozent-rechner', 'umsatzsteuer-rechner', 'gewinnmarge-rechner', 'gewinn-rechner'],
     ogFormula: 'Endpreis = Preis × (1 − Rabatt ÷ 100)',
     popular: true,
     added: '2026-11-22',
@@ -189,6 +193,23 @@ export const calculators: CalculatorMeta[] = [
     icon: 'student',
     related: ['umsatzsteuer-rechner', 'sparplan-rechner', 'zinseszins-rechner'],
     ogFormula: 'Netto = Brutto − Lohnsteuer − Rentenversicherung',
+    added: '2026-11-25',
+  },
+  {
+    // Eigene Seite src/pages/prozent-rechner.astro (zugleich Kategorieseite „Prozent & Rabatt“)
+    slug: 'prozent-rechner',
+    href: '/prozent-rechner/',
+    name: 'Prozentrechner',
+    description: 'Prozentwert, Prozentsatz, Grundwert, prozentuale Veränderung und Auf-/Abschlag berechnen – mit Rechenweg.',
+    category: 'prozent-rechner',
+    alsoIn: [],
+    keywords: ['prozent', 'prozentrechner', 'prozentrechnung', 'prozentsatz', 'prozentwert', 'grundwert', 'prozentuale veränderung', 'prozentpunkte', 'aufschlag', 'abschlag', 'dreisatz'],
+    icon: 'percent',
+    related: ['rabatt-rechner', 'umsatzsteuer-rechner', 'gewinnmarge-rechner', 'roi-rechner'],
+    ogFormula: 'Prozentwert = Grundwert × Prozentsatz ÷ 100',
+    featured: true,
+    popular: true,
+    popularRank: 1,
     added: '2026-11-25',
   },
 ];

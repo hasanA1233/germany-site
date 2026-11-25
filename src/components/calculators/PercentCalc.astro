@@ -1,0 +1,164 @@
+---
+import CalculatorShell from '../calculator/CalculatorShell.astro';
+import NumberField from '../calculator/NumberField.astro';
+import ChoiceField from '../calculator/ChoiceField.astro';
+import ResultMain from '../calculator/ResultMain.astro';
+const p = 'pz';
+const slug = 'prozent';
+
+/** Rechenarten als horizontal scrollbare Reiter (native Radio-Gruppe → Pfeiltasten funktionieren) */
+const modes = [
+  { value: 'prozentwert', label: 'X % von Y' },
+  { value: 'prozentsatz', label: 'Prozentsatz' },
+  { value: 'grundwert', label: 'Grundwert' },
+  { value: 'veraenderung', label: 'Veränderung' },
+  { value: 'aufschlag', label: 'Plus / Minus %' },
+];
+---
+
+<CalculatorShell slug={slug} title="Prozente berechnen" note="Ergebnisse werden auf bis zu vier Nachkommastellen gerundet angezeigt.">
+  <fieldset>
+    <legend class="mb-1.5 text-sm font-semibold text-navy-900">Was möchten Sie berechnen?</legend>
+    <div class="-mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin]">
+      {
+        modes.map((m, i) => (
+          <label class="shrink-0 snap-start cursor-pointer">
+            <input type="radio" name="mode" value={m.value} checked={i === 0} class="peer sr-only" id={`${p}-mode-${m.value}`} />
+            <span class="inline-flex min-h-11 items-center whitespace-nowrap rounded-full border border-line bg-card px-4 text-sm font-medium text-muted transition-colors peer-checked:border-transparent peer-checked:bg-[var(--btn-bg)] peer-checked:text-[var(--btn-text)] peer-focus-visible:outline-3 peer-focus-visible:outline-brand-600 hover:text-navy-900">
+              {m.label}
+            </span>
+          </label>
+        ))
+      }
+    </div>
+  </fieldset>
+
+  <div data-show-when="mode=prozentwert" class="grid grid-cols-2 gap-3">
+    <NumberField idPrefix={p} name="pw_p" label="Prozentsatz" value="15" suffix="%" decimals={4} />
+    <NumberField idPrefix={p} name="pw_g" label="von (Grundwert)" value="240" decimals={4} />
+  </div>
+  <div data-show-when="mode=prozentsatz" hidden class="grid grid-cols-2 gap-3">
+    <NumberField idPrefix={p} name="ps_w" label="Teilwert" value="36" decimals={4} />
+    <NumberField idPrefix={p} name="ps_g" label="von (Grundwert)" value="120" decimals={4} />
+  </div>
+  <div data-show-when="mode=grundwert" hidden class="grid grid-cols-2 gap-3">
+    <NumberField idPrefix={p} name="gw_w" label="Teilwert" value="45" decimals={4} />
+    <NumberField idPrefix={p} name="gw_p" label="sind (Prozent)" value="15" suffix="%" decimals={4} />
+  </div>
+  <div data-show-when="mode=veraenderung" hidden class="grid grid-cols-2 gap-3">
+    <NumberField idPrefix={p} name="ve_a" label="Alter Wert" value="80" decimals={4} />
+    <NumberField idPrefix={p} name="ve_b" label="Neuer Wert" value="100" decimals={4} />
+  </div>
+  <div data-show-when="mode=aufschlag" hidden class="flex flex-col gap-5">
+    <ChoiceField
+      idPrefix={p}
+      name="richtung"
+      legend="Aufschlag oder Abschlag?"
+      value="plus"
+      options={[
+        { value: 'plus', label: 'Plus (Aufschlag)' },
+        { value: 'minus', label: 'Minus (Abschlag)' },
+      ]}
+    />
+    <div class="grid grid-cols-2 gap-3">
+      <NumberField idPrefix={p} name="as_g" label="Ausgangswert" value="250" decimals={4} />
+      <NumberField idPrefix={p} name="as_p" label="Prozent" value="19" suffix="%" decimals={4} />
+    </div>
+  </div>
+
+  <Fragment slot="results">
+    <ResultMain label="Ergebnis" labelOut="label" out="main" />
+    <p class="mt-3 min-h-6 text-sm font-medium text-ink" data-out="sub"></p>
+    <div class="mt-4 rounded-2xl border border-line bg-card p-4 text-sm">
+      <p class="font-semibold text-navy-900">Rechenweg</p>
+      <p class="mt-1 text-muted" data-out="formel"></p>
+      <p class="mt-1 font-mono text-[0.95em] tabular-nums text-ink" data-out="rechnung"></p>
+    </div>
+    <div class="mt-4 flex flex-wrap gap-2">
+      <button type="button" class="btn-secondary px-4 py-2" data-copy>Ergebnis kopieren</button>
+    </div>
+    <p class="mt-2 min-h-5 text-sm font-medium text-brand-700" data-copy-status aria-live="polite"></p>
+  </Fragment>
+</CalculatorShell>
+
+<script>
+  import { mountCalculator } from '../../scripts/calc-runtime';
+  import { bindCopyButtons } from '../../scripts/copy-button';
+  import { calculatePercent, type PercentMode } from '../../lib/calc/percent';
+  import { formatNumber } from '../../lib/format';
+
+  const n = (v: number) => formatNumber(v, 4);
+  const pct = (v: number) => `${formatNumber(v, 4)} %`;
+  const signed = (v: number, unit = '') => `${v > 0 ? '+' : v < 0 ? '−' : '±'}${formatNumber(Math.abs(v), 4)}${unit}`;
+
+  mountCalculator('prozent', (c) => {
+    const mode = c.choice('mode') as PercentMode;
+    const val = (k: string) => c.num(k);
+    const input =
+      mode === 'prozentwert'
+        ? { mode, p: val('pw_p'), g: val('pw_g') }
+        : mode === 'prozentsatz'
+          ? { mode, w: val('ps_w'), g: val('ps_g') }
+          : mode === 'grundwert'
+            ? { mode, w: val('gw_w'), p: val('gw_p') }
+            : mode === 'veraenderung'
+              ? { mode, a: val('ve_a'), b: val('ve_b') }
+              : { mode, g: val('as_g'), p: val('as_p'), richtung: c.choice('richtung') === 'minus' ? ('minus' as const) : ('plus' as const) };
+
+    const r = calculatePercent(input);
+    if (!r.ok) {
+      // Fehlerschlüssel auf die Feldnamen des aktiven Modus abbilden
+      const prefix = { prozentwert: 'pw_', prozentsatz: 'ps_', grundwert: 'gw_', veraenderung: 've_', aufschlag: 'as_' }[mode];
+      return Object.fromEntries(Object.entries(r.errors).map(([k, v]) => [prefix + k, v]));
+    }
+
+    const i = r.inputs;
+    let label = '', main = '', sub = '', formel = '', rechnung = '';
+    switch (mode) {
+      case 'prozentwert':
+        label = `${pct(i.p!)} von ${n(i.g!)} sind`;
+        main = n(r.value);
+        formel = 'Prozentwert = Grundwert × Prozentsatz ÷ 100';
+        rechnung = `${n(i.g!)} × ${n(i.p!)} ÷ 100 = ${n(r.value)}`;
+        break;
+      case 'prozentsatz':
+        label = `${n(i.w!)} von ${n(i.g!)} sind`;
+        main = pct(r.value);
+        formel = 'Prozentsatz = Prozentwert ÷ Grundwert × 100';
+        rechnung = `${n(i.w!)} ÷ ${n(i.g!)} × 100 = ${pct(r.value)}`;
+        break;
+      case 'grundwert':
+        label = `${n(i.w!)} sind ${pct(i.p!)} von`;
+        main = n(r.value);
+        formel = 'Grundwert = Prozentwert × 100 ÷ Prozentsatz';
+        rechnung = `${n(i.w!)} × 100 ÷ ${n(i.p!)} = ${n(r.value)}`;
+        break;
+      case 'veraenderung':
+        label = `Veränderung von ${n(i.a!)} auf ${n(i.b!)}`;
+        main = signed(r.value, ' %');
+        sub = r.diff! === 0 ? 'Keine Veränderung.' : `${r.diff! > 0 ? 'Zunahme' : 'Abnahme'} um ${n(Math.abs(r.diff!))} (absolut).`;
+        formel = 'Veränderung in % = (neuer Wert − alter Wert) ÷ alter Wert × 100';
+        rechnung = `(${n(i.b!)} − ${n(i.a!)}) ÷ ${n(Math.abs(i.a!))} × 100 = ${signed(r.value, ' %')}`;
+        break;
+      case 'aufschlag': {
+        const plus = i.richtung !== 'minus';
+        label = `${n(i.g!)} ${plus ? 'plus' : 'minus'} ${pct(i.p!)}`;
+        main = n(r.value);
+        sub = `${plus ? 'Aufschlag' : 'Abschlag'}: ${n(Math.abs(r.diff!))}`;
+        formel = plus ? 'Ergebnis = Ausgangswert × (1 + Prozentsatz ÷ 100)' : 'Ergebnis = Ausgangswert × (1 − Prozentsatz ÷ 100)';
+        rechnung = `${n(i.g!)} × ${formatNumber(plus ? 1 + i.p! / 100 : 1 - i.p! / 100, 6)} = ${n(r.value)}`;
+        break;
+      }
+    }
+    c.out('label', label);
+    c.out('main', main);
+    c.out('sub', sub);
+    c.out('formel', formel);
+    c.out('rechnung', rechnung);
+    const btn = c.form.querySelector<HTMLElement>('[data-copy]');
+    if (btn) btn.dataset.value = main.replace(/\s%$/, ' %');
+    return null;
+  });
+
+  document.querySelectorAll<HTMLFormElement>('form[data-calc="prozent"]').forEach(bindCopyButtons);
+</script>

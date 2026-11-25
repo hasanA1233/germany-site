@@ -1,52 +1,27 @@
 ---
-import CategoryPage from '../components/layout/CategoryPage.astro';
+/**
+ * /prozent-rechner/ – Prozentrechner (Rechner + Ratgeber) und zugleich Kategorieseite „Prozent & Rabatt“.
+ * Inhalt: src/content/rechner/prozent-rechner.mdx · Rechner: src/components/calculators/PercentCalc.astro
+ */
+import { getEntry } from 'astro:content';
+import CalculatorPage from '../components/layout/CalculatorPage.astro';
+import PercentCalc from '../components/calculators/PercentCalc.astro';
+import CalculatorCard from '../components/ui/CalculatorCard.astro';
+import { calculatorsInCategory } from '../data/calculators';
+
+const entry = await getEntry('rechner', 'prozent-rechner');
+if (!entry) throw new Error('Inhalt prozent-rechner.mdx fehlt');
+const weitere = calculatorsInCategory('prozent-rechner').filter((c) => c.slug !== 'prozent-rechner');
 ---
 
-<CategoryPage
-  id="prozent-rechner"
-  h1="Prozentrechner: Rabatt, Marge und Prozentwerte"
-  faq={[
-    {
-      q: 'Wie rechne ich Prozent aus?',
-      a: 'Den Prozentwert erhalten Sie mit Grundwert × Prozentsatz ÷ 100. Den Prozentsatz berechnen Sie mit Prozentwert ÷ Grundwert × 100. Beispiel: 30 € von 120 € sind 30 ÷ 120 × 100 = 25 %.',
-    },
-    {
-      q: 'Warum ergeben 20 % und 10 % Rabatt nicht 30 %?',
-      a: 'Weil sich der zweite Prozentsatz auf den bereits reduzierten Betrag bezieht. 100 € minus 20 % sind 80 €, davon 10 % weniger ergibt 72 € – also insgesamt 28 % Nachlass.',
-    },
-    {
-      q: 'Was ist der Unterschied zwischen Prozent und Prozentpunkten?',
-      a: 'Prozentpunkte beschreiben den Abstand zwischen zwei Prozentsätzen. Steigt ein Zinssatz von 2 % auf 3 %, ist er um einen Prozentpunkt gestiegen – relativ betrachtet aber um 50 %.',
-    },
-  ]}
->
-  <p>
-    Prozentrechnung begegnet uns überall: beim Einkaufen, bei Preiskalkulationen, bei Steuern und bei Renditen. Diese Rechner übernehmen die
-    Arbeit und zeigen Ihnen den Rechenweg.
-  </p>
+<CalculatorPage entry={entry} breadcrumbs={[{ name: 'Prozentrechner' }]}>
+  <PercentCalc />
 
-  <Fragment slot="guide">
-    <h2>Die Grundlagen der Prozentrechnung</h2>
-    <p>Jede Prozentrechnung arbeitet mit drei Größen:</p>
-    <ul>
-      <li><strong>Grundwert:</strong> das Ganze, auf das sich der Prozentsatz bezieht (z. B. der Originalpreis).</li>
-      <li><strong>Prozentsatz:</strong> der Anteil in Prozent (z. B. 20 %).</li>
-      <li><strong>Prozentwert:</strong> der Anteil als Betrag (z. B. 16 € Ersparnis).</li>
-    </ul>
-    <p>
-      Die wichtigste Frage ist immer: <strong>Worauf bezieht sich der Prozentsatz?</strong> Viele Fehler entstehen, weil der falsche Grundwert
-      verwendet wird. Beim <a href="/rabatt-rechner/">Rabatt</a> ist es der ursprüngliche Preis, bei der
-      <a href="/gewinnmarge-rechner/">Gewinnmarge</a> der Umsatz, beim Aufschlag die Kosten und bei der
-      <a href="/umsatzsteuer-rechner/">Umsatzsteuer</a> der Nettobetrag.
-    </p>
-    <h3>Prozentsätze nicht einfach addieren</h3>
-    <p>
-      Folgen mehrere prozentuale Veränderungen aufeinander, beziehen sie sich jeweils auf einen neuen Grundwert. Ein Preis, der erst um 10 %
-      steigt und dann um 10 % sinkt, liegt am Ende 1 % unter dem Ausgangswert. Rechnen Sie solche Fälle deshalb Schritt für Schritt.
-    </p>
-    <p>
-      Auch Renditen sind Prozentrechnungen: Der <a href="/roi-rechner/">ROI-Rechner</a> setzt den Gewinn einer Investition ins Verhältnis zum
-      eingesetzten Kapital.
-    </p>
-  </Fragment>
-</CategoryPage>
+  <section slot="after-calculator" aria-labelledby="weitere-heading" class="mt-14">
+    <h2 id="weitere-heading" class="text-2xl font-bold tracking-tight text-navy-900">Weitere Prozent- &amp; Rabatt-Rechner</h2>
+    <p class="mt-2 max-w-3xl text-muted">Für häufige Spezialfälle der Prozentrechnung gibt es eigene Rechner – mit passenden Formeln und Erklärungen.</p>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {weitere.map((c) => <CalculatorCard calc={c} />)}
+    </div>
+  </section>
+</CalculatorPage>

@@ -239,3 +239,27 @@ test('Rabatt vorwärts und rückwärts', () => {
   assert.ok(fail(calculateDiscount({ mode: 'percent', original: 100, discountPct: 120 })).discountPct);
   assert.ok(fail(calculateDiscount({ mode: 'percent', original: 0, discountPct: 10 })).original);
 });
+
+// ---------------------------------------------------------------- Prozentrechner
+import { calculatePercent } from '../src/lib/calc/percent.ts';
+
+test('Prozentrechner: alle fünf Modi (Testfälle aus der Aufgabenstellung)', () => {
+  const v = (r: ReturnType<typeof calculatePercent>) => (r.ok ? r.value : NaN);
+  close(v(calculatePercent({ mode: 'prozentwert', p: 15, g: 240 })), 36, 1e-9);
+  close(v(calculatePercent({ mode: 'prozentsatz', w: 36, g: 120 })), 30, 1e-9);
+  close(v(calculatePercent({ mode: 'grundwert', w: 45, p: 15 })), 300, 1e-9);
+  const ch = calculatePercent({ mode: 'veraenderung', a: 80, b: 100 });
+  assert.ok(ch.ok && Math.abs(ch.value - 25) < 1e-9 && ch.diff === 20);
+  close(v(calculatePercent({ mode: 'veraenderung', a: 100, b: 80 })), -20, 1e-9);
+  const up = calculatePercent({ mode: 'aufschlag', g: 250, p: 19, richtung: 'plus' });
+  assert.ok(up.ok && Math.abs(up.value - 297.5) < 1e-9 && Math.abs(up.diff! - 47.5) < 1e-9);
+  close(v(calculatePercent({ mode: 'aufschlag', g: 250, p: 20, richtung: 'minus' })), 200, 1e-9);
+});
+
+test('Prozentrechner: Validierung (Division durch 0, fehlende Werte)', () => {
+  assert.ok(fail(calculatePercent({ mode: 'prozentsatz', w: 5, g: 0 })).g);
+  assert.ok(fail(calculatePercent({ mode: 'grundwert', w: 5, p: 0 })).p);
+  assert.ok(fail(calculatePercent({ mode: 'veraenderung', a: 0, b: 5 })).a);
+  assert.ok(fail(calculatePercent({ mode: 'prozentwert', p: NaN, g: 5 })).p);
+  assert.ok(fail(calculatePercent({ mode: 'aufschlag', g: 5, p: -3 })).p);
+});

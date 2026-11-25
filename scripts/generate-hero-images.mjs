@@ -110,6 +110,38 @@ const scenes = {
     <rect x="715" y="520" width="140" height="26" rx="13" fill="${C.sun}" opacity=".7"/>
   </g>
   <g filter="url(#soft)">${coin(980, 520, 30)}${coin(980, 498, 30)}${coin(980, 476, 30)}${coin(1040, 540, 24)}</g>`,
+
+  /** Prozentrechner: großes Prozentzeichen und Tortendiagramm */
+  prozentrechner: () => `
+  ${sky()}
+  <g filter="url(#soft)">
+    <circle cx="420" cy="350" r="190" fill="${C.white}"/>
+    <!-- Tortendiagramm: Anteil 30 % blau, 15 % sonnengelb -->
+    <path d="M420 350 L420 160 A190 190 0 0 1 600.7 291.3 Z" fill="${C.primary}"/>
+    <path d="M420 350 L600.7 291.3 A190 190 0 0 1 573.7 461.7 Z" fill="${C.sun}"/>
+    <circle cx="420" cy="350" r="190" fill="none" stroke="${C.primary}" stroke-opacity=".25" stroke-width="6"/>
+  </g>
+  <g transform="translate(800,360)" filter="url(#soft)">
+    <circle r="150" fill="${C.primaryDark}"/>
+    <path d="M62 -78 L-62 78" stroke="${C.white}" stroke-width="22" stroke-linecap="round"/>
+    <circle cx="-52" cy="-48" r="30" fill="none" stroke="${C.white}" stroke-width="18"/>
+    <circle cx="52" cy="48" r="30" fill="none" stroke="${C.white}" stroke-width="18"/>
+  </g>`,
+
+  /** In-Artikel-Grafik: Torte mit hervorgehobenem Stück, Balken Grundwert/Prozentwert */
+  'prozentrechner-beispiel': () => `
+  ${sky()}
+  <g filter="url(#soft)">
+    <circle cx="380" cy="350" r="170" fill="${C.white}"/>
+    <path d="M380 350 L380 180 A170 170 0 0 1 541.7 297.5 Z" fill="${C.sun}" transform="translate(16,-14)"/>
+    <circle cx="380" cy="350" r="170" fill="none" stroke="${C.primary}" stroke-opacity=".25" stroke-width="6"/>
+  </g>
+  <g filter="url(#soft)">
+    <rect x="640" y="230" width="420" height="300" rx="28" fill="${C.white}"/>
+    <rect x="690" y="290" width="320" height="48" rx="14" fill="${C.primary}"/>
+    <rect x="690" y="370" width="64" height="48" rx="14" fill="${C.sun}"/>
+    <rect x="690" y="455" width="200" height="14" rx="7" fill="${C.ink}" opacity=".15"/>
+  </g>`,
 };
 
 await mkdir(OUT, { recursive: true });

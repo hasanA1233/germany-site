@@ -9,7 +9,10 @@ import { categories } from '../data/categories';
 import { site } from '../data/site';
 
 const featured = calculators.filter((c) => c.featured).slice(0, 6);
-const popular = calculators.filter((c) => c.popular).slice(0, 6);
+const popular = calculators
+  .filter((c) => c.popular)
+  .sort((a, b) => (a.popularRank ?? 99) - (b.popularRank ?? 99))
+  .slice(0, 6);
 const recentList = [...calculators].sort((a, b) => b.added.localeCompare(a.added)).slice(0, 4);
 
 const guides = [
