@@ -1,0 +1,21 @@
+// Cloudflare Workers – statische Astro-Seite (nur Assets, kein Worker-Code).
+// Build: `npm run build` → ./dist · Deploy: `npx wrangler deploy`
+// Einstellungen übernommen vom bestehenden Worker „germany-site“ (Stand 25.11.2026).
+{
+  "$schema": "https://unpkg.com/wrangler@4.168.0/config-schema.json",
+  "name": "germany-site",
+  "compatibility_date": "2026-11-17",
+  "compatibility_flags": ["global_fetch_strictly_public"],
+  "assets": {
+    "directory": "./dist",
+    // Unbekannte URLs → dist/404.html mit HTTP-Status 404
+    "not_found_handling": "404-page",
+    // /seite → /seite/ (passt zu trailingSlash: 'always' in astro.config)
+    "html_handling": "auto-trailing-slash"
+  },
+  "routes": [{ "pattern": "quickrechner.de", "custom_domain": true }],
+  "workers_dev": true,
+  "observability": {
+    "enabled": true
+  }
+}
