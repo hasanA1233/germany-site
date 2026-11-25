@@ -1,0 +1,77 @@
+---
+/**
+ * Abzüge pro Monat und Jahr als Tabelle + CSS-Balken (ohne Diagramm-Bibliothek).
+ * Werte setzt src/scripts/netto-breakdown.ts über data-out="<key>M" / "<key>J" und data-bar="<gruppe>".
+ * Zeilen mit data-row="<key>" werden ausgeblendet, wenn der Betrag 0 ist (außer Brutto/Netto).
+ */
+interface Props {
+  /** short: kürzere Bezeichnung für schmale Bildschirme (< 640 px) */
+  rows: { key: string; label: string; short?: string }[];
+  caption: string;
+}
+const { rows, caption } = Astro.props;
+const groups = [
+  { key: 'netto', label: 'Netto', color: 'var(--primary)' },
+  { key: 'steuern', label: 'Steuern', color: 'var(--accent)' },
+  { key: 'sozial', label: 'Sozialversicherung', color: 'var(--chart-a)' },
+];
+---
+
+<div class="mt-4">
+  <!-- Balken: feste Höhe, Breiten per JS → kein Layout-Sprung -->
+  <div class="flex h-4 w-full overflow-hidden rounded-full bg-surface ring-1 ring-line" role="img" data-bar-label aria-label="Aufteilung des Bruttolohns">
+    {groups.map((g) => <span data-bar={g.key} class="h-full transition-[width] duration-300" style={`width:0%;background:${g.color}`} />)}
+  </div>
+  <ul class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+    {
+      groups.map((g) => (
+        <li class="inline-flex items-center gap-1.5">
+          <span class="inline-block h-3 w-3 rounded-sm" style={`background:${g.color}`} aria-hidden="true" />
+          {g.label} <span class="tabular-nums" data-out={`pct-${g.key}`} />
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="mt-4 overflow-x-auto rounded-2xl border border-line bg-card">
+    <table class="w-full text-[13px] sm:text-sm">
+      <caption class="sr-only">{caption}</caption>
+      <thead class="bg-surface text-navy-900">
+        <tr>
+          <th scope="col" class="px-2 py-2 text-left font-semibold sm:px-3">Posten</th>
+          <th scope="col" class="px-2 py-2 text-right font-semibold sm:px-3">Monat</th>
+          <th scope="col" class="px-2 py-2 text-right font-semibold sm:px-3">Jahr</th>
+        </tr>
+      </thead>
+      <tbody class="tabular-nums">
+        {
+          rows.map((r) => {
+            const isNetto = r.key === 'netto';
+            const isBrutto = r.key === 'brutto';
+            return (
+              <tr data-row={r.key} class:list={['border-t border-line', isNetto && 'bg-warn-50 font-bold text-navy-900']}>
+                <th scope="row" class:list={['px-2 py-2 text-left sm:px-3', isNetto || isBrutto ? 'font-semibold' : 'font-normal text-muted']}>
+                  {!isNetto && !isBrutto && <span aria-hidden="true">−&nbsp;</span>}
+                  {r.short ? (
+                    <>
+                      <abbr title={r.label} class="no-underline sm:hidden">{r.short}</abbr>
+                      <span class="hidden sm:inline">{r.label}</span>
+                    </>
+                  ) : (
+                    r.label
+                  )}
+                </th>
+                <td class="whitespace-nowrap px-2 py-2 text-right sm:px-3" data-out={`${r.key}M`}>
+                  –
+                </td>
+                <td class="whitespace-nowrap px-2 py-2 text-right sm:px-3" data-out={`${r.key}J`}>
+                  –
+                </td>
+              </tr>
+            );
+          })
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

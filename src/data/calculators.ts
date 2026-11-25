@@ -10,7 +10,8 @@ export type CalculatorSlug =
   | 'gewinnmarge-rechner'
   | 'roi-rechner'
   | 'break-even-rechner'
-  | 'rabatt-rechner';
+  | 'rabatt-rechner'
+  | 'werkstudent-brutto-netto-rechner';
 
 export interface CalculatorMeta {
   slug: CalculatorSlug;
@@ -176,6 +177,19 @@ export const calculators: CalculatorMeta[] = [
     ogFormula: 'Endpreis = Preis × (1 − Rabatt ÷ 100)',
     popular: true,
     added: '2026-11-22',
+  },
+  {
+    slug: 'werkstudent-brutto-netto-rechner',
+    href: '/werkstudent-brutto-netto-rechner/',
+    name: 'Werkstudent-Rechner',
+    description: 'Werkstudent brutto netto 2026: Lohnsteuer, Rentenversicherung und Netto pro Monat und Jahr – mit Prüfung der 20-Stunden-Grenze.',
+    category: 'gehalt-steuern',
+    alsoIn: [],
+    keywords: ['werkstudent', 'werkstudentin', 'student', 'studentenjob', 'nebenjob', 'brutto netto', 'gehalt', 'lohnsteuer', 'rentenversicherung', '20 stunden', 'minijob', 'midijob'],
+    icon: 'student',
+    related: ['umsatzsteuer-rechner', 'sparplan-rechner', 'zinseszins-rechner'],
+    ogFormula: 'Netto = Brutto − Lohnsteuer − Rentenversicherung',
+    added: '2026-11-25',
   },
 ];
 

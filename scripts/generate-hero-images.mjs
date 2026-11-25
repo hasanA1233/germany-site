@@ -1,5 +1,5 @@
 // Erzeugt die Hero-Illustrationen der Rechnerseiten (SVG → WebP) im Stil „Cloudy Sky“.
-// Ausführen: npm run images:hero   → public/images/rechner/<name>.webp (1200×675) und <name>-600.webp
+// Ausführen: npm run images:hero   → public/images/rechner/<name>.webp (1200×675) sowie <name>-800.webp und <name>-480.webp
 // Regeln: keine Texte im Bild, keine Logos/Hoheitszeichen, keine realen Personen oder Marken.
 import sharp from 'sharp';
 import { mkdir, stat } from 'node:fs/promises';
@@ -55,12 +55,68 @@ const scenes = {
     <rect x="22" y="24" width="146" height="54" rx="12" fill="${C.skyTop}"/>
     ${[0, 1, 2].map((r) => [0, 1, 2].map((c) => `<rect x="${22 + c * 52}" y="${98 + r * 50}" width="42" height="38" rx="10" fill="${r === 2 && c === 2 ? C.sun : '#3A4D63'}"/>`).join('')).join('')}
   </g>`,
+
+  /** Werkstudent: abstrakte studierende Person (ohne Gesicht) am Laptop, Wanduhr, Bücherstapel, Münzen */
+  'werkstudent-brutto-netto-rechner': () => `
+  ${sky()}
+  <!-- Tisch -->
+  <rect x="250" y="500" width="700" height="22" rx="11" fill="${C.ink}" opacity=".85"/>
+  <rect x="300" y="522" width="16" height="110" rx="8" fill="${C.ink}" opacity=".6"/>
+  <rect x="884" y="522" width="16" height="110" rx="8" fill="${C.ink}" opacity=".6"/>
+  <g filter="url(#soft)">
+    <!-- Person: Kopf, Oberkörper, Arm (stilisiert) -->
+    <circle cx="430" cy="300" r="52" fill="${C.primaryDark}"/>
+    <path d="M350 500 C350 400 380 370 430 370 C480 370 510 400 515 440 L520 500 Z" fill="${C.primary}"/>
+    <path d="M500 430 L585 470" stroke="${C.primary}" stroke-width="30" stroke-linecap="round"/>
+    <!-- Laptop -->
+    <path d="M560 360 h210 a10 10 0 0 1 10 10 v120 h-230 v-120 a10 10 0 0 1 10 -10z" fill="${C.ink}"/>
+    <rect x="566" y="368" width="198" height="114" rx="6" fill="${C.skyTop}"/>
+    <rect x="586" y="392" width="90" height="12" rx="6" fill="${C.primary}" opacity=".6"/>
+    <rect x="586" y="416" width="150" height="10" rx="5" fill="${C.ink}" opacity=".18"/>
+    <rect x="586" y="436" width="120" height="10" rx="5" fill="${C.ink}" opacity=".18"/>
+    <path d="M530 490 h270 l-12 14 h-246z" fill="${C.ink}" opacity=".9"/>
+  </g>
+  <!-- Wanduhr (ohne Ziffern) -->
+  <g transform="translate(870,190)" filter="url(#soft)">
+    <circle r="78" fill="${C.white}"/>
+    <circle r="78" fill="none" stroke="${C.primary}" stroke-width="10"/>
+    ${Array.from({ length: 12 }, (_, i) => `<rect x="-3" y="-66" width="6" height="${i % 3 === 0 ? 16 : 9}" rx="3" fill="${C.ink}" opacity=".55" transform="rotate(${i * 30})"/>`).join('')}
+    <path d="M0 0 L0 -46" stroke="${C.ink}" stroke-width="8" stroke-linecap="round"/>
+    <path d="M0 0 L36 22" stroke="${C.primaryDark}" stroke-width="7" stroke-linecap="round"/>
+    <circle r="7" fill="${C.sun}"/>
+  </g>
+  <!-- Bücherstapel und Münzen auf dem Tisch -->
+  <g filter="url(#soft)">
+    <rect x="820" y="452" width="110" height="20" rx="5" fill="${C.primary}"/>
+    <rect x="828" y="432" width="96" height="20" rx="5" fill="${C.sun}"/>
+    <rect x="816" y="412" width="104" height="20" rx="5" fill="${C.primaryDark}"/>
+    <rect x="822" y="472" width="114" height="28" rx="5" fill="${C.ink}" opacity=".75"/>
+  </g>
+  <g filter="url(#soft)">${coin(300, 480, 26)}${coin(300, 462, 26)}${coin(300, 444, 26)}</g>`,
+
+  /** In-Artikel-Grafik: Gehaltsabrechnung mit Balken (Netto, Steuern, Rentenversicherung), keine Texte */
+  'werkstudent-brutto-netto-rechner-beispiel': () => `
+  ${sky()}
+  <g filter="url(#soft)">
+    <rect x="300" y="110" width="600" height="470" rx="28" fill="${C.white}"/>
+    <rect x="345" y="155" width="210" height="18" rx="9" fill="${C.primary}" opacity=".35"/>
+    <rect x="345" y="190" width="320" height="12" rx="6" fill="${C.ink}" opacity=".12"/>
+    <!-- Balken: Netto (lang), Steuern, Rente -->
+    <rect x="345" y="250" width="510" height="54" rx="14" fill="${C.primary}"/>
+    <rect x="345" y="330" width="80" height="54" rx="14" fill="${C.sun}"/>
+    <rect x="345" y="410" width="120" height="54" rx="14" fill="${C.primaryDark}" opacity=".55"/>
+    <rect x="345" y="500" width="510" height="3" fill="${C.ink}" opacity=".15"/>
+    <rect x="345" y="525" width="150" height="16" rx="8" fill="${C.ink}" opacity=".25"/>
+    <rect x="715" y="520" width="140" height="26" rx="13" fill="${C.sun}" opacity=".7"/>
+  </g>
+  <g filter="url(#soft)">${coin(980, 520, 30)}${coin(980, 498, 30)}${coin(980, 476, 30)}${coin(1040, 540, 24)}</g>`,
 };
 
 await mkdir(OUT, { recursive: true });
 for (const [name, draw] of Object.entries(scenes)) {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">${draw()}</svg>`;
-  for (const [w, suffix] of [[1200, ''], [600, '-600']]) {
+  // Responsive Varianten: 1200w (Basis), 800w, 480w
+  for (const [w, suffix] of [[1200, ''], [800, '-800'], [480, '-480']]) {
     const file = `${OUT}/${name}${suffix}.webp`;
     await sharp(Buffer.from(svg)).resize(w).webp({ quality: 80 }).toFile(file);
     const kb = (await stat(file)).size / 1024;

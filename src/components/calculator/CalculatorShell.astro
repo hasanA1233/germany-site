@@ -38,7 +38,7 @@ const headingId = `${slug}-heading`;
       </div>
     </div>
 
-    <div class="border-t border-line bg-navy-50/60 p-5 sm:p-7 lg:border-t-0 lg:border-l">
+    <div id={`${slug}-ergebnis`} tabindex="-1" class="scroll-mt-20 border-t border-line bg-navy-50/60 p-5 focus:outline-none sm:p-7 lg:border-t-0 lg:border-l">
       <h3 class="mb-4 text-sm font-semibold uppercase tracking-wider text-muted">Ergebnis</h3>
       <div data-results>
         <slot name="results" />

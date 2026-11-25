@@ -13,7 +13,8 @@
     "astro": "astro",
     "audit": "node scripts/audit-dist.mjs",
     "images": "node scripts/generate-images.mjs",
-    "images:hero": "node scripts/generate-hero-images.mjs"
+    "images:hero": "node scripts/generate-hero-images.mjs",
+    "lohnsteuer:generate": "node scripts/generate-lohnsteuer.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.1.6",

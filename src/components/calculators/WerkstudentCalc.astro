@@ -1,0 +1,161 @@
+---
+import CalculatorShell from '../calculator/CalculatorShell.astro';
+import NumberField from '../calculator/NumberField.astro';
+import ChoiceField from '../calculator/ChoiceField.astro';
+import SelectField from '../calculator/SelectField.astro';
+import ResultMain from '../calculator/ResultMain.astro';
+import NettoBreakdown from '../calculator/NettoBreakdown.astro';
+import Icon from '../ui/Icon.astro';
+import { bundeslaender, steuer2026 } from '../../data/steuer-2026';
+const p = 'ws';
+const slug = 'werkstudent';
+---
+
+<CalculatorShell
+  slug={slug}
+  title="Werkstudent: Brutto → Netto 2026"
+  note={`Annahmen: gleichbleibender Monatslohn, keine weiteren Beschäftigungen, keine Freibeträge. Bis ${steuer2026.minijobGrenze} € gelten die Minijob-Regeln (Pauschsteuer trägt in der Regel der Arbeitgeber). Alle Angaben ohne Gewähr – keine Steuer- oder Rechtsberatung.`}
+>
+  <NumberField idPrefix={p} name="brutto" label="Bruttolohn pro Monat" value="1.200" suffix="€" />
+  <div class="grid grid-cols-2 gap-3">
+    <NumberField idPrefix={p} name="stundenVorlesung" label="Stunden/Woche Vorlesungszeit" value="20" suffix="Std." decimals={1} />
+    <NumberField idPrefix={p} name="stundenFerien" label="Stunden/Woche Semesterferien" value="20" suffix="Std." decimals={1} />
+  </div>
+  <div class="grid grid-cols-2 gap-3">
+    <SelectField
+      idPrefix={p}
+      name="stkl"
+      label="Steuerklasse"
+      value="1"
+      hint="VI = Zweitjob"
+      options={[
+        { value: '1', label: 'I' },
+        { value: '2', label: 'II' },
+        { value: '3', label: 'III' },
+        { value: '4', label: 'IV' },
+        { value: '5', label: 'V' },
+        { value: '6', label: 'VI' },
+      ]}
+    />
+    <NumberField idPrefix={p} name="alter" label="Alter" value="24" suffix="Jahre" integer />
+  </div>
+  <SelectField idPrefix={p} name="land" label="Bundesland" value="NW" options={bundeslaender.map((b) => ({ value: b.code, label: b.name }))} />
+  <ChoiceField
+    idPrefix={p}
+    name="kirche"
+    legend="Kirchensteuerpflichtig?"
+    value="nein"
+    options={[
+      { value: 'nein', label: 'Nein' },
+      { value: 'ja', label: 'Ja' },
+    ]}
+  />
+  <NumberField idPrefix={p} name="kinder" label="Kinder unter 25 Jahren" value="0" integer />
+  <ChoiceField
+    idPrefix={p}
+    name="kv"
+    legend="Krankenversicherung (nur zur Info)"
+    value="studentisch"
+    options={[
+      { value: 'studentisch', label: 'Studentisch' },
+      { value: 'familie', label: 'Familie' },
+      { value: 'privat', label: 'Privat' },
+    ]}
+  />
+  <p data-show-when="kv=studentisch" class="-mt-3 text-xs text-muted">Den Beitrag zur studentischen Krankenversicherung zahlen Sie selbst – er wird nicht vom Lohn abgezogen.</p>
+  <p data-show-when="kv=familie" hidden class="-mt-3 text-xs text-muted">
+    Familienversicherung ist meist nur bis 25 Jahre und bis zu einer Einkommensgrenze möglich; bei regelmäßig höherem Verdienst endet sie. Fragen Sie im Zweifel Ihre Krankenkasse.
+  </p>
+  <p data-show-when="kv=privat" hidden class="-mt-3 text-xs text-muted">Private Beiträge zahlen Sie selbst; sie mindern den Nettolohn im Rechner nicht.</p>
+  <a href={`#${slug}-ergebnis`} class="btn-primary lg:hidden" data-jump-result>
+    Zum Ergebnis <Icon name="arrow-right" size={18} class="rotate-90" />
+  </a>
+
+  <Fragment slot="results">
+    <p
+      data-state-for="status"
+      class="mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold ring-1 data-[state=ok]:bg-brand-50 data-[state=ok]:text-brand-700 data-[state=ok]:ring-brand-100 data-[state=warn]:bg-danger-50 data-[state=warn]:text-danger-700 data-[state=warn]:ring-danger-700/30 data-[state=info]:bg-warn-50 data-[state=info]:text-warn-700 data-[state=info]:ring-amber-200"
+      data-out="status"
+    >
+      Werkstudentenprivileg gilt
+    </p>
+    <ResultMain label="Netto pro Monat" out="nettoMain" sub="Netto pro Jahr:" subOut="nettoJahrMain" />
+    <NettoBreakdown
+      caption="Abzüge pro Monat und pro Jahr"
+      rows={[
+        { key: 'brutto', label: 'Brutto' },
+        { key: 'lohnsteuer', label: 'Lohnsteuer' },
+        { key: 'soli', label: 'Solidaritätszuschlag', short: 'Soli' },
+        { key: 'kirchensteuer', label: 'Kirchensteuer', short: 'KiSt' },
+        { key: 'rv', label: 'Rentenversicherung', short: 'Rente' },
+        { key: 'kv', label: 'Krankenversicherung', short: 'Kranken' },
+        { key: 'pv', label: 'Pflegeversicherung', short: 'Pflege' },
+        { key: 'av', label: 'Arbeitslosenversicherung', short: 'Arbeitslos.' },
+        { key: 'netto', label: 'Netto' },
+      ]}
+    />
+    <ul class="mt-4 space-y-2 text-sm leading-relaxed text-ink">
+      <li data-hint="erstattung" hidden class="flex gap-2"><Icon name="info" size={18} class="mt-0.5 shrink-0 text-brand-700" /><span data-out="erstattung"></span></li>
+      <li data-hint="ueb" hidden class="flex gap-2"><Icon name="info" size={18} class="mt-0.5 shrink-0 text-brand-700" /><span data-out="ueb"></span></li>
+      <li data-hint="ferien" hidden class="flex gap-2"><Icon name="info" size={18} class="mt-0.5 shrink-0 text-brand-700" /><span>Mehr als 20 Stunden in den Semesterferien sind zulässig – insgesamt aber höchstens 26 Wochen im Jahr mit mehr als 20 Wochenstunden.</span></li>
+    </ul>
+  </Fragment>
+</CalculatorShell>
+
+<script>
+  import { mountCalculator } from '../../scripts/calc-runtime';
+  import { renderBreakdown } from '../../scripts/netto-breakdown';
+  import { calculateWerkstudent } from '../../lib/calc/werkstudent';
+  import { formatEUR } from '../../lib/format';
+  import type { Steuerklasse } from '../../lib/lohnsteuer-2026';
+  import type { BundeslandCode } from '../../data/steuer-2026';
+
+  const STATUS = {
+    werkstudent: { state: 'ok', text: '✓ Werkstudentenprivileg gilt' },
+    ueber20: { state: 'warn', text: 'Achtung: 20-Stunden-Grenze überschritten' },
+    minijob: { state: 'info', text: 'Minijob-Regeln (bis 603 €)' },
+  } as const;
+
+  mountCalculator('werkstudent', (c) => {
+    const r = calculateWerkstudent({
+      bruttoMonat: c.num('brutto'),
+      stundenVorlesung: c.num('stundenVorlesung'),
+      stundenFerien: c.num('stundenFerien'),
+      steuerklasse: Number(c.choice('stkl')) as Steuerklasse,
+      kirche: c.choice('kirche') === 'ja',
+      bundesland: c.choice('land') as BundeslandCode,
+      alter: c.num('alter'),
+      kinder: c.num('kinder'),
+    });
+    if (!r.ok) return r.errors;
+
+    const s = STATUS[r.status];
+    c.state('status', s.state);
+    c.out('status', s.text);
+    c.out('nettoMain', formatEUR(r.monat.netto));
+    c.out('nettoJahrMain', formatEUR(r.jahr.netto));
+
+    const keys = ['brutto', 'lohnsteuer', 'soli', 'kirchensteuer', 'rv', 'kv', 'pv', 'av', 'netto'] as const;
+    const werte = Object.fromEntries(keys.map((k) => [k, { m: r.monat[k], j: r.jahr[k] }]));
+    renderBreakdown(c, werte, { steuern: ['lohnsteuer', 'soli', 'kirchensteuer'], sozial: ['rv', 'kv', 'pv', 'av'] });
+
+    const hint = (k: string, show: boolean) => {
+      const el = c.form.querySelector<HTMLElement>(`[data-hint="${k}"]`);
+      if (el) el.hidden = !show;
+    };
+    hint('erstattung', r.erstattungSchaetzung > 0);
+    c.out(
+      'erstattung',
+      `Über die Steuererklärung bekommen Sie voraussichtlich rund ${formatEUR(r.erstattungSchaetzung, { rounded: true })} Lohnsteuer im Jahr zurück (Schätzung, nur dieser Job, ganzes Jahr).`,
+    );
+    hint('ueb', r.uebergangsbereich);
+    c.out('ueb', 'Übergangsbereich (Midijob): Ihr Rentenbeitrag ist reduziert – der volle Rentenanspruch bleibt trotzdem erhalten.');
+    hint('ferien', r.ferienHinweis);
+    return null;
+  });
+
+  // „Zum Ergebnis“ (Mobil): Fokus auf den Ergebnisbereich, damit Screenreader dort weiterlesen
+  document.querySelectorAll<HTMLAnchorElement>('[data-jump-result]').forEach((a) =>
+    a.addEventListener('click', () => setTimeout(() => document.querySelector<HTMLElement>(a.hash)?.focus({ preventScroll: true }), 0)),
+  );
+</script>

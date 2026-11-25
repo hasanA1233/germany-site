@@ -27,7 +27,8 @@ export type IconName =
   | 'briefcase'
   | 'percent'
   | 'calculator'
-  | 'tax';
+  | 'tax'
+  | 'student';
 
 export const categories: Category[] = [
   {
@@ -68,10 +69,10 @@ export const categories: Category[] = [
     href: '/gehalt-steuern/',
     name: 'Gehalt & Steuern',
     navLabel: 'Gehalt & Steuern',
-    short: 'Umsatzsteuer und Mehrwertsteuer korrekt zwischen netto und brutto umrechnen.',
-    seoTitle: 'Steuerrechner – Umsatzsteuer berechnen',
+    short: 'Nettolohn für Werkstudenten berechnen und Mehrwertsteuer zwischen netto und brutto umrechnen.',
+    seoTitle: 'Gehalts- & Steuerrechner 2026 – Netto & MwSt',
     metaDescription:
-      'Steuerrechner von QuickRechner: Umsatzsteuer (Mehrwertsteuer) netto zu brutto und brutto zu netto berechnen – mit 19 %, 7 % oder eigenem Satz.',
+      'Gehalts- und Steuerrechner 2026: Werkstudent brutto netto mit Lohnsteuer nach BMF-Programmablaufplan sowie MwSt netto zu brutto mit 19 % oder 7 %.',
     icon: 'tax',
   },
   {

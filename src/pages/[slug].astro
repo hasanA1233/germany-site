@@ -23,6 +23,7 @@ import GewinnmargeCalc from '../components/calculators/GewinnmargeCalc.astro';
 import RoiCalc from '../components/calculators/RoiCalc.astro';
 import BreakEvenCalc from '../components/calculators/BreakEvenCalc.astro';
 import RabattCalc from '../components/calculators/RabattCalc.astro';
+import WerkstudentCalc from '../components/calculators/WerkstudentCalc.astro';
 
 const components: Record<CalculatorSlug, typeof KreditrateCalc> = {
   'kreditrate-berechnen': KreditrateCalc,
@@ -35,6 +36,7 @@ const components: Record<CalculatorSlug, typeof KreditrateCalc> = {
   'roi-rechner': RoiCalc,
   'break-even-rechner': BreakEvenCalc,
   'rabatt-rechner': RabattCalc,
+  'werkstudent-brutto-netto-rechner': WerkstudentCalc,
 };
 
 export async function getStaticPaths() {
@@ -102,7 +104,7 @@ const schema = [
             <source
               media="(min-width: 1024px)"
               type="image/webp"
-              srcset={`/images/rechner/${data.hero.file}-600.webp 600w, /images/rechner/${data.hero.file}.webp 1200w`}
+              srcset={`/images/rechner/${data.hero.file}-480.webp 480w, /images/rechner/${data.hero.file}-800.webp 800w, /images/rechner/${data.hero.file}.webp 1200w`}
               sizes="24rem"
             />
             <img

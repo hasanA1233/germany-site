@@ -1,0 +1,26 @@
+---
+/** Illustration im Ratgebertext: responsive WebP (480/800/1200w), lazy geladen, feste Maße gegen Layout-Sprünge. */
+interface Props {
+  /** Dateiname ohne Endung in public/images/rechner/ */
+  file: string;
+  alt: string;
+  caption?: string;
+}
+const { file, alt, caption } = Astro.props;
+const src = (w: number) => `/images/rechner/${file}-${w}.webp`;
+---
+
+<figure class="my-8">
+  <img
+    src={src(800)}
+    srcset={`${src(480)} 480w, ${src(800)} 800w, /images/rechner/${file}.webp 1200w`}
+    sizes="(min-width: 1024px) 720px, calc(100vw - 2rem)"
+    width="1200"
+    height="675"
+    alt={alt}
+    loading="lazy"
+    decoding="async"
+    class="h-auto w-full rounded-[var(--radius-card)] border border-line"
+  />
+  {caption && <figcaption class="mt-2 text-sm text-muted">{caption}</figcaption>}
+</figure>
