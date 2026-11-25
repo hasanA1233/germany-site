@@ -1,12 +1,12 @@
 ---
-seoTitle: "MwSt Rechner 2026: Mehrwertsteuer brutto netto"
+seoTitle: "MwSt Rechner 2026: Mehrwertsteuer berechnen"
 description: "Mehrwertsteuer Rechner 2026: MwSt brutto netto mit 19 %, 7 % oder eigenem Satz berechnen – auch für mehrere Positionen, mit Kopierfunktion."
-h1: "MwSt Brutto-Netto-Rechner 2026"
-intro: "Rechnen Sie die Mehrwertsteuer in Sekunden aus: Geben Sie einen Betrag ein, wählen Sie Netto → Brutto oder Brutto → Netto und den Steuersatz von 19 % oder 7 %. Unser Mehrwertsteuer Rechner rechnet brutto in netto und netto in brutto – auch für mehrere Positionen – und zeigt Nettobetrag, MwSt-Betrag und Bruttobetrag sofort an – auf Wunsch zum Kopieren."
-updated: 2026-11-24
+h1: "MwSt Rechner (Mehrwertsteuer & Umsatzsteuer)"
+intro: "Mit dem MwSt Rechner rechnen Sie die Mehrwertsteuer in Sekunden aus: Netto → Brutto oder Brutto → Netto, mit 19 %, 7 % oder eigenem Steuersatz. Nettobetrag, MwSt-Betrag und Bruttobetrag erscheinen sofort – auch für mehrere Positionen und mit Kopierfunktion."
+updated: 2026-11-25
 hero:
   file: "mwst-brutto-netto-rechner"
-  alt: "MwSt Brutto-Netto-Rechner: Kassenbon mit Prozentzeichen, Münzen und Taschenrechner"
+  alt: "MwSt Rechner: Kassenbon mit Prozentzeichen, Münzen und Taschenrechner"
 faq:
   - q: "Wie rechne ich die MwSt von brutto auf netto?"
     a: "Teilen Sie den Bruttobetrag durch 1,19 (bei 19 %) bzw. durch 1,07 (bei 7 %). Die Differenz zum Bruttobetrag ist die enthaltene Mehrwertsteuer. Beispiel: 119 € ÷ 1,19 = 100 € netto, die MwSt beträgt 19 €."
@@ -21,11 +21,13 @@ faq:
   - q: "Ist Wasser mit 7 % oder 19 % besteuert?"
     a: "Leitungswasser fällt unter den ermäßigten Satz von 7 %. Trinkwasser in Fertigpackungen – also etwa Mineral- oder Tafelwasser in der Flasche – ist laut Anlage 2 Nr. 34 UStG ausdrücklich ausgenommen und wird mit 19 % besteuert."
   - q: "Wofür brauche ich einen MwSt Brutto Netto Rechner?"
-    a: "Immer dann, wenn Sie zwischen Netto- und Bruttobeträgen wechseln müssen: beim Schreiben von Rechnungen und Angeboten (Netto → Brutto), beim Buchen von Kassenbons und Eingangsrechnungen (Brutto → Netto) oder um die enthaltene Mehrwertsteuer für die Umsatzsteuer-Voranmeldung zu ermitteln. Der Rechner vermeidet dabei den typischen Fehler, 19 % einfach vom Bruttobetrag abzuziehen."
+    a: "Immer dann, wenn Sie zwischen Netto- und Bruttobeträgen wechseln müssen: beim Schreiben von Rechnungen und Angeboten (Netto → Brutto), beim Buchen von Kassenbons und Eingangsrechnungen (Brutto → Netto) oder um die enthaltene Mehrwertsteuer für die Umsatzsteuer-Voranmeldung zu ermitteln. Ein Netto Brutto Rechner für die MwSt vermeidet dabei den typischen Fehler, 19 % einfach vom Bruttobetrag abzuziehen."
   - q: "Kann ich mehrere Beträge mit unterschiedlichen Steuersätzen zusammenrechnen?"
     a: "Ja. Wählen Sie im Rechner „Mehrere Positionen“ und geben Sie jeden Betrag mit seinem Steuersatz ein. Der Rechner addiert die Beträge je Steuersatz, berechnet die Mehrwertsteuer aus der jeweiligen Summe – so wie sie auch auf einer Rechnung ausgewiesen wird – und zeigt Netto, MwSt und Brutto insgesamt sowie getrennt nach 19 % und 7 %."
   - q: "Welche Umsatzgrenzen gelten 2026 für Kleinunternehmer?"
     a: "Die Kleinunternehmerregelung nach § 19 UStG gilt, wenn der Gesamtumsatz im Vorjahr höchstens 25.000 € betragen hat und im laufenden Jahr 100.000 € nicht überschreitet. Wird die Grenze von 100.000 € im laufenden Jahr überschritten, ist bereits der Umsatz, mit dem sie überschritten wird, regulär steuerpflichtig. Im Gründungsjahr gilt eine Grenze von 25.000 €."
+  - q: "Was ist die Vorsteuer?"
+    a: "Vorsteuer ist die Umsatzsteuer, die ein Unternehmen beim Einkauf an andere Unternehmen zahlt. Sie kann von der eigenen Umsatzsteuer abgezogen werden (§ 15 UStG), sofern eine ordnungsgemäße Rechnung vorliegt. Ans Finanzamt fließt nur die Differenz. Kleinunternehmer können keine Vorsteuer abziehen."
   - q: "Ist MwSt dasselbe wie Umsatzsteuer?"
     a: "Ja. Im Gesetz heißt die Steuer Umsatzsteuer (USt), umgangssprachlich wird sie meist Mehrwertsteuer (MwSt) genannt. Beide Begriffe meinen dieselbe Steuer."
 sources:
@@ -33,6 +35,8 @@ sources:
     url: "https://www.gesetze-im-internet.de/ustg_1980/__12.html"
   - label: "UStG Anlage 2 – Liste der Gegenstände mit ermäßigtem Steuersatz"
     url: "https://www.gesetze-im-internet.de/ustg_1980/anlage_2.html"
+  - label: "UStG § 15 – Vorsteuerabzug"
+    url: "https://www.gesetze-im-internet.de/ustg_1980/__15.html"
   - label: "UStG § 14 – Ausstellung von Rechnungen"
     url: "https://www.gesetze-im-internet.de/ustg_1980/__14.html"
   - label: "UStG § 19 – Besteuerung der Kleinunternehmer"
@@ -44,11 +48,12 @@ sources:
 ---
 
 import AdSlot from '../../components/ads/AdSlot.astro';
+import ArticleFigure from '../../components/ui/ArticleFigure.astro';
 import { ust2026 } from '../../data/ust-2026';
 
 export const eur = (n) => n.toLocaleString('de-DE') + ' €';
 
-## So funktioniert der MwSt-Rechner
+## Mehrwertsteuer Rechner: so funktioniert's
 
 Als MwSt Rechner brutto netto arbeitet das Tool in beide Richtungen und rechnet bei jeder Eingabe sofort neu:
 
@@ -60,38 +65,62 @@ Haben Sie mehrere Beträge – etwa einen Einkaufsbeleg oder eine Rechnung mit v
 
 Das Ergebnis zeigt Nettobetrag, MwSt-Betrag und Bruttobetrag. Mit den Buttons **„MwSt-Betrag kopieren“** und **„Bruttobetrag kopieren“** übernehmen Sie den Wert direkt in Ihre Buchhaltung, eine Tabelle oder ein Rechnungsprogramm. Alle Beträge werden kaufmännisch auf volle Cent gerundet.
 
-## Die Formeln hinter dem MwSt Brutto Netto Rechner
+## Umsatzsteuer berechnen: die Formeln
 
-**Netto → Brutto (MwSt aufschlagen):**
+Ob Sie es Umsatzsteuer oder Mehrwertsteuer nennen – gerechnet wird immer mit dem **Nettobetrag als Grundwert**. Der Steuersatz bezieht sich stets auf den Betrag ohne Steuer. Daraus ergeben sich zwei Rechenrichtungen:
+
+| Sie kennen | Sie suchen | Formel bei 19 % | Formel bei 7 % |
+| --- | --- | --- | --- |
+| Netto | Brutto | Netto × 1,19 | Netto × 1,07 |
+| Netto | MwSt-Betrag | Netto × 0,19 | Netto × 0,07 |
+| Brutto | Netto | Brutto ÷ 1,19 | Brutto ÷ 1,07 |
+| Brutto | MwSt-Betrag | Brutto − Netto (≈ Brutto × 0,1597) | Brutto − Netto (≈ Brutto × 0,0654) |
+
+Im Bruttobetrag macht die Mehrwertsteuer bei 19 % also nur rund **15,97 %** aus, bei 7 % rund **6,54 %**. Wer allgemein mit Prozenten rechnen möchte – etwa einen anderen Aufschlag oder eine prozentuale Veränderung –, nutzt den [Prozentrechner](/prozent-rechner/).
+
+## MwSt aufschlagen (Netto → Brutto)
+
+Wenn Sie einen Nettopreis kennen und den Endpreis brauchen – zum Beispiel für eine Rechnung oder ein Angebot an Privatkunden –, schlagen Sie die Mehrwertsteuer auf:
 
 ```
 MwSt-Betrag = Netto × Steuersatz
 Brutto      = Netto × (1 + Steuersatz)
 ```
 
-**Brutto → Netto (MwSt herausrechnen):**
+**Beispiel – Rechnung schreiben (19 %):** Eine Grafikdesignerin berechnet für einen Auftrag 1.250 € netto. Die MwSt beträgt 1.250 € × 0,19 = **237,50 €**, der Rechnungsbetrag **1.487,50 € brutto**.
+
+**Beispiel – Lebensmittel liefern (7 %):** Ein Hofladen liefert Obst für 400 € netto. Mit 7 % kommen 28 € MwSt hinzu, der Bruttobetrag beträgt **428 €**.
+
+## MwSt herausrechnen (Brutto → Netto)
+
+Steht auf einem Beleg nur der Endbetrag, rechnen Sie die enthaltene Mehrwertsteuer heraus – etwa um einen Kassenbon zu buchen oder die Vorsteuer zu ermitteln:
 
 ```
 Netto       = Brutto ÷ (1 + Steuersatz)
 MwSt-Betrag = Brutto − Netto
 ```
 
-Die wichtigsten Faktoren für 2026 auf einen Blick:
+**Beispiel – Beleg buchen (19 %):** Ein Kassenbon über 59,50 € brutto enthält 59,50 € ÷ 1,19 = **50,00 € netto** und **9,50 € MwSt**.
 
-| Steuersatz | Netto → Brutto | Brutto → Netto | MwSt-Anteil am Bruttobetrag |
-| --- | --- | --- | --- |
-| 19 % (Regelsatz) | × 1,19 | ÷ 1,19 | ca. 15,97 % |
-| 7 % (ermäßigt) | × 1,07 | ÷ 1,07 | ca. 6,54 % |
+**Beispiel – Lebensmitteleinkauf (7 %):** Ein Einkauf über 50,00 € brutto enthält 50,00 € ÷ 1,07 = **46,73 € netto** und **3,27 € MwSt**.
 
-Der häufigste Fehler beim Herausrechnen: einfach 19 % vom Bruttobetrag abziehen. Aus 119 € werden so 96,39 € – richtig sind 100 €. Die 19 % beziehen sich immer auf den Nettobetrag.
+**Achtung, häufigster Fehler:** Ziehen Sie nicht einfach 19 % vom Bruttobetrag ab. Aus 119 € werden so 96,39 € – richtig sind 100 €. Die 19 % beziehen sich immer auf den Nettobetrag, nicht auf den Endpreis.
 
-## Rechenbeispiele mit echten Zahlen
+## Beispiele mit 19 % und 7 % im Überblick
 
-**Rechnung schreiben (19 %):** Eine Grafikdesignerin berechnet für einen Auftrag 1.250 € netto. Die MwSt beträgt 1.250 € × 0,19 = **237,50 €**, der Rechnungsbetrag **1.487,50 € brutto**.
+| Ausgangsbetrag | Richtung | Steuersatz | Netto | MwSt | Brutto |
+| --- | --- | --- | --- | --- | --- |
+| 100,00 € netto | Netto → Brutto | 19 % | 100,00 € | 19,00 € | 119,00 € |
+| 100,00 € netto | Netto → Brutto | 7 % | 100,00 € | 7,00 € | 107,00 € |
+| 119,00 € brutto | Brutto → Netto | 19 % | 100,00 € | 19,00 € | 119,00 € |
+| 107,00 € brutto | Brutto → Netto | 7 % | 100,00 € | 7,00 € | 107,00 € |
+| 1.000,00 € brutto | Brutto → Netto | 19 % | 840,34 € | 159,66 € | 1.000,00 € |
 
-**Beleg buchen (19 %):** Ein Kassenbon über 59,50 € brutto enthält 59,50 € ÷ 1,19 = **50,00 € netto** und **9,50 € MwSt**.
-
-**Lebensmitteleinkauf (7 %):** Ein Einkauf über 50,00 € brutto enthält 50,00 € ÷ 1,07 = **46,73 € netto** und **3,27 € MwSt**.
+<ArticleFigure
+  file="mwst-rechner-beispiel"
+  alt="MwSt Rechner Beispiel: Kassenbon mit Balken für Nettobetrag und Mehrwertsteuer"
+  caption="Im Bruttobetrag steckt bei 19 % rund ein Sechstel Mehrwertsteuer – beim Herausrechnen also durch 1,19 teilen, nicht 19 % abziehen."
+/>
 
 **Restaurantrechnung 2026 (7 % und 19 %):** Seit 2026 werden Speisen und Getränke im Restaurant unterschiedlich besteuert:
 
@@ -103,7 +132,7 @@ Der häufigste Fehler beim Herausrechnen: einfach 19 % vom Bruttobetrag abziehen
 
 Bei gemischten Rechnungen wird jeder Steuersatz einzeln berechnet. Genau das übernimmt der Listenmodus des Rechners – mehr dazu im nächsten Abschnitt.
 
-## Brutto Netto Rechner für die Mehrwertsteuer: mehrere Positionen
+## Netto Brutto Rechner MwSt: mehrere Positionen
 
 Auf vielen Belegen stehen Waren mit unterschiedlichen Steuersätzen: Im Supermarkt etwa werden die meisten Lebensmittel mit 7 % besteuert, Drogerieartikel und Mineralwasser in Flaschen dagegen mit 19 %. Wer die Mehrwertsteuer aus so einem Beleg herausrechnen möchte, muss die Beträge **nach Steuersatz trennen**.
 
@@ -145,6 +174,18 @@ Ein vereinfachtes Beispiel mit 19 %:
 Die Kundin zahlt 952 € brutto. Die darin enthaltenen 152 € Steuer sind genau 19 % des Endpreises von 800 € – sie wurden aber stückweise von allen drei Unternehmen ans Finanzamt abgeführt. Getragen wird die Steuer am Ende von der Endverbraucherin, denn sie kann keine Vorsteuer abziehen.
 
 Für den Rechner spielt der Name keine Rolle: Ob Sie „Umsatzsteuer berechnen“ oder „Mehrwertsteuer berechnen“ wollen – die Formeln sind identisch.
+
+## Vorsteuer kurz erklärt
+
+Unternehmen zahlen beim Einkauf selbst Umsatzsteuer an ihre Lieferanten. Diese **Vorsteuer** dürfen sie von der Umsatzsteuer abziehen, die sie ihren eigenen Kunden in Rechnung stellen (§ 15 UStG). An das Finanzamt fließt nur die Differenz, die **Zahllast**:
+
+| Posten | Netto | Umsatzsteuer 19 % |
+| --- | --- | --- |
+| Einkauf von Material (Vorsteuer) | 1.000 € | 190 € |
+| Verkauf an Kunden (Umsatzsteuer) | 3.000 € | 570 € |
+| **Zahllast an das Finanzamt** | | **380 €** |
+
+Voraussetzung für den Vorsteuerabzug ist eine **ordnungsgemäße Rechnung** mit gesondert ausgewiesener Steuer. Wer Umsätze ausführt, die von der Umsatzsteuer befreit sind – dazu gehören auch Kleinunternehmer –, kann keine Vorsteuer abziehen. Den Vorsteuerbetrag eines Belegs ermitteln Sie mit dem Rechner oben über „Brutto → Netto“.
 
 ## 19 % oder 7 %? Beispiele für 2026
 
@@ -189,6 +230,6 @@ Wichtig sind zwei Details:
 - **Kleinunternehmer:** Wer die Kleinunternehmerregelung nach § 19 UStG nutzt, weist keine Umsatzsteuer aus und muss auf der Rechnung darauf hinweisen.
 - **Leistungszeitpunkt zählt:** Für den Steuersatz ist der Zeitpunkt der Leistung maßgeblich, nicht das Rechnungsdatum.
 
-Was nach Abzug aller Kosten übrig bleibt, berechnen Sie mit dem [Gewinnrechner](/gewinn-rechner/). Wie viel Prozent Ihres Nettoumsatzes Gewinn sind, zeigt der [Gewinnmargenrechner](/gewinnmarge-rechner/). Für Preisnachlässe nutzen Sie den [Rabattrechner](/rabatt-rechner/).
+Was nach Abzug aller Kosten übrig bleibt, berechnen Sie mit dem [Gewinnrechner](/gewinn-rechner/). Für allgemeine Prozentaufgaben gibt es den [Prozentrechner](/prozent-rechner/). Wie viel Prozent Ihres Nettoumsatzes Gewinn sind, zeigt der [Gewinnmargenrechner](/gewinnmarge-rechner/). Für Preisnachlässe nutzen Sie den [Rabattrechner](/rabatt-rechner/).
 
 > **Alle Angaben ohne Gewähr – keine Steuer-, Rechts- oder Finanzberatung.** Der Rechner hilft Ihnen, Beträge schnell und korrekt zu berechnen, sobald der richtige Steuersatz feststeht. Ob ein Umsatz mit 19 %, 7 % oder gar nicht besteuert wird, klären Sie im Zweifel mit einer Steuerberaterin oder einem Steuerberater.

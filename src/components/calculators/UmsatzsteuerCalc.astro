@@ -162,6 +162,7 @@ const pct = (n: number) => `${n} %`;
 
 <script>
   import { mountCalculator } from '../../scripts/calc-runtime';
+  import { bindCopyButtons } from '../../scripts/copy-button';
   import { calculateVat, calculateVatList, type VatListItem } from '../../lib/calc/business';
   import { formatEUR, formatPercent } from '../../lib/format';
 
@@ -229,50 +230,19 @@ const pct = (n: number) => `${n} %`;
     return null;
   });
 
-  // Kopieren in die Zwischenablage (mit Fallback für ältere Browser / unsichere Kontexte)
-  async function copyText(text: string): Promise<boolean> {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch {
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.setAttribute('readonly', '');
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      const ok = document.execCommand('copy');
-      ta.remove();
-      return ok;
-    }
-  }
   document.querySelectorAll<HTMLFormElement>('form[data-calc="umsatzsteuer"]').forEach((form) => {
-    const status = form.querySelector<HTMLElement>('[data-copy-status]');
+    bindCopyButtons(form);
     const addBtn = form.querySelector<HTMLButtonElement>('[data-add-row]');
     const hiddenRows = () => [...form.querySelectorAll<HTMLElement>('[data-vat-row][hidden]')];
-    let timer = 0;
 
-    form.addEventListener('click', async (e) => {
-      const target = e.target as HTMLElement;
-      // Weitere Position einblenden
-      if (target.closest('[data-add-row]')) {
-        const next = hiddenRows()[0];
-        if (next) {
-          next.hidden = false;
-          next.querySelector<HTMLInputElement>('input')?.focus();
-        }
-        if (addBtn) addBtn.hidden = hiddenRows().length === 0;
-        return;
+    // Weitere Position einblenden
+    addBtn?.addEventListener('click', () => {
+      const next = hiddenRows()[0];
+      if (next) {
+        next.hidden = false;
+        next.querySelector<HTMLInputElement>('input')?.focus();
       }
-      const btn = target.closest<HTMLButtonElement>('[data-copy]');
-      if (!btn || !btn.dataset.value) return;
-      const ok = await copyText(btn.dataset.value);
-      if (status) {
-        status.textContent = ok ? `„${btn.dataset.value}“ in die Zwischenablage kopiert.` : 'Kopieren nicht möglich – bitte manuell markieren.';
-        clearTimeout(timer);
-        timer = window.setTimeout(() => (status.textContent = ''), 3000);
-      }
+      addBtn.hidden = hiddenRows().length === 0;
     });
 
     // Zurücksetzen: zusätzliche Zeilen wieder ausblenden

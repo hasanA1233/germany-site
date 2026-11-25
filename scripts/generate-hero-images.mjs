@@ -142,6 +142,26 @@ const scenes = {
     <rect x="690" y="370" width="64" height="48" rx="14" fill="${C.sun}"/>
     <rect x="690" y="455" width="200" height="14" rx="7" fill="${C.ink}" opacity=".15"/>
   </g>`,
+
+  /** In-Artikel-Grafik MwSt: Kassenbon, Balken Netto (lang) und MwSt (kurz), Prozent-Plakette */
+  'mwst-rechner-beispiel': () => `
+  ${sky()}
+  <g filter="url(#soft)">
+    <path d="M330 120h300v400l-25-16-25 16-25-16-25 16-25-16-25 16-25-16-25 16-25-16-25 16-25-16-25 16z" fill="${C.white}"/>
+    <rect x="365" y="165" width="150" height="14" rx="7" fill="${C.primary}" opacity=".3"/>
+    <rect x="365" y="200" width="230" height="10" rx="5" fill="${C.ink}" opacity=".12"/>
+    <rect x="365" y="225" width="190" height="10" rx="5" fill="${C.ink}" opacity=".12"/>
+    <rect x="365" y="290" width="230" height="44" rx="12" fill="${C.primary}"/>
+    <rect x="365" y="350" width="44" height="44" rx="12" fill="${C.sun}"/>
+    <rect x="365" y="420" width="230" height="3" fill="${C.ink}" opacity=".15"/>
+  </g>
+  <g transform="translate(810,320)" filter="url(#soft)">
+    <circle r="120" fill="${C.primaryDark}"/>
+    <path d="M48 -60 L-48 60" stroke="${C.white}" stroke-width="18" stroke-linecap="round"/>
+    <circle cx="-40" cy="-36" r="23" fill="none" stroke="${C.white}" stroke-width="14"/>
+    <circle cx="40" cy="36" r="23" fill="none" stroke="${C.white}" stroke-width="14"/>
+  </g>
+  <g filter="url(#soft)">${coin(1010, 520, 28)}${coin(1010, 498, 28)}${coin(1060, 540, 22)}</g>`,
 };
 
 await mkdir(OUT, { recursive: true });
