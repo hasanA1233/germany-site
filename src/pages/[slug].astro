@@ -20,6 +20,7 @@ import RabattCalc from '../components/calculators/RabattCalc.astro';
 import WerkstudentCalc from '../components/calculators/WerkstudentCalc.astro';
 import TvoedCalc from '../components/calculators/TvoedCalc.astro';
 import DreisatzCalc from '../components/calculators/DreisatzCalc.astro';
+import TvlCalc from '../components/calculators/TvlCalc.astro';
 
 const components: Partial<Record<CalculatorSlug, typeof KreditrateCalc>> = {
   'kreditrate-berechnen': KreditrateCalc,
@@ -35,6 +36,7 @@ const components: Partial<Record<CalculatorSlug, typeof KreditrateCalc>> = {
   'werkstudent-brutto-netto-rechner': WerkstudentCalc,
   'tvoed-rechner': TvoedCalc,
   'dreisatz-rechner': DreisatzCalc,
+  'tv-l-rechner': TvlCalc,
 };
 
 export async function getStaticPaths() {

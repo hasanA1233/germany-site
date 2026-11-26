@@ -1,23 +1,28 @@
 /**
  * Register der Tarifverträge für den gemeinsamen Tarifrechner (TarifCalc.astro).
  * Jeder Tarif: Bereiche (z. B. Bund/VKA), Tabellen je Stand, Jahressonderzahlung, Zusatzversorgung.
- * Werte und Quellen stehen in den jeweiligen Datendateien (tvoed-2026.ts, …).
+ * Werte und Quellen stehen in den jeweiligen Datendateien (tvoed-2026.ts, tvl-2026.ts).
  */
-import { tvoed, entgeltgruppen, jahressonderzahlungProzent, vbl, type Tabelle, type Entgeltgruppe } from './tvoed-2026';
+import { tvoed, entgeltgruppen, jahressonderzahlungProzent, vbl } from './tvoed-2026';
+import { tvl, entgeltgruppenTvl, jahressonderzahlungTvl } from './tvl-2026';
+
+/** Monatswerte je Entgeltgruppe (Index 0 = Stufe 1; null = Stufe existiert nicht) */
+export type TarifTabelle = Record<string, (number | null)[]>;
 
 export interface TarifBereich {
   id: string;
   label: string;
-  /** Tabellen je Stand: 'aktuell' = ab 1. Mai 2026, 'vorher' = Januar bis April 2026 */
-  tabellen: { aktuell: Tabelle; vorher: Tabelle };
-  jsz: (eg: Entgeltgruppe) => number;
+  /** Tabellen je Stand: 'aktuell' = nach der letzten Erhöhung 2026, 'vorher' = Monate davor */
+  tabellen: { aktuell: TarifTabelle; vorher: TarifTabelle };
+  /** Jahressonderzahlung in % je Entgeltgruppe */
+  jsz: (eg: string) => number;
 }
 
 export interface Tarif {
-  id: 'tvoed';
+  id: 'tvoed' | 'tvl';
   name: string;
   bereiche: TarifBereich[];
-  entgeltgruppen: Entgeltgruppe[];
+  entgeltgruppen: string[];
   standLabels: { aktuell: string; vorher: string };
   zusatzversorgung: { west: number; ost: number };
 }
@@ -32,6 +37,15 @@ export const tarife: Record<Tarif['id'], Tarif> = {
     ],
     entgeltgruppen,
     standLabels: { aktuell: 'ab 1. Mai 2026', vorher: 'Jan.–Apr. 2026' },
+    zusatzversorgung: vbl,
+  },
+  tvl: {
+    id: 'tvl',
+    name: 'TV-L',
+    bereiche: [{ id: 'laender', label: 'Länder (TV-L)', tabellen: { aktuell: tvl.tab2026, vorher: tvl.tab2025 }, jsz: jahressonderzahlungTvl }],
+    entgeltgruppen: entgeltgruppenTvl,
+    standLabels: { aktuell: 'ab 1. April 2026', vorher: 'Jan.–März 2026' },
+    // Die VBL-Sätze gelten laut VBL für ATV- (Bund/VKA) und TdL-Arbeitgeber gleichermaßen
     zusatzversorgung: vbl,
   },
 };

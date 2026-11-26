@@ -99,7 +99,7 @@ export const tvoed = {
 };
 
 /** Jahressonderzahlung § 20 TVöD in % der Bemessungsgrundlage (Ø Entgelt Juli–September), Auszahlung mit dem Novemberentgelt */
-export function jahressonderzahlungProzent(bereich: 'bund' | 'vka', eg: Entgeltgruppe): number {
+export function jahressonderzahlungProzent(bereich: 'bund' | 'vka', eg: string): number {
   if (bereich === 'vka') return 85; // § 20 (VKA) Abs. 2: einheitlich 85 Prozent
   const n = parseInt(eg, 10); // § 20 (Bund) Abs. 2: E1–8 95 v. H., E9a–12 90 v. H., E13–15 75 v. H.
   return n <= 8 ? 95 : n <= 12 ? 90 : 75;

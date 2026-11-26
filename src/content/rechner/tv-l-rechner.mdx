@@ -1,0 +1,191 @@
+---
+seoTitle: "TV-L Rechner 2026: Gehalt brutto netto"
+description: "TV-L Rechner 2026: Entgeltgruppe und Stufe wählen und Netto pro Monat und Jahr berechnen – mit Entgelttabelle ab 1. April 2026 und Jahressonderzahlung."
+h1: "TV-L Rechner 2026"
+intro: "Mit dem TV-L Rechner sehen Sie in Sekunden, was von Ihrem Gehalt im Landesdienst netto übrig bleibt. Wählen Sie Entgeltgruppe und Stufe – der Rechner nutzt die offizielle Entgelttabelle ab 1. April 2026 und berücksichtigt Steuern, Sozialabgaben, Zusatzversorgung und Jahressonderzahlung."
+updated: 2026-11-26
+hero:
+  file: "tv-l-rechner"
+  alt: "TV-L Rechner: Landesbehörde mit Säulen und Gehaltstabelle als Illustration"
+faq:
+  - q: "Wie viel verdiene ich im TV-L netto?"
+    a: "Das hängt von Entgeltgruppe, Stufe, Steuerklasse und Krankenkasse ab. Beispiel ab 1. April 2026 in Steuerklasse I ohne Kinder: E 9b Stufe 3 ergibt 4.035,07 € brutto und rund 2.551 € netto im Monat. Der TV-L Rechner oben berechnet Ihren individuellen Wert."
+  - q: "Wann steigen die TV-L-Gehälter?"
+    a: "Nach der Tarifeinigung vom 14. Februar 2026 stiegen die Tabellenentgelte zum 1. April 2026 um 2,8 %, mindestens um 100 € monatlich. Es folgen weitere Erhöhungen um 2,0 % zum 1. März 2027 und um 1,0 % zum 1. Januar 2028."
+  - q: "Wie hoch ist die Jahressonderzahlung im TV-L?"
+    a: "Sie richtet sich nach der Entgeltgruppe: 87,43 % in E 1 bis E 4, 88,14 % in E 5 bis E 8, 74,35 % in E 9a bis E 11, 46,47 % in E 12 und E 13 sowie 32,53 % in E 14 und E 15. Seit 2022 gelten diese Sätze einheitlich in Ost und West. Ausgezahlt wird mit dem Novembergehalt."
+  - q: "Was ist der Unterschied zwischen E 9a und E 9b?"
+    a: "Die frühere Entgeltgruppe 9 ist im TV-L in E 9a und E 9b aufgeteilt. E 9b ist die höhere Gruppe, etwa für Tätigkeiten mit Bachelor- oder Fachhochschulabschluss. In den Stufen 1 und 2 sind beide Gruppen gleich, danach steigt E 9b stärker."
+  - q: "Gilt der TV-L auch in Hessen?"
+    a: "Nein. Hessen ist nicht Mitglied der Tarifgemeinschaft deutscher Länder und hat einen eigenen Tarifvertrag, den TV-H, mit eigenen Entgelttabellen. Der TV-L Rechner gilt für die übrigen Bundesländer."
+  - q: "Was ist der Unterschied zwischen TV-L und TVöD?"
+    a: "Der TV-L gilt für Beschäftigte der Bundesländer, der TVöD für Bund und Kommunen. Beide sind ähnlich aufgebaut, unterscheiden sich aber bei den Tabellenwerten, den Terminen der Erhöhungen und der Jahressonderzahlung."
+  - q: "Wird die Zusatzversorgung vom Gehalt abgezogen?"
+    a: "Ja. Für die Betriebsrente der VBL zahlen Beschäftigte einen eigenen Anteil: im Abrechnungsverband West 1,81 % des zusatzversorgungspflichtigen Entgelts, im Abrechnungsverband Ost 4,25 %. Im Rechner können Sie West, Ost oder einen eigenen Satz wählen."
+sources:
+  - label: "TdL – Allgemeine Entgelttabelle (Anlage B zum TV-L), gültig vom 01.04.2026 bis 31.12.2026"
+    url: "https://www.tdl-online.de/fileadmin/downloads/TV-L/TV-L_Anlagen/Allgemeine_Entgelttabelle__Anlage_B___g%C3%BCltig_vom_01.04.2026_bis_31.12.2026.pdf"
+  - label: "TdL – Allgemeine Entgelttabelle (Anlage B zum TV-L), gültig vom 01.11.2025 bis 31.03.2026"
+    url: "https://www.tdl-online.de/fileadmin/downloads/TV-L/TV-L_Anlagen/Allgemeine_Entgelttabelle__Anlage_B___g%C3%BCltig_vom_01.11.2025_bis_31.03.2026.pdf"
+  - label: "TdL – TV-L in der Fassung des Änderungstarifvertrags Nr. 14 (§§ 6, 16, 20)"
+    url: "https://www.tdl-online.de/fileadmin/downloads/TV-L/260812_TV-L__i.d.F._des_%C3%84TV_Nr._14_VT_neu.pdf"
+  - label: "TdL – Tarifrunde 2026 für die Beschäftigten der Länder (Tarifeinigung vom 14.02.2026)"
+    url: "https://www.tdl-online.de/tarifrunden/tarifrunde-fuer-die-beschaeftigten-im-oeffentlichen-dienst-der-laender-2026"
+  - label: "VBL – Finanzierung in der VBLklassik (Umlage- und Beitragssätze)"
+    url: "https://www.vbl.de/de/finanzierung"
+  - label: "BMF – Programmablaufplan Lohnsteuer 2026 (XML-Pseudocode)"
+    url: "https://www.bmf-steuerrechner.de/interface/pseudocodes.xhtml"
+---
+
+import AdSlot from '../../components/ads/AdSlot.astro';
+import ArticleFigure from '../../components/ui/ArticleFigure.astro';
+import Entgelttabelle from '../../components/ui/Entgelttabelle.astro';
+import { tvl, entgeltgruppenTvl, jahressonderzahlungTvl } from '../../data/tvl-2026';
+import { stufenlaufzeiten, vbl } from '../../data/tvoed-2026';
+import { calculateTarif } from '../../lib/calc/tarif';
+import { plural } from '../../lib/dates';
+
+export const eur = (n) => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+export const pct = (n) => n.toLocaleString('de-DE') + ' %';
+export const beispiel = (eg, stufe) => {
+  const r = calculateTarif({ stufenwerte: tvl.tab2026[eg], stufe, teilzeitProzent: 100, jszProzent: jahressonderzahlungTvl(eg), zusatzversorgungProzent: vbl.west, steuerklasse: 1, kirche: false, bundesland: 'NW', kinder: 0, kvZusatz: 2.9 });
+  if (!r.ok) throw new Error('Beispiel ungültig');
+  return { eg, stufe, ...r };
+};
+export const beispiele = [beispiel('9a', 3), beispiel('9b', 3), beispiel('13', 4)];
+
+## So funktioniert der TV-L Rechner
+
+Der Rechner ermittelt Ihr Gehalt in drei Schritten: Er liest Ihr **Tabellenentgelt** aus der offiziellen Entgelttabelle der Tarifgemeinschaft deutscher Länder (TdL), rechnet es auf Ihren **Beschäftigungsumfang** um und zieht **Steuern, Sozialabgaben und den Beitrag zur Zusatzversorgung** ab. Sie brauchen dafür:
+
+1. **Tabelle:** „ab 1. April 2026“ (aktuell) oder „Jan.–März 2026“ für die Monate vor der letzten Erhöhung.
+2. **Entgeltgruppe und Stufe** – beides steht in Ihrem Arbeitsvertrag oder auf der Gehaltsabrechnung.
+3. **Beschäftigungsumfang** in Prozent – 100 % entspricht der vollen regelmäßigen Arbeitszeit in Ihrem Land.
+4. **Steuerklasse, Kinder, Bundesland, Kirchensteuer und Zusatzbeitrag** Ihrer Krankenkasse.
+5. **Zusatzversorgung:** VBL West, VBL Ost oder ein eigener Satz.
+
+Die Lohnsteuer berechnet der TV-L Gehaltsrechner nach dem **Programmablaufplan 2026** des Bundesfinanzministeriums. Das Ergebnis zeigt Netto pro Monat und pro Jahr; im Jahresnetto ist die **Jahressonderzahlung** enthalten, die als Einmalzahlung im November eigens versteuert wird.
+
+## Der TV-L kurz erklärt
+
+Der **Tarifvertrag für den öffentlichen Dienst der Länder (TV-L)** regelt Gehalt, Arbeitszeit und Urlaub der Tarifbeschäftigten der Bundesländer – etwa in Landesministerien, Finanzämtern, Hochschulen, Unikliniken und bei angestellten Lehrkräften. Verhandelt wird er zwischen den Gewerkschaften und der **Tarifgemeinschaft deutscher Länder (TdL)**. Hessen ist nicht Mitglied der TdL und hat einen eigenen Tarifvertrag, den **TV-H**.
+
+Wie im TVöD ergibt sich das Gehalt aus **Entgeltgruppe** (E 1 bis E 15) und **Stufe** (1 bis 6). Die Entgeltgruppe hängt von Ihrer Tätigkeit ab: Beschäftigte mit einer mindestens dreijährigen Ausbildung und entsprechender Tätigkeit sind zum Beispiel mindestens in E 5 eingruppiert, Tätigkeiten mit Bachelorabschluss meist ab E 9b und Tätigkeiten mit wissenschaftlichem Hochschulabschluss ab E 13.
+
+## TV-L Entgelttabelle 2026
+
+Seit dem **1. April 2026** gelten die folgenden Monatsentgelte für Vollzeitbeschäftigte (Anlage B zum TV-L). Die Entgeltgruppe 1 hat nur die Stufen 2 bis 6.
+
+<Entgelttabelle tabelle={tvl.tab2026} reihenfolge={entgeltgruppenTvl} caption="TV-L – Tabellenentgelt ab 1. April 2026, monatlich" />
+
+Für Januar bis März 2026 galt noch die Tabelle vom 1. November 2025; sie können Sie im Rechner unter „Tabelle“ auswählen. Eigene Tabellen für Pflegekräfte (Anlage C) und für bestimmte Beschäftigte im Sozial- und Erziehungsdienst (Anlage D) sind im Rechner nicht enthalten.
+
+## Erhöhungen 2026 bis 2028
+
+Die Tarifeinigung vom **14. Februar 2026** sieht drei Erhöhungsschritte vor:
+
+| Zeitpunkt | Erhöhung der Tabellenentgelte |
+| --- | --- |
+| 1. April 2026 | + 2,8 %, mindestens 100 € pro Monat |
+| 1. März 2027 | + 2,0 % |
+| 1. Januar 2028 | + 1,0 % |
+
+Der Mindestbetrag von 100 € wirkt vor allem in den unteren Entgeltgruppen: Dort steigt das Gehalt prozentual stärker als um 2,8 %. Zusätzlich wird zum 1. Januar 2027 die Stufe 2 der Entgeltgruppe 1 angehoben.
+
+<AdSlot placement="in-content" />
+
+## Stufen und Stufenaufstieg im TV-L
+
+Neue Beschäftigte ohne einschlägige Berufserfahrung beginnen in **Stufe 1**. Mit mindestens einem Jahr einschlägiger Berufserfahrung erfolgt die Einstellung in Stufe 2, mit mindestens drei Jahren in der Regel in Stufe 3. Danach steigen Sie automatisch auf, wenn Sie ununterbrochen in derselben Entgeltgruppe beim selben Arbeitgeber arbeiten:
+
+<div class="overflow-x-auto">
+<table>
+  <thead><tr><th scope="col">Aufstieg</th><th scope="col">Laufzeit</th><th scope="col">bis zum Erreichen insgesamt</th></tr></thead>
+  <tbody>
+    {stufenlaufzeiten.map((s, i) => (
+      <tr>
+        <td>Stufe {s.von} → Stufe {s.nach}</td>
+        <td>{plural(s.jahre, 'Jahr', 'Jahre')}</td>
+        <td>{plural(stufenlaufzeiten.slice(0, i + 1).reduce((a, x) => a + x.jahre, 0), 'Jahr', 'Jahre')}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+</div>
+
+Ab Stufe 3 hängt der Aufstieg auch von der Leistung ab: Bei erheblich überdurchschnittlicher Leistung kann die Laufzeit verkürzt, bei erheblich unterdurchschnittlicher Leistung verlängert werden.
+
+## Jahressonderzahlung im TV-L
+
+Wer am 1. Dezember beschäftigt ist, erhält eine **Jahressonderzahlung**. Bemessungsgrundlage ist das durchschnittliche Monatsentgelt aus Juli, August und September; ausgezahlt wird mit dem Novembergehalt. Seit dem Kalenderjahr 2022 gelten einheitliche Sätze für Ost und West:
+
+| Entgeltgruppen | Jahressonderzahlung |
+| --- | --- |
+| E 1 bis E 4 | {pct(jahressonderzahlungTvl('3'))} |
+| E 5 bis E 8 | {pct(jahressonderzahlungTvl('8'))} |
+| E 9a bis E 11 | {pct(jahressonderzahlungTvl('9b'))} |
+| E 12 und E 13 | {pct(jahressonderzahlungTvl('13'))} |
+| E 14 und E 15 | {pct(jahressonderzahlungTvl('15'))} |
+
+Maßgeblich ist die Entgeltgruppe am 1. September. Weil die Jahressonderzahlung als **sonstiger Bezug** versteuert wird, bleibt davon prozentual oft weniger netto übrig als von einem normalen Monatsgehalt.
+
+## Arbeitszeit im TV-L
+
+Anders als im TVöD ist die Wochenarbeitszeit im TV-L nicht einheitlich. Im **Tarifgebiet Ost** beträgt sie 40 Stunden. Im **Tarifgebiet West** gilt für jedes Bundesland eine eigene, im Tarifvertrag festgelegte Arbeitszeit; für bestimmte Gruppen wie Beschäftigte in Krankenhäusern oder im Schichtdienst sind es 38,5 Stunden. Die Tabellenentgelte gelten für die volle Arbeitszeit des jeweiligen Landes – wer weniger arbeitet, gibt im Rechner den entsprechenden Prozentsatz an.
+
+## Rechenbeispiele: E 9a, E 9b und E 13
+
+Alle Beispiele: Tabelle ab 1. April 2026, Vollzeit, Steuerklasse I, keine Kinder, keine Kirchensteuer, Nordrhein-Westfalen, Zusatzbeitrag 2,9 %, VBL West.
+
+<div class="overflow-x-auto">
+<table>
+  <thead>
+    <tr><th scope="col">Entgeltgruppe</th><th scope="col">Brutto/Monat</th><th scope="col">Lohnsteuer</th><th scope="col">Sozialabgaben</th><th scope="col">VBL</th><th scope="col">Netto/Monat</th><th scope="col">Netto/Jahr*</th></tr>
+  </thead>
+  <tbody>
+    {beispiele.map((b) => (
+      <tr>
+        <td>E {b.eg} Stufe {b.stufe}</td>
+        <td>{eur(b.monat.brutto)}</td>
+        <td>{eur(b.monat.lohnsteuer + b.monat.soli)}</td>
+        <td>{eur(b.monat.kv + b.monat.pv + b.monat.rv + b.monat.av)}</td>
+        <td>{eur(b.monat.zv)}</td>
+        <td><strong>{eur(b.monat.netto)}</strong></td>
+        <td>{eur(b.jahr.netto)}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+</div>
+
+\* inklusive Jahressonderzahlung nach Entgeltgruppe.
+
+<ArticleFigure
+  file="tv-l-rechner-beispiel"
+  alt="TV-L Gehaltsrechner Beispiel: Entgelttabelle mit markierter Entgeltgruppe und Stufe sowie Balken für Netto und Abzüge"
+  caption="Bei E 13 Stufe 4 liegt das Gehalt über der Beitragsbemessungsgrenze der Krankenversicherung – Kranken- und Pflegeversicherung steigen darüber nicht weiter."
+/>
+
+**Was die Beispiele zeigen:** Zwischen E 9a und E 9b liegen in Stufe 3 rund 110 € brutto. Bei E 13 Stufe 4 greift die Beitragsbemessungsgrenze der Krankenversicherung von 5.812,50 € im Monat: Darüber fallen keine höheren Kranken- und Pflegebeiträge an, dafür steigt die Lohnsteuer wegen des progressiven Tarifs deutlich.
+
+## TV-L oder TVöD?
+
+| | TV-L | TVöD |
+| --- | --- | --- |
+| Gilt für | Bundesländer (außer Hessen) | Bund und Kommunen |
+| Letzte Erhöhung 2026 | 1. April 2026: + 2,8 %, mind. 100 € | 1. Mai 2026: + 2,8 % |
+| Jahressonderzahlung | 32,53 % bis 88,14 % je nach Gruppe | VKA 85 %, Bund 75 % bis 95 % |
+| Arbeitszeit | je nach Land, Ost 40 Stunden | 39 Stunden |
+
+Arbeiten Sie bei einer Stadt, einem Landkreis oder einer Bundesbehörde, nutzen Sie den [TVöD-Rechner](/tvoed-rechner/). Beamtinnen und Beamte werden nicht nach Tarifvertrag, sondern nach den Besoldungsgesetzen bezahlt.
+
+## Tipps für Beschäftigte im Landesdienst
+
+- **Stufe bei Einstellung prüfen:** Förderliche Berufserfahrung kann angerechnet werden – fragen Sie danach, das wirkt sich über Jahre aus.
+- **Höhergruppierung im Blick behalten:** Ändert sich Ihre Tätigkeit dauerhaft, kann eine höhere Entgeltgruppe zustehen.
+- **Teilzeit durchrechnen:** Wegen des progressiven Steuertarifs bleibt bei Teilzeit prozentual oft mehr netto übrig, als die Kürzung vermuten lässt.
+- **Neben dem Studium im Landesdienst?** Für Werkstudierende gelten besondere Regeln – siehe [Werkstudent-Rechner](/werkstudent-brutto-netto-rechner/).
+
+Weitere Rechner finden Sie in der Kategorie [Gehalt & Steuern](/gehalt-steuern/). Wie viel Prozent mehr eine Erhöhung ausmacht, zeigt der [Prozentrechner](/prozent-rechner/).
+
+> **Alle Angaben ohne Gewähr – keine Steuer- oder Rechtsberatung.** Der TV-L Rechner liefert eine Modellrechnung auf Basis der Entgelttabelle der TdL und des Programmablaufplans 2026. Ihre tatsächliche Abrechnung kann abweichen, etwa durch Zulagen, Zuschläge, Freibeträge, eine abweichende Zusatzversorgung oder den steuer- und beitragspflichtigen Anteil der Arbeitgeber-Umlage.

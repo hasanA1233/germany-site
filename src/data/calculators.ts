@@ -14,7 +14,8 @@ export type CalculatorSlug =
   | 'werkstudent-brutto-netto-rechner'
   | 'prozent-rechner'
   | 'tvoed-rechner'
-  | 'dreisatz-rechner';
+  | 'dreisatz-rechner'
+  | 'tv-l-rechner';
 
 export interface CalculatorMeta {
   slug: CalculatorSlug;
@@ -223,7 +224,7 @@ export const calculators: CalculatorMeta[] = [
     alsoIn: [],
     keywords: ['tvöd', 'tvoed', 'tvod', 'öffentlicher dienst', 'gehaltsrechner', 'entgelttabelle', 'entgeltgruppe', 'stufe', 'vka', 'bund', 'kommunen', 'brutto netto', 'jahressonderzahlung', 'vbl'],
     icon: 'building',
-    related: ['werkstudent-brutto-netto-rechner', 'prozent-rechner', 'sparplan-rechner'],
+    related: ['tv-l-rechner', 'werkstudent-brutto-netto-rechner', 'prozent-rechner'],
     ogFormula: 'Netto = Tabellenentgelt − Steuern − Sozialabgaben − VBL',
     added: '2026-11-26',
   },
@@ -238,6 +239,19 @@ export const calculators: CalculatorMeta[] = [
     icon: 'dreisatz',
     related: ['prozent-rechner', 'rabatt-rechner', 'umsatzsteuer-rechner'],
     ogFormula: 'C ≙ B ÷ A × C',
+    added: '2026-11-26',
+  },
+  {
+    slug: 'tv-l-rechner',
+    href: '/tv-l-rechner/',
+    name: 'TV-L-Rechner',
+    description: 'TV-L Gehaltsrechner 2026: Entgeltgruppe und Stufe wählen, Netto pro Monat und Jahr inkl. Jahressonderzahlung berechnen – Tabelle ab 1. April 2026.',
+    category: 'gehalt-steuern',
+    alsoIn: [],
+    keywords: ['tv-l', 'tvl', 'tv l', 'länder', 'landesdienst', 'öffentlicher dienst', 'gehaltsrechner', 'entgelttabelle', 'entgeltgruppe', 'stufe', 'brutto netto', 'jahressonderzahlung', 'uni', 'hochschule'],
+    icon: 'building',
+    related: ['tvoed-rechner', 'werkstudent-brutto-netto-rechner', 'prozent-rechner'],
+    ogFormula: 'Netto = Tabellenentgelt − Steuern − Sozialabgaben − VBL',
     added: '2026-11-26',
   },
 ];

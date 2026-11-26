@@ -33,7 +33,13 @@ const zvOst = tarif.zusatzversorgung.ost.toLocaleString('de-DE');
   note={`Annahmen: Vollzeitentgelt laut Tabelle × Beschäftigungsumfang, ohne Zulagen und Zuschläge; ohne Kinder wird der Kinderlosenzuschlag zur Pflegeversicherung (ab 23 Jahren) angesetzt; Jahressonderzahlung im November auf Basis des Monatsentgelts. Der steuer- und beitragspflichtige Anteil der Arbeitgeber-Umlage zur Zusatzversorgung ist nicht berücksichtigt. Alle Angaben ohne Gewähr – keine Steuer- oder Rechtsberatung.`}
 >
   <div class="grid gap-5 sm:grid-cols-2">
-    <ChoiceField idPrefix={p} name="bereich" legend="Tarifbereich" value={tarif.bereiche[0].id} options={tarif.bereiche.map((b) => ({ value: b.id, label: b.label }))} />
+    {
+      tarif.bereiche.length > 1 ? (
+        <ChoiceField idPrefix={p} name="bereich" legend="Tarifbereich" value={tarif.bereiche[0].id} options={tarif.bereiche.map((b) => ({ value: b.id, label: b.label }))} />
+      ) : (
+        <input type="hidden" name="bereich" value={tarif.bereiche[0].id} />
+      )
+    }
     <ChoiceField
       idPrefix={p}
       name="stand"
@@ -136,7 +142,6 @@ const zvOst = tarif.zusatzversorgung.ost.toLocaleString('de-DE');
   import { renderBreakdown } from '../../scripts/netto-breakdown';
   import { calculateTarif } from '../../lib/calc/tarif';
   import { tarife, type Tarif } from '../../data/tarife';
-  import type { Entgeltgruppe } from '../../data/tvoed-2026';
   import { formatEUR, formatPercent } from '../../lib/format';
   import type { Steuerklasse } from '../../lib/lohnsteuer-2026';
   import type { BundeslandCode } from '../../data/steuer-2026';
@@ -146,7 +151,7 @@ const zvOst = tarif.zusatzversorgung.ost.toLocaleString('de-DE');
     mountCalculator(`tarif-${id}`, (c) => {
       const bereich = tarif.bereiche.find((b) => b.id === c.choice('bereich')) ?? tarif.bereiche[0];
       const stand = c.choice('stand') === 'vorher' ? 'vorher' : 'aktuell';
-      const eg = c.choice('eg') as Entgeltgruppe;
+      const eg = c.choice('eg');
       const zvArt = c.choice('zvArt');
       const zv = zvArt === 'ost' ? tarif.zusatzversorgung.ost : zvArt === 'eigen' ? c.num('zv') : tarif.zusatzversorgung.west;
       const jszProzent = bereich.jsz(eg);
@@ -179,7 +184,7 @@ const zvOst = tarif.zusatzversorgung.ost.toLocaleString('de-DE');
       });
       c.out(
         'jsz',
-        `${formatPercent(jszProzent, 0)} des Monatsentgelts = ${formatEUR(r.jsz.brutto)} brutto, davon bleiben rund ${formatEUR(r.jsz.netto)} netto. Im Jahresnetto ist sie enthalten.`,
+        `${formatPercent(jszProzent, 2)} des Monatsentgelts = ${formatEUR(r.jsz.brutto)} brutto, davon bleiben rund ${formatEUR(r.jsz.netto)} netto. Im Jahresnetto ist sie enthalten.`,
       );
       return null;
     });

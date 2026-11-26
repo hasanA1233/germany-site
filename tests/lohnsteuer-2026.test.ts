@@ -147,3 +147,26 @@ test('TVöD-Rechner: Teilzeit und ungültige Stufe', () => {
   assert.ok(t.ok && t.monat.brutto === 2345.28);
   assert.ok(!calculateTarif({ ...base, stufenwerte: tvoed.vka2026['1'], stufe: 1, teilzeitProzent: 100 }).ok);
 });
+
+// ---------------------------------------------------------------- TV-L 2026
+import { tvl, entgeltgruppenTvl, jahressonderzahlungTvl } from '../src/data/tvl-2026.ts';
+
+test('TV-L-Tabelle: ab 1.4.2026 = Vorgängertabelle × 1,028, mindestens + 100 €', () => {
+  for (const eg of entgeltgruppenTvl) {
+    tvl.tab2026[eg].forEach((v, i) => {
+      const a = tvl.tab2025[eg][i];
+      if (v === null || a === null) return assert.equal(v, a);
+      close(v, Math.round(Math.max(a * 1.028, a + 100) * 100) / 100, 0.005);
+    });
+  }
+  assert.equal(tvl.tab2026['13'][3], 5873.56);
+  assert.deepEqual([jahressonderzahlungTvl('3'), jahressonderzahlungTvl('8'), jahressonderzahlungTvl('9b'), jahressonderzahlungTvl('13'), jahressonderzahlungTvl('15')], [87.43, 88.14, 74.35, 46.47, 32.53]);
+});
+
+test('TV-L-Rechner: E 13 Stufe 4 über der BBG KV wird gedeckelt', () => {
+  const r = calculateTarif({ stufenwerte: tvl.tab2026['13'], stufe: 4, teilzeitProzent: 100, jszProzent: 46.47, zusatzversorgungProzent: 1.81, steuerklasse: 1, kirche: false, bundesland: 'NW', kinder: 0, kvZusatz: 2.9 });
+  assert.ok(r.ok);
+  if (!r.ok) return;
+  close(r.monat.kv, 5812.5 * 0.0875, 0.01); // KV nur bis zur Beitragsbemessungsgrenze 5.812,50 €
+  close(r.monat.rv, 5873.56 * 0.093, 0.01); // RV-BBG 8.450 € nicht erreicht
+});

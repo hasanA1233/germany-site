@@ -220,6 +220,37 @@ const scenes = {
     ${[0, 1, 2].map((r) => `<circle cx="365" cy="${215 + r * 120}" r="26" fill="${r === 2 ? C.sun : C.primary}"/><rect x="415" y="${203 + r * 120}" width="${[300, 220, 360][r]}" height="24" rx="12" fill="${C.ink}" opacity=".15"/>`).join('')}
     ${[0, 1].map((r) => `<path d="M365 ${250 + r * 120} V ${300 + r * 120}" stroke="${C.primary}" stroke-width="6" stroke-linecap="round" opacity=".5"/>`).join('')}
   </g>`,
+
+  /** TV-L: Landesbehörde (Kuppelbau, ohne Hoheitszeichen) und Gehaltstabelle */
+  'tv-l-rechner': () => `
+  ${sky()}
+  <g filter="url(#soft)">
+    <path d="M300 250 A130 90 0 0 1 560 250 Z" fill="${C.primaryDark}"/>
+    <rect x="250" y="250" width="360" height="22" rx="6" fill="${C.ink}" opacity=".85"/>
+    ${[0, 1, 2, 3].map((i) => `<rect x="${278 + i * 86}" y="278" width="40" height="210" rx="8" fill="${C.white}"/>`).join('')}
+    <rect x="250" y="488" width="360" height="22" rx="6" fill="${C.ink}" opacity=".85"/>
+    <rect x="225" y="510" width="410" height="22" rx="6" fill="${C.ink}" opacity=".6"/>
+    <rect x="422" y="150" width="16" height="40" rx="6" fill="${C.sun}"/>
+  </g>
+  <g filter="url(#soft)">
+    <rect x="720" y="210" width="360" height="330" rx="24" fill="${C.white}"/>
+    <rect x="720" y="210" width="360" height="56" rx="24" fill="${C.primary}"/>
+    <rect x="720" y="246" width="360" height="20" fill="${C.primary}"/>
+    ${[0, 1, 2, 3, 4].map((r) => [0, 1, 2, 3].map((c) => `<rect x="${748 + c * 82}" y="${290 + r * 48}" width="62" height="16" rx="8" fill="${r === 1 && c === 3 ? C.sun : C.ink}" opacity="${r === 1 && c === 3 ? 1 : 0.14}"/>`).join('')).join('')}
+  </g>`,
+
+  /** In-Artikel-Grafik TV-L: Tabelle mit markierter Zelle und Deckel-Linie (Beitragsbemessungsgrenze) */
+  'tv-l-rechner-beispiel': () => `
+  ${sky()}
+  <g filter="url(#soft)">
+    <rect x="200" y="150" width="440" height="380" rx="24" fill="${C.white}"/>
+    ${[0, 1, 2, 3, 4, 5].map((r) => [0, 1, 2, 3, 4].map((c) => `<rect x="${228 + c * 82}" y="${180 + r * 56}" width="64" height="18" rx="9" fill="${r === 2 && c === 3 ? C.sun : r === 0 ? C.primary : C.ink}" opacity="${r === 2 && c === 3 ? 1 : r === 0 ? 0.6 : 0.13}"/>`).join('')).join('')}
+  </g>
+  <g filter="url(#soft)">
+    <rect x="700" y="200" width="340" height="290" rx="24" fill="${C.white}"/>
+    ${[0, 1, 2, 3].map((i) => `<rect x="${740 + i * 70}" y="${430 - [80, 140, 190, 190][i]}" width="44" height="${[80, 140, 190, 190][i]}" rx="10" fill="${i > 1 ? C.primaryDark : C.primary}" opacity="${i > 1 ? 0.6 : 1}"/>`).join('')}
+    <path d="M725 240 H1015" stroke="${C.sun}" stroke-width="6" stroke-dasharray="14 10" stroke-linecap="round"/>
+  </g>`,
 };
 
 await mkdir(OUT, { recursive: true });
