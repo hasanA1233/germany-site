@@ -29,7 +29,8 @@ export type IconName =
   | 'calculator'
   | 'tax'
   | 'student'
-  | 'building';
+  | 'building'
+  | 'dreisatz';
 
 export const categories: Category[] = [
   {

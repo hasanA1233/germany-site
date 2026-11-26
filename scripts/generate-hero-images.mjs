@@ -197,6 +197,29 @@ const scenes = {
     <rect x="815" y="335" width="80" height="40" rx="12" fill="${C.primaryDark}" opacity=".55"/>
     <rect x="735" y="405" width="180" height="12" rx="6" fill="${C.ink}" opacity=".15"/>
   </g>`,
+
+  /** Dreisatz: drei verbundene Kästchen mit Pfeilen */
+  'dreisatz-rechner': () => `
+  ${sky()}
+  <g filter="url(#soft)">
+    ${[0, 1, 2].map((i) => `<rect x="${170 + i * 320}" y="250" width="220" height="170" rx="28" fill="${i === 2 ? C.primaryDark : C.white}"/>`).join('')}
+    <rect x="215" y="310" width="130" height="18" rx="9" fill="${C.primary}" opacity=".5"/>
+    <rect x="215" y="345" width="90" height="18" rx="9" fill="${C.ink}" opacity=".18"/>
+    <rect x="535" y="310" width="130" height="18" rx="9" fill="${C.sun}"/>
+    <rect x="535" y="345" width="90" height="18" rx="9" fill="${C.ink}" opacity=".18"/>
+    <circle cx="920" cy="335" r="38" fill="${C.sun}"/>
+  </g>
+  ${[0, 1].map((i) => `<g transform="translate(${400 + i * 320},335)"><path d="M0 0 H70" stroke="${C.ink}" stroke-width="10" stroke-linecap="round" opacity=".7"/><path d="M52 -16 L72 0 L52 16" fill="none" stroke="${C.ink}" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/></g>`).join('')}
+  <path d="M280 450 C 420 560, 780 560, 920 450" fill="none" stroke="${C.primary}" stroke-width="8" stroke-dasharray="4 18" stroke-linecap="round"/>`,
+
+  /** In-Artikel-Grafik Dreisatz: drei Zeilen (Schritte) mit Pfeilen */
+  'dreisatz-rechner-beispiel': () => `
+  ${sky()}
+  <g filter="url(#soft)">
+    <rect x="300" y="130" width="600" height="420" rx="28" fill="${C.white}"/>
+    ${[0, 1, 2].map((r) => `<circle cx="365" cy="${215 + r * 120}" r="26" fill="${r === 2 ? C.sun : C.primary}"/><rect x="415" y="${203 + r * 120}" width="${[300, 220, 360][r]}" height="24" rx="12" fill="${C.ink}" opacity=".15"/>`).join('')}
+    ${[0, 1].map((r) => `<path d="M365 ${250 + r * 120} V ${300 + r * 120}" stroke="${C.primary}" stroke-width="6" stroke-linecap="round" opacity=".5"/>`).join('')}
+  </g>`,
 };
 
 await mkdir(OUT, { recursive: true });

@@ -1,0 +1,146 @@
+---
+import CalculatorShell from '../calculator/CalculatorShell.astro';
+import NumberField from '../calculator/NumberField.astro';
+import ChoiceField from '../calculator/ChoiceField.astro';
+import ResultMain from '../calculator/ResultMain.astro';
+const p = 'ds';
+const slug = 'dreisatz';
+const modes = [
+  { value: 'proportional', label: 'Proportional' },
+  { value: 'antiproportional', label: 'Umgekehrt' },
+  { value: 'zusammengesetzt', label: 'Zusammengesetzt' },
+];
+const artOptions = [
+  { value: 'proportional', label: 'je mehr, desto mehr' },
+  { value: 'antiproportional', label: 'je mehr, desto weniger' },
+];
+---
+
+<CalculatorShell slug={slug} title="Dreisatz berechnen" note="Ergebnisse werden auf bis zu vier Nachkommastellen gerundet angezeigt.">
+  <fieldset>
+    <legend class="mb-1.5 text-sm font-semibold text-navy-900">Welcher Dreisatz?</legend>
+    <div class="-mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-1">
+      {
+        modes.map((m, i) => (
+          <label class="shrink-0 snap-start cursor-pointer">
+            <input type="radio" name="mode" value={m.value} checked={i === 0} class="peer sr-only" id={`${p}-mode-${m.value}`} />
+            <span class="inline-flex min-h-11 items-center whitespace-nowrap rounded-full border border-line bg-card px-4 text-sm font-medium text-muted transition-colors peer-checked:border-transparent peer-checked:bg-[var(--btn-bg)] peer-checked:text-[var(--btn-text)] peer-focus-visible:outline-3 peer-focus-visible:outline-brand-600 hover:text-navy-900">
+              {m.label}
+            </span>
+          </label>
+        ))
+      }
+    </div>
+    <p class="mt-1 text-xs text-muted" data-show-when="mode=proportional">Proportional: je mehr von A, desto mehr von B (z. B. Menge und Preis).</p>
+    <p class="mt-1 text-xs text-muted" data-show-when="mode=antiproportional" hidden>Umgekehrt (antiproportional): je mehr von A, desto weniger von B (z. B. Arbeiter und Tage).</p>
+    <p class="mt-1 text-xs text-muted" data-show-when="mode=zusammengesetzt" hidden>Zwei Größen ändern sich gleichzeitig – der Rechner löst zwei Dreisätze nacheinander.</p>
+  </fieldset>
+
+  <div data-show-when="mode=zusammengesetzt" hidden class="flex flex-col gap-5">
+    <p class="text-sm font-semibold text-navy-900">Ausgangslage</p>
+    <div class="grid grid-cols-3 gap-3">
+      <NumberField idPrefix={p} name="za1" label="Größe 1" value="3" decimals={4} hint="z. B. Maschinen" />
+      <NumberField idPrefix={p} name="za2" label="Größe 2" value="4" decimals={4} hint="z. B. Stunden" />
+      <NumberField idPrefix={p} name="zb" label="ergibt" value="600" decimals={4} hint="z. B. Teile" />
+    </div>
+    <p class="text-sm font-semibold text-navy-900">Neue Lage</p>
+    <div class="grid grid-cols-2 gap-3">
+      <NumberField idPrefix={p} name="zc1" label="Größe 1 neu" value="5" decimals={4} />
+      <NumberField idPrefix={p} name="zc2" label="Größe 2 neu" value="6" decimals={4} />
+    </div>
+    <ChoiceField idPrefix={p} name="art1" legend="Größe 1 und Ergebnis:" value="proportional" options={artOptions} />
+    <ChoiceField idPrefix={p} name="art2" legend="Größe 2 und Ergebnis:" value="proportional" options={artOptions} />
+  </div>
+
+  <div data-show-when="mode=proportional|antiproportional" class="flex flex-col gap-5">
+    <div class="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3">
+      <NumberField idPrefix={p} name="a" label="Wert A" value="3" decimals={4} />
+      <div class="flex flex-col gap-1.5">
+        <label for={`${p}-ua`} class="text-sm font-semibold text-navy-900">Einheit A <span class="font-normal text-muted">(optional)</span></label>
+        <input id={`${p}-ua`} name="ua" type="text" maxlength="20" value="Äpfel" autocomplete="off" class="field-input" />
+      </div>
+    </div>
+    <div class="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3">
+      <NumberField idPrefix={p} name="b" label="entspricht B" value="1,50" decimals={4} />
+      <div class="flex flex-col gap-1.5">
+        <label for={`${p}-ub`} class="text-sm font-semibold text-navy-900">Einheit B <span class="font-normal text-muted">(optional)</span></label>
+        <input id={`${p}-ub`} name="ub" type="text" maxlength="20" value="€" autocomplete="off" class="field-input" />
+      </div>
+    </div>
+    <NumberField idPrefix={p} name="c" label="Gesucht für C (gleiche Einheit wie A)" value="7" decimals={4} />
+  </div>
+
+  <Fragment slot="results">
+    <ResultMain label="Ergebnis" labelOut="label" out="main" />
+    <div class="mt-4 rounded-2xl border border-line bg-card p-4 text-sm">
+      <p class="font-semibold text-navy-900">Rechenweg</p>
+      <ol class="mt-2 space-y-1.5 font-mono text-[0.95em] tabular-nums text-ink">
+        <li data-out="s1"></li>
+        <li data-out="s2"></li>
+        <li data-out="s3"></li>
+      </ol>
+    </div>
+    <div class="mt-4 flex flex-wrap gap-2">
+      <button type="button" class="btn-secondary px-4 py-2" data-copy>Ergebnis kopieren</button>
+    </div>
+    <p class="mt-2 min-h-5 text-sm font-medium text-brand-700" data-copy-status aria-live="polite"></p>
+  </Fragment>
+</CalculatorShell>
+
+<script>
+  import { mountCalculator } from '../../scripts/calc-runtime';
+  import { bindCopyButtons } from '../../scripts/copy-button';
+  import { calculateDreisatz, calculateZusammengesetzt, type Art } from '../../lib/calc/dreisatz';
+  import { formatNumber } from '../../lib/format';
+
+  const n = (v: number) => formatNumber(v, 4);
+  const txt = (c: { form: HTMLFormElement }, name: string) => (c.form.querySelector<HTMLInputElement>(`[name="${name}"]`)?.value ?? '').trim().slice(0, 20);
+  // Bei Euro-Beträgen immer mindestens zwei Nachkommastellen (3,50 € statt 3,5 €)
+  const withUnit = (v: number, u: string) => (u ? `${/^(€|eur|euro)$/i.test(u) ? formatNumber(v, 4, 2) : n(v)} ${u}` : n(v));
+
+  mountCalculator('dreisatz', (c) => {
+    const mode = c.choice('mode');
+    let main = '';
+    if (mode === 'zusammengesetzt') {
+      const art1 = c.choice('art1') as Art;
+      const art2 = c.choice('art2') as Art;
+      const i = { a1: c.num('za1'), a2: c.num('za2'), b: c.num('zb'), c1: c.num('zc1'), c2: c.num('zc2'), art1, art2 };
+      const r = calculateZusammengesetzt(i);
+      if (!r.ok) return r.errors;
+      const op = (art: Art, alt: number, neu: number) => (art === 'proportional' ? `× ${n(neu)} ÷ ${n(alt)}` : `× ${n(alt)} ÷ ${n(neu)}`);
+      main = n(r.ergebnis);
+      c.out('label', 'Ergebnis in der neuen Lage');
+      c.out('s1', `Ausgangslage: ${n(i.a1)} | ${n(i.a2)} ≙ ${n(i.b)}`);
+      c.out('s2', `Größe 1 ändern: ${n(i.b)} ${op(art1, i.a1, i.c1)} = ${n(r.zwischen)}`);
+      c.out('s3', `Größe 2 ändern: ${n(r.zwischen)} ${op(art2, i.a2, i.c2)} = ${n(r.ergebnis)}`);
+    } else {
+      const art = mode === 'antiproportional' ? 'antiproportional' : 'proportional';
+      const ua = txt(c, 'ua');
+      const ub = txt(c, 'ub');
+      const i = { art, a: c.num('a'), b: c.num('b'), c: c.num('c') } as const;
+      const r = calculateDreisatz(i);
+      if (!r.ok) return r.errors;
+      main = withUnit(r.ergebnis, ub);
+      c.out('label', `${withUnit(i.c, ua)} entsprechen`);
+      c.out('s1', `${withUnit(i.a, ua)} ≙ ${withUnit(i.b, ub)}`);
+      c.out(
+        's2',
+        art === 'proportional'
+          ? `1 ≙ ${withUnit(i.b, ub)} ÷ ${n(i.a)} = ${withUnit(r.einheit, ub)}`
+          : `1 ≙ ${withUnit(i.b, ub)} × ${n(i.a)} = ${withUnit(r.einheit, ub)}`,
+      );
+      c.out(
+        's3',
+        art === 'proportional'
+          ? `${withUnit(i.c, ua)} ≙ ${withUnit(r.einheit, ub)} × ${n(i.c)} = ${withUnit(r.ergebnis, ub)}`
+          : `${withUnit(i.c, ua)} ≙ ${withUnit(r.einheit, ub)} ÷ ${n(i.c)} = ${withUnit(r.ergebnis, ub)}`,
+      );
+    }
+    c.out('main', main);
+    const btn = c.form.querySelector<HTMLElement>('[data-copy]');
+    if (btn) btn.dataset.value = main;
+    return null;
+  });
+
+  document.querySelectorAll<HTMLFormElement>('form[data-calc="dreisatz"]').forEach(bindCopyButtons);
+</script>

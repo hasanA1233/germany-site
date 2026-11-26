@@ -13,7 +13,8 @@ export type CalculatorSlug =
   | 'rabatt-rechner'
   | 'werkstudent-brutto-netto-rechner'
   | 'prozent-rechner'
-  | 'tvoed-rechner';
+  | 'tvoed-rechner'
+  | 'dreisatz-rechner';
 
 export interface CalculatorMeta {
   slug: CalculatorSlug;
@@ -206,7 +207,7 @@ export const calculators: CalculatorMeta[] = [
     alsoIn: [],
     keywords: ['prozent', 'prozentrechner', 'prozentrechnung', 'prozentsatz', 'prozentwert', 'grundwert', 'prozentuale veränderung', 'prozentpunkte', 'aufschlag', 'abschlag', 'dreisatz'],
     icon: 'percent',
-    related: ['rabatt-rechner', 'umsatzsteuer-rechner', 'gewinnmarge-rechner', 'roi-rechner'],
+    related: ['dreisatz-rechner', 'rabatt-rechner', 'umsatzsteuer-rechner', 'gewinnmarge-rechner'],
     ogFormula: 'Prozentwert = Grundwert × Prozentsatz ÷ 100',
     featured: true,
     popular: true,
@@ -225,6 +226,19 @@ export const calculators: CalculatorMeta[] = [
     related: ['werkstudent-brutto-netto-rechner', 'prozent-rechner', 'sparplan-rechner'],
     ogFormula: 'Netto = Tabellenentgelt − Steuern − Sozialabgaben − VBL',
     added: '2026-11-26',
+  },
+  {
+    slug: 'dreisatz-rechner',
+    href: '/dreisatz-rechner/',
+    name: 'Dreisatzrechner',
+    description: 'Dreisatz berechnen: proportional, umgekehrt (antiproportional) oder zusammengesetzt – mit Rechenweg in drei Schritten.',
+    category: 'prozent-rechner',
+    alsoIn: [],
+    keywords: ['dreisatz', 'dreisatzrechner', 'umgekehrter dreisatz', 'antiproportional', 'proportional', 'zusammengesetzter dreisatz', 'verhältnisrechnung', 'mathe', 'rechenweg'],
+    icon: 'dreisatz',
+    related: ['prozent-rechner', 'rabatt-rechner', 'umsatzsteuer-rechner'],
+    ogFormula: 'C ≙ B ÷ A × C',
+    added: '2026-11-27',
   },
 ];
 

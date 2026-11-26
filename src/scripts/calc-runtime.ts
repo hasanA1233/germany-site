@@ -7,7 +7,7 @@
  *  - <p data-error-for="x">                        Fehlermeldung zu Feld x
  *  - [data-out="key"]                              Ausgabefeld
  *  - [data-results] / [data-results-invalid]       Ergebnisbereich / Hinweis bei ungültigen Eingaben
- *  - [data-show-when="feld=wert"]                  nur sichtbar, wenn Radio/Select feld den Wert hat
+ *  - [data-show-when="feld=wert|wert2"]            nur sichtbar, wenn Radio/Select feld einen der Werte hat
  *  - <button type="reset">                         setzt auf Standardwerte zurück
  */
 import { formatNumber, parseNumber } from '../lib/format';
@@ -66,7 +66,8 @@ export function initCalculator(form: HTMLFormElement, compute: ComputeFn) {
   const updateVisibility = () => {
     form.querySelectorAll<HTMLElement>('[data-show-when]').forEach((node) => {
       const [name, value] = (node.dataset.showWhen ?? '').split('=');
-      const visible = ctx.choice(name) === value;
+      // Mehrere erlaubte Werte mit | trennen, z. B. data-show-when="mode=a|b"
+      const visible = (value ?? '').split('|').includes(ctx.choice(name));
       node.hidden = !visible;
       // Ausgeblendete Felder nicht validieren/absenden
       node.querySelectorAll<HTMLInputElement>('input, select').forEach((i) => (i.disabled = !visible));

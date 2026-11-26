@@ -126,7 +126,9 @@ const schema = [
           )
         }
 
-        <p class="mt-10 text-sm text-muted">Zuletzt aktualisiert: <time datetime={data.updated.toISOString().slice(0, 10)}>{updated}</time></p>
+        <p class="mt-10 text-sm text-muted">
+          Von der Redaktion {site.name} · zuletzt aktualisiert am <time datetime={data.updated.toISOString().slice(0, 10)}>{updated}</time>
+        </p>
       </article>
 
       <aside class="hidden lg:block" aria-label="Seitennavigation">

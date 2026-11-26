@@ -263,3 +263,18 @@ test('Prozentrechner: Validierung (Division durch 0, fehlende Werte)', () => {
   assert.ok(fail(calculatePercent({ mode: 'prozentwert', p: NaN, g: 5 })).p);
   assert.ok(fail(calculatePercent({ mode: 'aufschlag', g: 5, p: -3 })).p);
 });
+
+// ---------------------------------------------------------------- Dreisatz
+import { calculateDreisatz, calculateZusammengesetzt } from '../src/lib/calc/dreisatz.ts';
+
+test('Dreisatz: proportional, antiproportional, zusammengesetzt', () => {
+  const p = calculateDreisatz({ art: 'proportional', a: 3, b: 1.5, c: 7 }); // 3 Äpfel = 1,50 € → 7 Äpfel
+  assert.ok(p.ok && Math.abs(p.einheit - 0.5) < 1e-12 && Math.abs(p.ergebnis - 3.5) < 1e-12);
+  const a = calculateDreisatz({ art: 'antiproportional', a: 4, b: 6, c: 3 }); // 4 Maler 6 Tage → 3 Maler 8 Tage
+  assert.ok(a.ok && a.einheit === 24 && a.ergebnis === 8);
+  // 3 Maschinen fertigen in 4 h 600 Teile → 5 Maschinen in 6 h: 600 × 5/3 × 6/4 = 1.500
+  const z = calculateZusammengesetzt({ a1: 3, a2: 4, b: 600, c1: 5, c2: 6, art1: 'proportional', art2: 'proportional' });
+  assert.ok(z.ok && Math.abs(z.zwischen - 1000) < 1e-9 && Math.abs(z.ergebnis - 1500) < 1e-9);
+  assert.ok(fail(calculateDreisatz({ art: 'proportional', a: 0, b: 1, c: 1 })).a);
+  assert.ok(fail(calculateDreisatz({ art: 'antiproportional', a: 2, b: 1, c: 0 })).c);
+});
