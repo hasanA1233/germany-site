@@ -30,7 +30,8 @@ export type IconName =
   | 'tax'
   | 'student'
   | 'building'
-  | 'dreisatz';
+  | 'dreisatz'
+  | 'clock';
 
 export const categories: Category[] = [
   {

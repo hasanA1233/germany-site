@@ -293,3 +293,20 @@ test('Datumsangaben: nie in der Zukunft (deutsche Zeit), Anzeige als Kalendertag
   assert.equal(plural(1, 'Jahr', 'Jahre'), '1 Jahr');
   assert.equal(plural(15, 'Jahr', 'Jahre'), '15 Jahre');
 });
+
+// ---------------------------------------------------------------- Stundenlohn
+import { calculateStundenlohn } from '../src/lib/calc/stundenlohn.ts';
+
+test('Stundenlohn: Monat ↔ Stunde, Mindestlohn-Vergleich, Urlaub', () => {
+  const a = calculateStundenlohn({ modus: 'monat', betrag: 3000, wochenstunden: 40 });
+  assert.ok(a.ok);
+  if (!a.ok) return;
+  close(a.monatsstunden, 173.333, 0.001);
+  close(a.stundenlohn, 17.31, 0.005); // 3.000 ÷ (40 × 13/3)
+  assert.ok(a.diffMindestlohn > 0);
+  const b = calculateStundenlohn({ modus: 'stunde', betrag: 13.9, wochenstunden: 40 });
+  assert.ok(b.ok && Math.abs(b.monatsgehalt - 2409.33) < 0.01 && Math.abs(b.diffMindestlohn) < 1e-9);
+  const c = calculateStundenlohn({ modus: 'monat', betrag: 3000, wochenstunden: 40, urlaubstage: 30, arbeitstageProWoche: 5 });
+  assert.ok(c.ok && c.gearbeiteteStundenJahr === 1840 && Math.abs(c.stundenlohnGearbeitet! - 19.57) < 0.01); // 36.000 ÷ 1.840 h
+  assert.ok(fail(calculateStundenlohn({ modus: 'monat', betrag: 0, wochenstunden: 0 })).wochenstunden);
+});

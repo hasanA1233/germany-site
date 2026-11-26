@@ -19,6 +19,7 @@ export const iconPaths: Record<IconName | ExtraIcon, string> = {
   calculator: 'M6 3h12v18H6zM9 7h6M9 11h.01M12 11h.01M15 11h.01M9 14h.01M12 14h.01M15 14h.01M9 17h.01M12 17h.01M15 17h.01',
   tax: 'M7 3h7l4 4v14H7zM14 3v4h4M10 12h5M10 16h5',
   student: 'M2 9l10-5 10 5-10 5zM6 11v5c3 2 9 2 12 0v-5M22 9v6',
+  clock: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2',
   dreisatz: 'M2 8h6v8H2zM9 8h6v8H9zM16 8h6v8h-6zM8 12h1M15 12h1M5 19c3 2 11 2 14 0M17 17.5l2 1.5-2 1.5',
   building: 'M3 21h18M5 21V10M19 21V10M9 21v-6h6v6M3 10l9-6 9 6M8 13h.01M16 13h.01',
   search: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4',

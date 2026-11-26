@@ -48,8 +48,11 @@ export const steuer2026 = {
    *  https://www.deutsche-rentenversicherung.de/DRV/DE/Ueber-uns-und-Presse/Presse/Meldungen/2026/260223-minijob-midijob-verdienstgrenzen-steigen.html (zuletzt geprüft 2026-11-25) */
   minijobGrenze: 603,
   uebergangsbereichObergrenze: 2_000,
-  /** Mindestlohn 2026 in €/Stunde (Grundlage der Minijob-Grenze) – Quelle: DRV-Pressemitteilung 23.02.2026 (s. o.) */
+  /** Gesetzlicher Mindestlohn in €/Stunde (brutto je Zeitstunde) – Quelle: Fünfte Mindestlohnanpassungsverordnung (MiLoV5) v. 05.11.2025,
+   *  https://www.gesetze-im-internet.de/milov5/BJNR10C0A0025.html (zuletzt geprüft 2026-11-26) */
   mindestlohn: 13.9,
+  /** ab 1. Januar 2027 – Quelle: MiLoV5 (s. o.) */
+  mindestlohn2027: 14.6,
 
   /** Minijob-Rentenversicherung in % – Quelle: DRV, FAQ Minijobs,
    *  https://www.deutsche-rentenversicherung.de/DRV/DE/Rente/Allgemeine-Informationen/Wissenswertes-zur-Rente/FAQs/Minijobs/Minijobs.html (zuletzt geprüft 2026-11-25) */

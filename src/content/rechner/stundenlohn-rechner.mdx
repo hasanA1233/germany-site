@@ -1,0 +1,173 @@
+---
+seoTitle: "Stundenlohn Rechner 2026 mit Mindestlohn"
+description: "Stundenlohn Rechner 2026: Monatsgehalt in Stundenlohn umrechnen und umgekehrt – mit Mindestlohn-Check (13,90 €), Rechenweg und Beispielen."
+h1: "Stundenlohn Rechner 2026"
+intro: "Wie viel verdienen Sie pro Stunde? Geben Sie Ihr Bruttogehalt und Ihre Wochenstunden ein – der Stundenlohn Rechner zeigt sofort Ihren Stundenlohn und prüft, ob der Mindestlohn von 13,90 € eingehalten ist. Umgekehrt rechnen Sie einen Stundenlohn in ein Monatsgehalt um."
+updated: 2026-11-26
+hero:
+  file: "stundenlohn-rechner"
+  alt: "Stundenlohn Rechner: Uhr und Münzstapel als Illustration"
+faq:
+  - q: "Wie berechne ich meinen Stundenlohn aus dem Monatsgehalt?"
+    a: "Teilen Sie Ihr Bruttomonatsgehalt durch die Arbeitsstunden pro Monat. Die Monatsstunden erhalten Sie, indem Sie die Wochenstunden mit 4,33 multiplizieren (52 Wochen ÷ 12 Monate). Beispiel: 3.000 € ÷ (40 × 4,33) ≈ 17,31 € pro Stunde."
+  - q: "Wie hoch ist der Mindestlohn 2026?"
+    a: "Seit dem 1. Januar 2026 beträgt der gesetzliche Mindestlohn 13,90 € brutto pro Stunde. Zum 1. Januar 2027 steigt er auf 14,60 €. Festgelegt ist das in der Fünften Mindestlohnanpassungsverordnung."
+  - q: "Wie viel verdient man bei Vollzeit zum Mindestlohn?"
+    a: "Bei 40 Wochenstunden sind es 2026 rund 2.409 € brutto im Monat (13,90 € × 173,33 Stunden). Bei 38,5 Wochenstunden ergeben sich etwa 2.319 € brutto."
+  - q: "Warum rechnet man mit 4,33 Wochen pro Monat?"
+    a: "Ein Jahr hat 52 Wochen. Verteilt auf 12 Monate sind das im Durchschnitt 52 ÷ 12 = 4,33 Wochen pro Monat. So erhält man einen Durchschnittswert, der für jeden Monat gleich ist – auch wenn manche Monate tatsächlich mehr Arbeitstage haben als andere."
+  - q: "Zählt der Urlaub bei der Berechnung des Stundenlohns mit?"
+    a: "In der üblichen Rechnung ja: Das Monatsgehalt wird auf alle bezahlten Stunden verteilt, Urlaub inklusive. Wer wissen möchte, was er pro tatsächlich gearbeiteter Stunde verdient, kann im Rechner seine Urlaubstage eingeben. Dann wird das Jahresgehalt nur auf die gearbeiteten Stunden verteilt – der Wert ist entsprechend höher."
+  - q: "Gilt der Mindestlohn für alle?"
+    a: "Für fast alle Arbeitnehmerinnen und Arbeitnehmer ab 18 Jahren. Ausnahmen regelt § 22 Mindestlohngesetz, etwa für Auszubildende, Pflichtpraktika, freiwillige Praktika bis zu drei Monaten, Jugendliche unter 18 ohne abgeschlossene Berufsausbildung und Ehrenamtliche."
+sources:
+  - label: "Fünfte Mindestlohnanpassungsverordnung (MiLoV5) – 13,90 € ab 2026, 14,60 € ab 2027"
+    url: "https://www.gesetze-im-internet.de/milov5/BJNR10C0A0025.html"
+  - label: "Mindestlohngesetz § 22 – Persönlicher Anwendungsbereich"
+    url: "https://www.gesetze-im-internet.de/milog/__22.html"
+  - label: "Arbeitszeitgesetz § 3 – Arbeitszeit der Arbeitnehmer"
+    url: "https://www.gesetze-im-internet.de/arbzg/__3.html"
+  - label: "Bundesregierung – Fragen und Antworten zum Mindestlohn"
+    url: "https://www.bundesregierung.de/breg-de/service/fragen-und-antworten/mindestlohn-faq-1688186"
+---
+
+import AdSlot from '../../components/ads/AdSlot.astro';
+import ArticleFigure from '../../components/ui/ArticleFigure.astro';
+import { steuer2026 } from '../../data/steuer-2026';
+import { WOCHEN_PRO_MONAT } from '../../lib/calc/stundenlohn';
+
+export const eur = (n) => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+export const num = (n, d = 2) => n.toLocaleString('de-DE', { maximumFractionDigits: d });
+export const stunden = [20, 25, 30, 35, 38.5, 39, 40];
+
+## So funktioniert der Stundenlohn Rechner
+
+Der Rechner kennt zwei Richtungen:
+
+1. **Gehalt → Stundenlohn:** Sie geben Ihr Bruttogehalt pro Monat und Ihre vertraglichen Wochenstunden ein. Der Rechner zeigt Ihren Stundenlohn.
+2. **Stundenlohn → Gehalt:** Sie kennen Ihren Stundenlohn und möchten wissen, welches Monats- und Jahresgehalt sich daraus ergibt.
+
+Zusätzlich prüft der Rechner, ob Ihr Stundenlohn den **gesetzlichen Mindestlohn von {eur(steuer2026.mindestlohn)}** erreicht. Unter „Urlaub berücksichtigen“ können Sie optional Ihre Urlaubstage eingeben – dann sehen Sie auch, was Sie pro **tatsächlich gearbeiteter** Stunde verdienen. Der Rechenweg unter dem Ergebnis zeigt jeden Schritt.
+
+Alle Werte sind **Bruttobeträge**. Was davon netto bleibt, hängt von Steuerklasse und Sozialabgaben ab – für Werkstudierende gibt es den [Werkstudent-Rechner](/werkstudent-brutto-netto-rechner/), für den öffentlichen Dienst den [TVöD-Rechner](/tvoed-rechner/) und den [TV-L-Rechner](/tv-l-rechner/).
+
+## Die Formel: Stundenlohn berechnen
+
+Ein Monat hat im Durchschnitt **4,33 Wochen** (52 Wochen ÷ 12 Monate). Daraus ergeben sich zwei einfache Formeln:
+
+| Gesucht | Formel |
+| --- | --- |
+| Arbeitsstunden pro Monat | Wochenstunden × 4,33 |
+| Stundenlohn | Monatsgehalt ÷ (Wochenstunden × 4,33) |
+| Monatsgehalt | Stundenlohn × Wochenstunden × 4,33 |
+
+**Beispiel:** Bei 40 Wochenstunden arbeiten Sie im Durchschnitt 40 × 4,33 = **173,33 Stunden** im Monat. Bei einem Gehalt von 3.000 € brutto ergibt das 3.000 € ÷ 173,33 = **17,31 € pro Stunde**.
+
+Manche Arbeitgeber rechnen mit leicht anderen Werten, etwa mit 4,35 Wochen pro Monat oder mit den tatsächlichen Arbeitstagen eines Monats. Die Unterschiede liegen meist im Cent-Bereich.
+
+## Mindestlohn 2026
+
+Der gesetzliche Mindestlohn beträgt seit dem **1. Januar 2026 {eur(steuer2026.mindestlohn)} brutto pro Stunde**. Zum **1. Januar 2027** steigt er auf **{eur(steuer2026.mindestlohn2027)}**. Was das für das Monatsgehalt bedeutet, zeigt die Tabelle:
+
+<div class="overflow-x-auto">
+<table>
+  <thead><tr><th scope="col">Wochenstunden</th><th scope="col">Stunden pro Monat</th><th scope="col">Mindestlohn 2026 pro Monat</th><th scope="col">Mindestlohn 2027 pro Monat</th></tr></thead>
+  <tbody>
+    {stunden.map((h) => (
+      <tr>
+        <td>{num(h, 1)}</td>
+        <td>{num(h * WOCHEN_PRO_MONAT)}</td>
+        <td>{eur(steuer2026.mindestlohn * h * WOCHEN_PRO_MONAT)}</td>
+        <td>{eur(steuer2026.mindestlohn2027 * h * WOCHEN_PRO_MONAT)}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+</div>
+
+Der Mindestlohn gilt für fast alle Beschäftigten ab 18 Jahren – auch für Minijobs, Aushilfen und Teilzeitkräfte. **Ausnahmen** nennt § 22 des Mindestlohngesetzes: Auszubildende, Pflichtpraktika im Rahmen von Schule oder Studium, freiwillige Orientierungs- oder studienbegleitende Praktika von bis zu drei Monaten, Jugendliche unter 18 Jahren ohne abgeschlossene Berufsausbildung sowie Ehrenamtliche. Für Menschen, die vorher langzeitarbeitslos waren, gibt es eine Sonderregel für die ersten Monate der Beschäftigung.
+
+<AdSlot placement="in-content" />
+
+## Rechenbeispiele
+
+### Vollzeit mit 38,5 Stunden
+
+Ein Tarifvertrag sieht 38,5 Wochenstunden vor, das Gehalt beträgt 2.500 € brutto. Stunden pro Monat: 38,5 × 4,33 = 166,83. Stundenlohn: 2.500 € ÷ 166,83 = **14,99 €**. Das liegt über dem Mindestlohn.
+
+### Teilzeit mit 20 Stunden
+
+Eine Teilzeitkraft verdient 15 € pro Stunde und arbeitet 20 Stunden pro Woche. Monatsgehalt: 15 € × 20 × 4,33 = **1.300 € brutto**. Da das über 603 € liegt, ist es kein Minijob mehr, sondern eine Beschäftigung im Übergangsbereich mit reduzierten Sozialabgaben.
+
+### Mindestlohn in Vollzeit
+
+Bei 40 Wochenstunden zum Mindestlohn ergibt sich 2026 ein Monatsgehalt von {eur(steuer2026.mindestlohn * 40 * WOCHEN_PRO_MONAT)} brutto, ab 2027 von {eur(steuer2026.mindestlohn2027 * 40 * WOCHEN_PRO_MONAT)}.
+
+### Stundenlohn mit Urlaub
+
+Bei 3.000 € brutto, 40 Stunden an 5 Tagen und 30 Urlaubstagen arbeiten Sie im Jahr (52 × 5 − 30) × 8 = **1.840 Stunden**. Ihr Jahresgehalt von 36.000 € entspricht damit **19,57 €** pro tatsächlich gearbeiteter Stunde – rund 2,26 € mehr als der rechnerische Stundenlohn von 17,31 €. Feiertage sind hier noch nicht abgezogen; mit ihnen liegt der Wert noch etwas höher.
+
+<ArticleFigure
+  file="stundenlohn-rechner-beispiel"
+  alt="Stundenlohn Rechner Beispiel: Kalenderwoche mit Uhr und Balken für Wochenstunden, Monatsstunden und Monatsgehalt"
+  caption="Vom Wochen- zum Monatswert: Wochenstunden × 4,33 ergibt die Stunden pro Monat – darauf verteilt sich das Monatsgehalt."
+/>
+
+## Monatsgehalt in Stundenlohn: Umrechnungstabelle
+
+Die folgende Tabelle zeigt typische Bruttogehälter umgerechnet in den Stundenlohn – einmal für 40 und einmal für 38,5 Wochenstunden:
+
+<div class="overflow-x-auto">
+<table>
+  <thead><tr><th scope="col">Monatsgehalt brutto</th><th scope="col">Stundenlohn bei 40 Std./Woche</th><th scope="col">Stundenlohn bei 38,5 Std./Woche</th></tr></thead>
+  <tbody>
+    {[2000, 2500, 3000, 3500, 4000, 4500, 5000, 6000].map((m) => (
+      <tr>
+        <td>{eur(m)}</td>
+        <td>{eur(m / (40 * WOCHEN_PRO_MONAT))}</td>
+        <td>{eur(m / (38.5 * WOCHEN_PRO_MONAT))}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+</div>
+
+Ein Gehalt von 2.000 € brutto in Vollzeit mit 40 Stunden liegt damit unter dem Mindestlohn von 2026 – erlaubt wäre es nur bei entsprechend weniger Wochenstunden.
+
+## Brutto oder netto?
+
+Stundenlöhne werden in Deutschland fast immer **brutto** angegeben – also vor Abzug von Lohnsteuer und Sozialabgaben. Auch der Mindestlohn ist ein Bruttowert. Ihr **Netto-Stundenlohn** ist deutlich niedriger: Bei einem Durchschnittsverdienst in Steuerklasse I gehen grob ein Drittel bis 40 % für Steuern und Sozialversicherung ab. Wie viel genau, hängt von Steuerklasse, Kinderzahl, Krankenkasse und Bundesland ab.
+
+Für einen fairen Vergleich zweier Jobangebote sollten Sie deshalb immer Bruttowerte miteinander vergleichen – oder beide Angebote mit einem Brutto-Netto-Rechner durchrechnen.
+
+## Stundensatz für Selbstständige
+
+Für Selbstständige und Freiberufler funktioniert die einfache Umrechnung nicht: Ein angestellter Stundenlohn von 25 € entspricht keinem Stundensatz von 25 €. Selbstständige müssen mit ihrem Stundensatz zusätzlich finanzieren:
+
+- **Sozialversicherung komplett selbst**, also auch den Anteil, den sonst der Arbeitgeber trägt,
+- **nicht abrechenbare Zeit** für Akquise, Buchhaltung, Weiterbildung, Urlaub und Krankheit,
+- **Betriebskosten** wie Büro, Software, Versicherungen und Fahrzeug.
+
+Ein vereinfachtes Beispiel: Wer 60.000 € Gewinn vor Steuern erzielen möchte, 15.000 € Betriebskosten hat und 1.100 Stunden im Jahr abrechnen kann, braucht einen Stundensatz von (60.000 + 15.000) ÷ 1.100 ≈ **68 € netto**. Kommt Umsatzsteuer hinzu, steigt der Betrag auf der Rechnung entsprechend – das zeigt der [MwSt-Rechner](/umsatzsteuer-rechner/). Ob sich ein Auftrag lohnt, prüfen Sie mit dem [Gewinnrechner](/gewinn-rechner/).
+
+## Teilzeit: Stundenlohn bleibt gleich
+
+Bei Teilzeit sinkt das Gehalt im gleichen Verhältnis wie die Arbeitszeit – der Stundenlohn bleibt gleich. Wer statt 40 nur 30 Stunden arbeitet, erhält drei Viertel des Vollzeitgehalts. Ein Beispiel: Bei einem Vollzeitgehalt von 3.200 € für 40 Stunden ergeben 30 Stunden ein Gehalt von 2.400 € brutto; der Stundenlohn liegt in beiden Fällen bei 18,46 €.
+
+Netto sieht das oft besser aus: Wegen des progressiven Steuertarifs sinkt die Lohnsteuer bei Teilzeit stärker als das Bruttogehalt. Prozentual bleibt deshalb meist mehr netto übrig, als die Stundenkürzung vermuten lässt.
+
+## Überstunden richtig rechnen
+
+Überstunden werden in der Regel mit dem normalen Stundenlohn vergütet, sofern Arbeitsvertrag oder Tarifvertrag nichts anderes vorsehen. **Einen gesetzlichen Anspruch auf einen Überstundenzuschlag gibt es nicht** – viele Tarifverträge sehen aber Zuschläge vor, der TVöD zum Beispiel 15 bis 30 %. Manche Verträge regeln auch, dass Überstunden mit dem Gehalt abgegolten sind oder durch Freizeit ausgeglichen werden.
+
+Beispiel: Bei einem Stundenlohn von 17,31 € bringen 10 Überstunden ohne Zuschlag 173,08 € brutto zusätzlich. Wichtig ist auch die Obergrenze des Arbeitszeitgesetzes: Die werktägliche Arbeitszeit darf **8 Stunden** nicht überschreiten; sie kann auf bis zu 10 Stunden verlängert werden, wenn im Durchschnitt von sechs Monaten 8 Stunden pro Werktag eingehalten werden.
+
+## Tipps
+
+- **Wochenstunden aus dem Vertrag nehmen:** Rechnen Sie mit der vereinbarten Arbeitszeit, nicht mit tatsächlich geleisteten Überstunden – sonst wird der Stundenlohn zu niedrig.
+- **Mindestlohn prüfen:** Gerade bei Minijobs und Teilzeit lohnt der Blick, ob Gehalt und Stunden zusammenpassen. Bei 603 € im Monat sind zum Mindestlohn 2026 höchstens rund 43 Stunden möglich.
+- **Gehälter vergleichen:** Bei Jobangeboten mit unterschiedlicher Wochenarbeitszeit ist der Stundenlohn die fairere Vergleichsgröße als das Monatsgehalt.
+- **Gehaltsabrechnung prüfen:** Steht auf Ihrer Abrechnung ein Stundenlohn, können Sie mit dem Rechner kontrollieren, ob Monatsgehalt und vereinbarte Stunden zusammenpassen. Abweichungen um wenige Cent entstehen oft durch einen anderen Monatsfaktor, größere Abweichungen sollten Sie mit der Personalabteilung klären.
+- **Prozentuale Erhöhung ausrechnen:** Wie viel eine Gehaltserhöhung in Prozent ausmacht, zeigt der [Prozentrechner](/prozent-rechner/); für Verhältnisaufgaben hilft der [Dreisatzrechner](/dreisatz-rechner/).
+
+> **Alle Angaben ohne Gewähr – keine Steuer- oder Rechtsberatung.** Der Stundenlohn Rechner liefert eine Durchschnittsrechnung mit 4,33 Wochen pro Monat. Die Abrechnung Ihres Arbeitgebers kann je nach Vertrag oder Tarifvertrag abweichen.

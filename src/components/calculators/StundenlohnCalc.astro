@@ -1,0 +1,119 @@
+---
+import CalculatorShell from '../calculator/CalculatorShell.astro';
+import NumberField from '../calculator/NumberField.astro';
+import ChoiceField from '../calculator/ChoiceField.astro';
+import ResultMain from '../calculator/ResultMain.astro';
+import ResultList from '../calculator/ResultList.astro';
+import { steuer2026 } from '../../data/steuer-2026';
+const p = 'sl';
+const ml = steuer2026.mindestlohn.toLocaleString('de-DE', { minimumFractionDigits: 2 });
+---
+
+<CalculatorShell
+  slug="stundenlohn"
+  title="Stundenlohn berechnen"
+  note={`Umrechnung mit 4,33 Wochen pro Monat (52 Wochen ÷ 12 Monate). Alle Beträge brutto. Gesetzlicher Mindestlohn 2026: ${ml} € pro Stunde.`}
+>
+  <ChoiceField
+    idPrefix={p}
+    name="modus"
+    legend="Was möchten Sie berechnen?"
+    value="monat"
+    options={[
+      { value: 'monat', label: 'Gehalt → Stundenlohn' },
+      { value: 'stunde', label: 'Stundenlohn → Gehalt' },
+    ]}
+  />
+  <div data-show-when="modus=monat">
+    <NumberField idPrefix={p} name="monat" label="Bruttogehalt pro Monat" value="3.000" suffix="€" />
+  </div>
+  <div data-show-when="modus=stunde" hidden>
+    <NumberField idPrefix={p} name="stunde" label="Stundenlohn brutto" value={ml} suffix="€" />
+  </div>
+  <NumberField idPrefix={p} name="wochenstunden" label="Arbeitsstunden pro Woche" value="40" suffix="Std." decimals={2} hint="Laut Arbeitsvertrag, ohne Überstunden." />
+  <details class="group rounded-xl border border-line bg-card px-4 py-1">
+    <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between text-sm font-semibold text-navy-900 [&::-webkit-details-marker]:hidden">
+      Urlaub berücksichtigen (optional)
+      <span class="text-brand-700 transition-transform group-open:rotate-45" aria-hidden="true">+</span>
+    </summary>
+    <div class="grid grid-cols-2 gap-3 pb-4">
+      <NumberField idPrefix={p} name="urlaubstage" label="Urlaubstage pro Jahr" optional placeholder="z. B. 30" integer />
+      <NumberField idPrefix={p} name="arbeitstage" label="Arbeitstage pro Woche" value="5" integer />
+    </div>
+  </details>
+
+  <Fragment slot="results">
+    <p
+      data-state-for="ml"
+      data-out="ml"
+      class="mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold ring-1 data-[state=ok]:bg-brand-50 data-[state=ok]:text-brand-700 data-[state=ok]:ring-brand-100 data-[state=warn]:bg-danger-50 data-[state=warn]:text-danger-700 data-[state=warn]:ring-danger-700/30"
+    >
+    </p>
+    <ResultMain label="Stundenlohn" labelOut="mainLabel" out="main" />
+    <ResultList
+      items={[
+        { label: 'Stundenlohn brutto', out: 'stundenlohn', strong: true },
+        { label: 'Monatsgehalt brutto', out: 'monat' },
+        { label: 'Jahresgehalt brutto (12 Gehälter)', out: 'jahr' },
+        { label: 'Arbeitsstunden pro Monat', out: 'monatsstunden' },
+      ]}
+    />
+    <p class="mt-3 text-sm text-ink" data-out="urlaub" hidden data-urlaub></p>
+    <div class="mt-4 rounded-2xl border border-line bg-card p-4 text-sm">
+      <p class="font-semibold text-navy-900">Rechenweg</p>
+      <p class="mt-1 font-mono text-[0.95em] tabular-nums text-ink" data-out="rw1"></p>
+      <p class="mt-1 font-mono text-[0.95em] tabular-nums text-ink" data-out="rw2"></p>
+    </div>
+  </Fragment>
+</CalculatorShell>
+
+<script>
+  import { mountCalculator } from '../../scripts/calc-runtime';
+  import { calculateStundenlohn } from '../../lib/calc/stundenlohn';
+  import { formatEUR, formatNumber } from '../../lib/format';
+
+  mountCalculator('stundenlohn', (c) => {
+    const modus = c.choice('modus') === 'stunde' ? 'stunde' : 'monat';
+    const r = calculateStundenlohn({
+      modus,
+      betrag: c.num(modus),
+      wochenstunden: c.num('wochenstunden'),
+      urlaubstage: c.optional('urlaubstage'),
+      arbeitstageProWoche: c.num('arbeitstage'),
+    });
+    if (!r.ok) {
+      if (r.errors.betrag) r.errors[modus] = r.errors.betrag;
+      return r.errors;
+    }
+    const h = c.num('wochenstunden');
+    c.out('mainLabel', modus === 'monat' ? 'Ihr Stundenlohn (brutto)' : 'Ihr Monatsgehalt (brutto)');
+    c.out('main', modus === 'monat' ? formatEUR(r.stundenlohn) : formatEUR(r.monatsgehalt));
+    c.out('stundenlohn', formatEUR(r.stundenlohn));
+    c.out('monat', formatEUR(r.monatsgehalt));
+    c.out('jahr', formatEUR(r.jahresgehalt));
+    c.out('monatsstunden', `${formatNumber(r.monatsstunden, 2)} Std.`);
+
+    const unter = r.diffMindestlohn < -0.004;
+    c.state('ml', unter ? 'warn' : 'ok');
+    c.out(
+      'ml',
+      unter
+        ? `Unter dem Mindestlohn (${formatEUR(r.mindestlohn)}) – ${formatEUR(-r.diffMindestlohn)} pro Stunde zu wenig`
+        : `✓ Mindestlohn ${formatEUR(r.mindestlohn)} eingehalten${r.diffMindestlohn > 0.004 ? ` (+${formatEUR(r.diffMindestlohn)})` : ''}`,
+    );
+
+    const ul = c.form.querySelector<HTMLElement>('[data-urlaub]');
+    if (ul) ul.hidden = r.stundenlohnGearbeitet === undefined;
+    if (r.stundenlohnGearbeitet !== undefined)
+      c.out('urlaub', `Bezogen auf die tatsächlich gearbeiteten ${formatNumber(r.gearbeiteteStundenJahr!, 0)} Stunden im Jahr (bezahlter Urlaub abgezogen) verdienen Sie ${formatEUR(r.stundenlohnGearbeitet)} pro Stunde.`);
+
+    c.out('rw1', `${formatNumber(h, 2)} Std./Woche × 4,33 = ${formatNumber(r.monatsstunden, 2)} Std./Monat`);
+    c.out(
+      'rw2',
+      modus === 'monat'
+        ? `${formatEUR(r.monatsgehalt)} ÷ ${formatNumber(r.monatsstunden, 2)} Std. = ${formatEUR(r.stundenlohn)} pro Stunde`
+        : `${formatEUR(r.stundenlohn)} × ${formatNumber(r.monatsstunden, 2)} Std. = ${formatEUR(r.monatsgehalt)} pro Monat`,
+    );
+    return null;
+  });
+</script>

@@ -251,6 +251,35 @@ const scenes = {
     ${[0, 1, 2, 3].map((i) => `<rect x="${740 + i * 70}" y="${430 - [80, 140, 190, 190][i]}" width="44" height="${[80, 140, 190, 190][i]}" rx="10" fill="${i > 1 ? C.primaryDark : C.primary}" opacity="${i > 1 ? 0.6 : 1}"/>`).join('')}
     <path d="M725 240 H1015" stroke="${C.sun}" stroke-width="6" stroke-dasharray="14 10" stroke-linecap="round"/>
   </g>`,
+
+  /** Stundenlohn: große Uhr und Münzstapel */
+  'stundenlohn-rechner': () => `
+  ${sky()}
+  <g transform="translate(470,340)" filter="url(#soft)">
+    <circle r="170" fill="${C.white}"/>
+    <circle r="170" fill="none" stroke="${C.primary}" stroke-width="16"/>
+    ${Array.from({ length: 12 }, (_, i) => `<rect x="-4" y="-150" width="8" height="${i % 3 === 0 ? 26 : 14}" rx="4" fill="${C.ink}" opacity=".55" transform="rotate(${i * 30})"/>`).join('')}
+    <path d="M0 0 L0 -105" stroke="${C.ink}" stroke-width="12" stroke-linecap="round"/>
+    <path d="M0 0 L78 40" stroke="${C.primaryDark}" stroke-width="10" stroke-linecap="round"/>
+    <circle r="12" fill="${C.sun}"/>
+  </g>
+  <g filter="url(#soft)">${coin(820, 520, 46)}${coin(820, 486, 46)}${coin(820, 452, 46)}${coin(820, 418, 46)}${coin(920, 540, 38)}${coin(920, 512, 38)}</g>`,
+
+  /** In-Artikel-Grafik Stundenlohn: Wochenraster und drei Balken (Woche, Monat, Gehalt) */
+  'stundenlohn-rechner-beispiel': () => `
+  ${sky()}
+  <g filter="url(#soft)">
+    <rect x="220" y="160" width="420" height="360" rx="26" fill="${C.white}"/>
+    <rect x="220" y="160" width="420" height="58" rx="26" fill="${C.primary}"/>
+    <rect x="220" y="196" width="420" height="22" fill="${C.primary}"/>
+    ${[0, 1, 2, 3, 4].map((r) => [0, 1, 2, 3, 4, 5, 6].map((c) => `<rect x="${246 + c * 54}" y="${240 + r * 52}" width="40" height="36" rx="8" fill="${c < 5 ? C.primary : C.ink}" opacity="${c < 5 ? 0.25 : 0.08}"/>`).join('')).join('')}
+  </g>
+  <g filter="url(#soft)">
+    <rect x="700" y="220" width="320" height="250" rx="24" fill="${C.white}"/>
+    <rect x="735" y="262" width="90" height="34" rx="10" fill="${C.primary}" opacity=".5"/>
+    <rect x="735" y="318" width="210" height="34" rx="10" fill="${C.primary}"/>
+    <rect x="735" y="374" width="250" height="34" rx="10" fill="${C.sun}"/>
+  </g>`,
 };
 
 await mkdir(OUT, { recursive: true });

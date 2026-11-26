@@ -15,7 +15,8 @@ export type CalculatorSlug =
   | 'prozent-rechner'
   | 'tvoed-rechner'
   | 'dreisatz-rechner'
-  | 'tv-l-rechner';
+  | 'tv-l-rechner'
+  | 'stundenlohn-rechner';
 
 export interface CalculatorMeta {
   slug: CalculatorSlug;
@@ -252,6 +253,19 @@ export const calculators: CalculatorMeta[] = [
     icon: 'building',
     related: ['tvoed-rechner', 'werkstudent-brutto-netto-rechner', 'prozent-rechner'],
     ogFormula: 'Netto = Tabellenentgelt − Steuern − Sozialabgaben − VBL',
+    added: '2026-11-26',
+  },
+  {
+    slug: 'stundenlohn-rechner',
+    href: '/stundenlohn-rechner/',
+    name: 'Stundenlohnrechner',
+    description: 'Stundenlohn berechnen: Monatsgehalt in Stundenlohn umrechnen und umgekehrt – mit Mindestlohn-Check 2026 und Rechenweg.',
+    category: 'gehalt-steuern',
+    alsoIn: [],
+    keywords: ['stundenlohn', 'stundenlohn berechnen', 'monatsgehalt', 'mindestlohn', 'mindestlohn 2026', 'gehalt pro stunde', 'wochenstunden', 'teilzeit', 'überstunden', 'lohn'],
+    icon: 'clock',
+    related: ['werkstudent-brutto-netto-rechner', 'tvoed-rechner', 'dreisatz-rechner', 'prozent-rechner'],
+    ogFormula: 'Stundenlohn = Monatsgehalt ÷ (Wochenstunden × 4,33)',
     added: '2026-11-26',
   },
 ];
