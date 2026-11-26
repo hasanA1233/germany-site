@@ -75,7 +75,7 @@ const p = 'sp';
     renderStackedBars(
       c.el('[data-chart="sp-chart"]'),
       r.rows.map((row) => ({ label: String(row.year), a: row.deposits, b: row.interest })),
-      `Säulendiagramm: geschätzter Depotwert nach ${r.rows.length} Jahren ${formatEUR(r.finalBalance)}, davon ${formatEUR(r.totalDeposits)} Einzahlungen.`,
+      `Säulendiagramm: geschätzter Depotwert nach ${r.rows.length === 1 ? '1 Jahr' : `${r.rows.length} Jahren`} ${formatEUR(r.finalBalance)}, davon ${formatEUR(r.totalDeposits)} Einzahlungen.`,
     );
     fillTable(
       c.el('[data-table="sp-table"]'),

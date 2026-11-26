@@ -38,6 +38,7 @@ import ArticleFigure from '../../components/ui/ArticleFigure.astro';
 import Entgelttabelle from '../../components/ui/Entgelttabelle.astro';
 import { tvoed, entgeltgruppen, jahressonderzahlungProzent, stufenlaufzeiten, vbl } from '../../data/tvoed-2026';
 import { calculateTarif } from '../../lib/calc/tarif';
+import { plural } from '../../lib/dates';
 
 export const eur = (n) => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
 export const beispiel = (eg, stufe) => {
@@ -102,8 +103,8 @@ Neue Beschäftigte ohne einschlägige Berufserfahrung starten in **Stufe 1**. We
     {stufenlaufzeiten.map((s, i) => (
       <tr>
         <td>Stufe {s.von} → Stufe {s.nach}</td>
-        <td>{s.jahre} {s.jahre === 1 ? 'Jahr' : 'Jahre'}</td>
-        <td>{stufenlaufzeiten.slice(0, i + 1).reduce((a, x) => a + x.jahre, 0)} Jahre</td>
+        <td>{plural(s.jahre, 'Jahr', 'Jahre')}</td>
+        <td>{plural(stufenlaufzeiten.slice(0, i + 1).reduce((a, x) => a + x.jahre, 0), 'Jahr', 'Jahre')}</td>
       </tr>
     ))}
   </tbody>

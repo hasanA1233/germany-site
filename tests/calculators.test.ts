@@ -278,3 +278,18 @@ test('Dreisatz: proportional, antiproportional, zusammengesetzt', () => {
   assert.ok(fail(calculateDreisatz({ art: 'proportional', a: 0, b: 1, c: 1 })).a);
   assert.ok(fail(calculateDreisatz({ art: 'antiproportional', a: 2, b: 1, c: 0 })).c);
 });
+
+// ---------------------------------------------------------------- Datumsregeln
+import { calculators } from '../src/data/calculators.ts';
+import { isNotInFuture, todayBerlin, formatDateDe, plural } from '../src/lib/dates.ts';
+
+test('Datumsangaben: nie in der Zukunft (deutsche Zeit), Anzeige als Kalendertag', () => {
+  for (const c of calculators) assert.ok(isNotInFuture(c.added), `${c.slug}: added ${c.added} liegt nach ${todayBerlin()}`);
+  // 23:30 UTC am 25.11. ist in Berlin bereits der 26.11.
+  assert.equal(todayBerlin(new Date('2026-11-25T23:30:00Z')), '2026-11-26');
+  assert.equal(isNotInFuture('2026-11-27', new Date('2026-11-26T22:57:00+01:00')), false);
+  assert.equal(formatDateDe('2026-11-26'), '26. November 2026');
+  assert.equal(formatDateDe('2026-11-26', 'short'), '26.11.2026');
+  assert.equal(plural(1, 'Jahr', 'Jahre'), '1 Jahr');
+  assert.equal(plural(15, 'Jahr', 'Jahre'), '15 Jahre');
+});

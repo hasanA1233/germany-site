@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { isNotInFuture, todayBerlin } from './lib/dates';
 
 /**
  * Ratgeber-Inhalte zu jedem Rechner. Dateiname = URL-Slug des Rechners.
@@ -17,7 +18,8 @@ const rechner = defineCollection({
     h1: z.string(),
     /** Einleitung direkt unter der H1 */
     intro: z.string(),
-    updated: z.coerce.date(),
+    /** Veröffentlichungs-/Aktualisierungsdatum – darf nicht in der Zukunft liegen (deutsche Zeit) */
+    updated: z.coerce.date().refine((d) => isNotInFuture(d.toISOString()), { message: `Datum liegt in der Zukunft (heute in Berlin: ${todayBerlin()})` }),
     faq: z.array(z.object({ q: z.string(), a: z.string() })).min(3),
     sources: z.array(z.object({ label: z.string(), url: z.url() })).default([]),
     /** Optionales Hero-Bild: Dateiname ohne Endung in public/images/rechner/ (nur Desktop sichtbar) */

@@ -83,7 +83,7 @@ const p = 'zz';
     renderStackedBars(
       c.el('[data-chart="zz-chart"]'),
       r.rows.map((row) => ({ label: String(row.year), a: row.deposits, b: row.interest })),
-      `Säulendiagramm: Kapital wächst in ${r.rows.length} Jahren auf ${formatEUR(r.finalBalance)}, davon ${formatEUR(r.interest)} Zinsen.`,
+      `Säulendiagramm: Kapital wächst in ${r.rows.length === 1 ? '1 Jahr' : `${r.rows.length} Jahren`} auf ${formatEUR(r.finalBalance)}, davon ${formatEUR(r.interest)} Zinsen.`,
     );
     fillTable(
       c.el('[data-table="zz-table"]'),

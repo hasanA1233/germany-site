@@ -15,6 +15,7 @@ import type { Crumb } from './Breadcrumbs.astro';
 import { getCalculator } from '../../data/calculators';
 import { getCategory } from '../../data/categories';
 import { site } from '../../data/site';
+import { formatDateDe } from '../../lib/dates';
 
 interface Props {
   entry: CollectionEntry<'rechner'>;
@@ -29,7 +30,7 @@ const { Content, headings } = await render(entry);
 const toc = headings.filter((h) => h.depth === 2);
 const data = entry.data;
 const url = new URL(meta.href, site.url).href;
-const updated = data.updated.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' });
+const updated = formatDateDe(data.updated);
 
 const schema = [
   {

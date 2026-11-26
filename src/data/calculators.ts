@@ -1,4 +1,4 @@
-import { getCategory, type CategoryId, type IconName } from './categories';
+import { getCategory, type CategoryId, type IconName } from './categories.ts';
 
 export type CalculatorSlug =
   | 'kreditrate-berechnen'
@@ -238,7 +238,7 @@ export const calculators: CalculatorMeta[] = [
     icon: 'dreisatz',
     related: ['prozent-rechner', 'rabatt-rechner', 'umsatzsteuer-rechner'],
     ogFormula: 'C ≙ B ÷ A × C',
-    added: '2026-11-27',
+    added: '2026-11-26',
   },
 ];
 
