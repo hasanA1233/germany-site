@@ -102,13 +102,27 @@ export function initCalculator(form: HTMLFormElement, compute: ComputeFn) {
     form.querySelectorAll<HTMLElement>('[data-results-invalid]').forEach((n) => (n.hidden = !invalid));
   };
 
+  // Nutzungsstatistik: nach einer Eingabe mit gültigem Ergebnis ein Ereignis melden (entprellt, ohne Eingabewerte).
+  // Ob es an Google Analytics geht, entscheidet allein der Cookie-Banner (nur mit Einwilligung „Statistik“).
+  let userInput = false;
+  let statTimer = 0;
+  const reportCalculation = () => {
+    clearTimeout(statTimer);
+    statTimer = window.setTimeout(() => {
+      const calculator = location.pathname.replace(/^\/+|\/+$/g, '') || form.dataset.calc || '';
+      document.dispatchEvent(new CustomEvent('qr:calculate', { detail: { calculator } }));
+    }, 1500);
+  };
+
   let frame = 0;
   const run = () => {
     cancelAnimationFrame(frame);
     frame = requestAnimationFrame(() => {
       updateVisibility();
       try {
-        applyErrors(compute(ctx));
+        const errors = compute(ctx);
+        applyErrors(errors);
+        if (userInput && (!errors || Object.keys(errors).length === 0)) reportCalculation();
       } catch (err) {
         console.error('[QuickRechner] Berechnung fehlgeschlagen', err);
         applyErrors({ _form: 'Die Berechnung konnte nicht durchgeführt werden. Bitte prüfen Sie Ihre Eingaben.' });
@@ -116,11 +130,15 @@ export function initCalculator(form: HTMLFormElement, compute: ComputeFn) {
     });
   };
 
-  form.addEventListener('input', run);
-  form.addEventListener('change', run);
+  const onUserInput = () => {
+    userInput = true;
+    run();
+  };
+  form.addEventListener('input', onUserInput);
+  form.addEventListener('change', onUserInput);
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    run();
+    onUserInput();
   });
   form.addEventListener('reset', () => setTimeout(run, 0));
 

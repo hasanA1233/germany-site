@@ -52,6 +52,25 @@ const jsonLd = [...schema, breadcrumbSchema].filter(Boolean);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {
+      analyticsEnabled && (
+        /* Google Consent Mode v2: Standard „abgelehnt“, bevor irgendein Google-Tag geladen wird.
+           Kein Netzwerkzugriff – gtag.js lädt erst nach Einwilligung (ConsentBanner.astro). */
+        <script is:inline>
+          window.dataLayer = window.dataLayer || [];
+          window.gtag = function () {
+            window.dataLayer.push(arguments);
+          };
+          window.gtag('consent', 'default', {
+            ad_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied',
+            analytics_storage: 'denied',
+            wait_for_update: 500,
+          });
+        </script>
+      )
+    }
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -99,7 +118,6 @@ const jsonLd = [...schema, breadcrumbSchema].filter(Boolean);
         />
       )
     }
-    {analyticsEnabled && <link rel="preconnect" href="https://www.googletagmanager.com" />}
   </head>
   <body class="flex min-h-screen flex-col">
     <!-- Dekorative CSS-Wolken (Theme „Cloudy Sky“) -->
