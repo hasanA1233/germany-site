@@ -1,0 +1,198 @@
+---
+seoTitle: "Minijob Rechner 2026: Grenze, Stunden, Netto"
+description: "Minijob Rechner 2026: Verdienst, maximale Stunden zum Mindestlohn, Netto und Arbeitgeberkosten berechnen – mit Prüfung der Minijob-Grenze von 603 €."
+h1: "Minijob Rechner 2026"
+intro: "Im Minijob dürfen Sie 2026 im Durchschnitt bis zu 603 € im Monat verdienen. Geben Sie Stundenlohn und Stunden ein – der Minijob Rechner zeigt, ob Sie unter der Grenze bleiben, wie viel netto übrig bleibt und was der Minijob den Arbeitgeber kostet."
+updated: 2026-11-26
+hero:
+  file: "minijob-rechner"
+  alt: "Minijob Rechner: Arbeitstasche und Verdienstbalken mit Grenzmarkierung als Illustration"
+faq:
+  - q: "Wie hoch ist die Minijob-Grenze 2026?"
+    a: "Die Verdienstgrenze liegt 2026 bei 603 € im Monat. Sie ist an den Mindestlohn gekoppelt: Mindestlohn × 130 ÷ 3, aufgerundet auf volle Euro. Mit dem Mindestlohn von 14,60 € steigt sie 2027 auf 633 €."
+  - q: "Wie viele Stunden darf ich im Minijob arbeiten?"
+    a: "Eine feste Stundengrenze gibt es nicht – entscheidend ist der Verdienst. Zum Mindestlohn von 13,90 € sind 2026 höchstens rund 43 Stunden im Monat möglich (603 € ÷ 13,90 €). Bei einem höheren Stundenlohn sind es entsprechend weniger Stunden."
+  - q: "Was bleibt netto vom Minijob?"
+    a: "Im gewerblichen Minijob zahlen Sie nur 3,6 % Eigenanteil zur Rentenversicherung – bei 600 € sind das 21,60 €. Lassen Sie sich von der Rentenversicherungspflicht befreien, erhalten Sie den Verdienst ohne Abzüge. Die Pauschsteuer von 2 % übernimmt in der Regel der Arbeitgeber."
+  - q: "Darf ich die Minijob-Grenze auch mal überschreiten?"
+    a: "Ja, wenn es unvorhersehbar ist, zum Beispiel durch eine Krankheitsvertretung. Das ist in höchstens zwei Kalendermonaten innerhalb eines Jahres erlaubt, und der Verdienst darf in diesen Monaten höchstens das Doppelte der Grenze betragen. Regelmäßige Überschreitungen beenden den Minijob."
+  - q: "Kann ich neben meinem Hauptjob einen Minijob haben?"
+    a: "Ja. Ein Minijob neben einer sozialversicherungspflichtigen Hauptbeschäftigung bleibt abgabenfrei für Sie – bis auf den Rentenversicherungsbeitrag. Jeder weitere Minijob wird dagegen mit der Hauptbeschäftigung zusammengerechnet."
+  - q: "Sollte ich mich von der Rentenversicherungspflicht befreien lassen?"
+    a: "Das hängt von Ihrer Situation ab. Die Befreiung bringt mehr Netto, aber weniger Rentenansprüche und keinen vollen Zugang zu Leistungen wie Reha oder Erwerbsminderungsrente. Seit Juli 2026 lässt sich eine Befreiung einmalig wieder rückgängig machen."
+  - q: "Was kostet ein Minijob den Arbeitgeber?"
+    a: "Gewerbliche Arbeitgeber zahlen 2026 bis zu 31,17 % Abgaben an die Minijob-Zentrale (Kranken- und Rentenversicherung, Pauschsteuer, Umlagen) plus Unfallversicherung. Im Privathaushalt sind es höchstens 14,62 % einschließlich Unfallversicherung."
+sources:
+  - label: "Minijob-Zentrale – Abgaben & Steuern (gewerbliche Minijobs)"
+    url: "https://www.minijob-zentrale.de/DE/fuer-gewerbetreibende/abgaben-und-steuern"
+  - label: "Minijob-Zentrale – Abgaben & Fristen (Minijobs im Privathaushalt)"
+    url: "https://www.minijob-zentrale.de/DE/fuer-haushalte/abgaben-und-fristen"
+  - label: "Deutsche Rentenversicherung – Verdienstgrenzen im Mini- und Midijob 2026"
+    url: "https://www.deutsche-rentenversicherung.de/DRV/DE/Ueber-uns-und-Presse/Presse/Meldungen/2026/260223-minijob-midijob-verdienstgrenzen-steigen.html"
+  - label: "Deutsche Rentenversicherung – Befreiung von der Rentenversicherungspflicht einmalig widerrufbar"
+    url: "https://www.deutsche-rentenversicherung.de/DRV/DE/Ueber-uns-und-Presse/Presse/Meldungen/2026/260605-minijob-befreiung-rv-pflicht.html"
+  - label: "SGB IV § 8 – Geringfügige Beschäftigung (u. a. Abs. 1b: gelegentliches Überschreiten)"
+    url: "https://www.gesetze-im-internet.de/sgb_4/__8.html"
+  - label: "Bundesurlaubsgesetz § 3 – Mindesturlaub"
+    url: "https://www.gesetze-im-internet.de/burlg/__3.html"
+  - label: "Entgeltfortzahlungsgesetz § 3 – Entgeltfortzahlung im Krankheitsfall"
+    url: "https://www.gesetze-im-internet.de/entgfg/__3.html"
+  - label: "EStG § 35a – Steuerermäßigung für haushaltsnahe Beschäftigungsverhältnisse"
+    url: "https://www.gesetze-im-internet.de/estg/__35a.html"
+  - label: "Fünfte Mindestlohnanpassungsverordnung (MiLoV5)"
+    url: "https://www.gesetze-im-internet.de/milov5/BJNR10C0A0025.html"
+---
+
+import AdSlot from '../../components/ads/AdSlot.astro';
+import ArticleFigure from '../../components/ui/ArticleFigure.astro';
+import { steuer2026 } from '../../data/steuer-2026';
+import { minijob2026, minijobGrenze2027 } from '../../data/minijob-2026';
+import { calculateMinijob } from '../../lib/calc/minijob';
+
+export const eur = (n) => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+export const eur0 = (n) => n.toLocaleString('de-DE') + ' €';
+export const pct = (n) => n.toLocaleString('de-DE') + ' %';
+export const g = minijob2026.gewerbe;
+export const h = minijob2026.haushalt;
+export const ex = calculateMinijob({ stundenlohn: steuer2026.mindestlohn, stundenProMonat: 43, arbeitgeber: 'gewerbe', rvBefreit: false, gesetzlichVersichert: true });
+
+## So funktioniert der Minijob Rechner
+
+Der Rechner beantwortet die wichtigsten Fragen rund um den Minijob in einem Schritt:
+
+1. **Stundenlohn eingeben** – der Mindestlohn von {eur(steuer2026.mindestlohn)} ist vorausgefüllt.
+2. **Stunden pro Monat eingeben** – oder das Feld leer lassen. Dann zeigt der Rechner, wie viele Stunden Sie höchstens arbeiten können, ohne die Grenze von {eur0(steuer2026.minijobGrenze)} zu überschreiten.
+3. **Arbeitgeber wählen:** gewerblich (z. B. Gastronomie, Einzelhandel, Büro) oder Privathaushalt (z. B. Reinigung, Gartenarbeit, Kinderbetreuung).
+4. **Rentenversicherung:** Sind Sie von der Rentenversicherungspflicht befreit oder nicht?
+5. **Krankenversicherung:** Nur für gesetzlich Versicherte zahlt der Arbeitgeber einen Pauschalbeitrag zur Krankenversicherung.
+
+Das Ergebnis zeigt Ihr **Netto**, den **Monatsverdienst**, die **maximalen Stunden** sowie die **Kosten des Arbeitgebers** mit allen Pauschalabgaben. Ein farbiges Kennzeichen warnt, wenn die Grenze überschritten oder der Mindestlohn unterschritten wird.
+
+## Minijob 2026: Die wichtigsten Regeln
+
+Ein Minijob – offiziell **geringfügig entlohnte Beschäftigung** – liegt vor, wenn Sie im Durchschnitt nicht mehr als **{eur0(steuer2026.minijobGrenze)} im Monat** verdienen. Die Grenze ist seit 2022 an den Mindestlohn gekoppelt und wird nach der Formel **Mindestlohn × 130 ÷ 3** berechnet, aufgerundet auf volle Euro:
+
+| Jahr | Mindestlohn | Minijob-Grenze |
+| --- | --- | --- |
+| 2026 | {eur(steuer2026.mindestlohn)} | {eur0(steuer2026.minijobGrenze)} |
+| 2027 | {eur(steuer2026.mindestlohn2027)} | {eur0(minijobGrenze2027)} |
+
+Maßgeblich ist der **regelmäßige Verdienst im Durchschnitt**. Schwankt Ihr Einkommen von Monat zu Monat, darf es in einzelnen Monaten auch über {eur0(steuer2026.minijobGrenze)} liegen, solange der Durchschnitt die Grenze nicht übersteigt. Auch Minijobber haben die gleichen Arbeitnehmerrechte wie andere Beschäftigte, etwa bezahlten Urlaub, Lohnfortzahlung im Krankheitsfall und den Mindestlohn.
+
+## Wie viele Stunden sind im Minijob erlaubt?
+
+Eine feste Stundengrenze gibt es nicht. Wie viele Stunden möglich sind, hängt allein vom Stundenlohn ab:
+
+<div class="overflow-x-auto">
+<table>
+  <thead><tr><th scope="col">Stundenlohn</th><th scope="col">Max. Stunden pro Monat</th><th scope="col">ca. Stunden pro Woche</th></tr></thead>
+  <tbody>
+    {[steuer2026.mindestlohn, 15, 16, 18, 20].map((l) => {
+      const max = Math.floor((steuer2026.minijobGrenze / l) * 10) / 10;
+      return (
+        <tr>
+          <td>{eur(l)}{l === steuer2026.mindestlohn ? ' (Mindestlohn)' : ''}</td>
+          <td>{max.toLocaleString('de-DE')} Std.</td>
+          <td>{(Math.floor((max / (13 / 3)) * 10) / 10).toLocaleString('de-DE')} Std.</td>
+        </tr>
+      );
+    })}
+  </tbody>
+</table>
+</div>
+
+## Abgaben im Minijob 2026
+
+Für Minijobber ist der Job weitgehend abgabenfrei. Die meisten Abgaben trägt der Arbeitgeber pauschal:
+
+| Abgabe | Gewerblicher Minijob | Minijob im Privathaushalt |
+| --- | --- | --- |
+| Krankenversicherung (Arbeitgeber, nur bei gesetzlich Versicherten) | {pct(g.kv)} | {pct(h.kv)} |
+| Rentenversicherung (Arbeitgeber) | {pct(g.rvArbeitgeber)} | {pct(h.rvArbeitgeber)} |
+| Rentenversicherung – Eigenanteil Minijobber | {pct(g.rvEigenanteil)} | {pct(h.rvEigenanteil)} |
+| Pauschsteuer (inkl. Kirchensteuer und Soli) | {pct(g.pauschsteuer)} | {pct(h.pauschsteuer)} |
+| Umlage U1 / U2 | {pct(g.u1)} / {pct(g.u2)} | {pct(h.u1)} / {pct(h.u2)} |
+| Insolvenzgeldumlage | {pct(g.insolvenzgeldumlage)} | – |
+| Unfallversicherung | individuell (Berufsgenossenschaft) | {pct(h.unfallversicherung)} |
+| **Abgaben Arbeitgeber gesamt** | **bis 31,17 %** + Unfallversicherung | **bis 14,62 %** |
+
+Kranken-, Pflege- und Arbeitslosenversicherung zahlen Minijobber nicht. Aus dem Minijob entsteht deshalb auch kein eigener Krankenversicherungsschutz.
+
+<AdSlot placement="in-content" />
+
+## Rentenversicherung: Pflicht und Befreiung
+
+Minijobs sind grundsätzlich **rentenversicherungspflichtig**. Im gewerblichen Minijob zahlen Sie einen Eigenanteil von {pct(g.rvEigenanteil)} – das ist die Differenz zwischen dem vollen Beitragssatz von 18,6 % und dem Pauschalbeitrag des Arbeitgebers. Im Privathaushalt beträgt der Eigenanteil {pct(h.rvEigenanteil)}, weil der Arbeitgeber dort nur {pct(h.rvArbeitgeber)} zahlt.
+
+Sie können sich auf Antrag beim Arbeitgeber **befreien lassen**. Dann bleibt Ihnen mehr Netto, Sie erwerben aber deutlich weniger Rentenansprüche und haben keinen vollen Zugang zu Leistungen wie Reha oder Erwerbsminderungsrente. Seit **Juli 2026** kann eine Befreiung **einmalig widerrufen** werden – wer sich früher befreien ließ, kann also wieder in die volle Rentenversicherungspflicht wechseln.
+
+## Grenze überschritten – was nun?
+
+Verdienen Sie regelmäßig mehr als {eur0(steuer2026.minijobGrenze)}, ist es kein Minijob mehr. Dann gelten die Regeln des **Übergangsbereichs** (Midijob) bis 2.000 €: Sie zahlen Sozialabgaben, allerdings reduziert.
+
+Erlaubt ist nur ein **unvorhersehbares Überschreiten**, etwa durch eine kurzfristige Krankheitsvertretung. Das Gesetz (§ 8 Abs. 1b SGB IV) setzt dafür enge Grenzen: höchstens in **zwei Kalendermonaten** innerhalb eines Jahres und jeweils um höchstens einen Betrag in Höhe der Grenze – der Verdienst darf in diesen Monaten also maximal das Doppelte betragen.
+
+## Minijob neben dem Hauptjob oder mehrere Minijobs
+
+- **Ein Minijob neben einer Hauptbeschäftigung** bleibt für Sie abgabenfrei, abgesehen vom Rentenbeitrag. Er wird nicht mit dem Hauptjob zusammengerechnet.
+- **Jeder weitere Minijob** neben einem Hauptjob wird mit der Hauptbeschäftigung zusammengerechnet und ist dann sozialversicherungspflichtig.
+- **Mehrere Minijobs ohne Hauptjob** werden zusammengezählt. Liegt die Summe über {eur0(steuer2026.minijobGrenze)}, sind alle Jobs keine Minijobs mehr.
+
+## Rechenbeispiel: Minijob zum Mindestlohn
+
+Sie arbeiten 2026 im Einzelhandel 43 Stunden im Monat zum Mindestlohn, sind gesetzlich krankenversichert und nicht von der Rentenversicherung befreit:
+
+| Posten | Betrag |
+| --- | --- |
+| Verdienst: {eur(steuer2026.mindestlohn)} × 43 Stunden | {eur(ex.verdienst)} |
+| Eigenanteil Rentenversicherung ({pct(g.rvEigenanteil)}) | − {eur(ex.rvEigenanteil)} |
+| **Netto** | **{eur(ex.netto)}** |
+| Abgaben des Arbeitgebers (ohne Unfallversicherung) | {eur(ex.arbeitgeber.summe)} |
+| **Gesamtkosten des Arbeitgebers** | **{eur(ex.arbeitgeber.gesamtkosten)}** |
+
+<ArticleFigure
+  file="minijob-rechner-beispiel"
+  alt="Minijob Rechner Beispiel: Verdienstbalken knapp unter der Grenzmarkierung und kleiner Abzug für die Rentenversicherung"
+  caption="Bis zur Grenze bleibt der Minijob für Beschäftigte fast abgabenfrei – nur der Rentenbeitrag geht ab, wenn Sie sich nicht befreien lassen."
+/>
+
+## Steuern im Minijob
+
+In den meisten Minijobs zahlt der Arbeitgeber die **einheitliche Pauschsteuer von {pct(g.pauschsteuer)}** des Verdienstes an die Minijob-Zentrale. Damit sind Lohnsteuer, Solidaritätszuschlag und Kirchensteuer abgegolten. Der Verdienst taucht in Ihrer Einkommensteuererklärung nicht auf, und Sie müssen ihn auch nicht angeben.
+
+Alternativ kann der Arbeitgeber die Lohnsteuer nach Ihren **individuellen Steuermerkmalen** (Steuerklasse) abrechnen. Das ist vor allem dann üblich, wenn der Minijob neben einem Hauptjob über Steuerklasse VI läuft – oder wenn Sie in Steuerklasse I ohnehin keine Lohnsteuer zahlen würden. Welche Variante gilt, vereinbaren Sie mit Ihrem Arbeitgeber. Der Rechner geht vom Normalfall aus: Pauschsteuer, getragen vom Arbeitgeber.
+
+## Urlaub und Krankheit im Minijob
+
+Minijobber sind Arbeitnehmer mit allen Rechten. Zwei besonders wichtige:
+
+- **Bezahlter Urlaub:** Der gesetzliche Mindesturlaub beträgt **24 Werktage** im Jahr bei einer Sechstagewoche. Wer weniger Tage pro Woche arbeitet, hat anteilig Anspruch – bei zwei Arbeitstagen pro Woche sind es zum Beispiel 8 Urlaubstage. Viele Arbeitgeber gewähren mehr.
+- **Lohnfortzahlung bei Krankheit:** Bei Arbeitsunfähigkeit zahlt der Arbeitgeber den Verdienst **bis zu sechs Wochen** weiter – genau wie bei anderen Beschäftigten.
+
+Auch Feiertage, die auf einen regulären Arbeitstag fallen, werden bezahlt. Gewerbliche Arbeitgeber zahlen für diese Fälle die Umlagen U1 und U2 und erhalten im Krankheitsfall oder bei Mutterschaft einen Teil der Kosten erstattet.
+
+## Minijob im Privathaushalt
+
+Für Haushaltshilfen, Gartenarbeit oder Kinderbetreuung im privaten Haushalt gelten besonders niedrige Abgaben: höchstens **14,62 %** einschließlich Unfallversicherung. Angemeldet wird über das vereinfachte **Haushaltsscheckverfahren** der Minijob-Zentrale; die Abgaben werden halbjährlich per Lastschrift eingezogen.
+
+Zusätzlich lohnt sich der Minijob im Haushalt steuerlich: Privathaushalte können **20 % ihrer Aufwendungen, höchstens 510 € im Jahr**, direkt von der Einkommensteuer abziehen (§ 35a EStG). Für Minijobber im Haushalt ist der Eigenanteil zur Rentenversicherung mit {pct(h.rvEigenanteil)} dafür höher als im Gewerbe – viele lassen sich deshalb befreien.
+
+## Minijob oder Midijob?
+
+| | Minijob | Midijob (Übergangsbereich) |
+| --- | --- | --- |
+| Verdienst 2026 | bis {eur0(steuer2026.minijobGrenze)} | {eur(steuer2026.minijobGrenze + 0.01)} bis 2.000 € |
+| Sozialabgaben Beschäftigte | nur Rente ({pct(g.rvEigenanteil)}, Befreiung möglich) | alle Zweige, aber reduziert |
+| Eigener Krankenversicherungsschutz | nein | ja |
+| Lohnsteuer | meist {pct(g.pauschsteuer)} pauschal durch Arbeitgeber | nach Steuerklasse |
+
+Für Studierende gibt es zusätzlich den Werkstudentenstatus mit besonderen Regeln – den [Werkstudent-Rechner](/werkstudent-brutto-netto-rechner/) finden Sie hier. Ihren Stundenlohn aus einem Monatsgehalt ermitteln Sie mit dem [Stundenlohnrechner](/stundenlohn-rechner/).
+
+## Tipps für Minijobber
+
+- **Stunden im Blick behalten:** Wer zum Mindestlohn arbeitet, kommt mit rund 43 Stunden im Monat an die Grenze. Steigt der Stundenlohn, sinkt die mögliche Stundenzahl.
+- **2027 planen:** Mit dem Mindestlohn steigt die Grenze auf {eur0(minijobGrenze2027)}. Wer genau an der Grenze arbeitet, kann dann etwas mehr verdienen oder die Stunden anpassen.
+- **Rentenbeitrag bewusst entscheiden:** Der kleine Eigenanteil bringt volle Rentenversicherungszeiten – das kann für spätere Ansprüche wichtig sein.
+- **Bürgergeld oder BAföG:** Einkommen aus einem Minijob wird oberhalb von Freibeträgen angerechnet. Fragen Sie im Zweifel beim Jobcenter oder BAföG-Amt nach.
+
+> **Alle Angaben ohne Gewähr – keine Steuer- oder Rechtsberatung.** Der Minijob Rechner liefert eine Modellrechnung mit den Abgabensätzen der Minijob-Zentrale für 2026. Ob im Einzelfall ein Minijob vorliegt, prüft die Minijob-Zentrale.

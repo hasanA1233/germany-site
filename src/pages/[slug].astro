@@ -22,6 +22,7 @@ import TvoedCalc from '../components/calculators/TvoedCalc.astro';
 import DreisatzCalc from '../components/calculators/DreisatzCalc.astro';
 import TvlCalc from '../components/calculators/TvlCalc.astro';
 import StundenlohnCalc from '../components/calculators/StundenlohnCalc.astro';
+import MinijobCalc from '../components/calculators/MinijobCalc.astro';
 
 const components: Partial<Record<CalculatorSlug, typeof KreditrateCalc>> = {
   'kreditrate-berechnen': KreditrateCalc,
@@ -39,6 +40,7 @@ const components: Partial<Record<CalculatorSlug, typeof KreditrateCalc>> = {
   'dreisatz-rechner': DreisatzCalc,
   'tv-l-rechner': TvlCalc,
   'stundenlohn-rechner': StundenlohnCalc,
+  'minijob-rechner': MinijobCalc,
 };
 
 export async function getStaticPaths() {

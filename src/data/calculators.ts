@@ -16,7 +16,8 @@ export type CalculatorSlug =
   | 'tvoed-rechner'
   | 'dreisatz-rechner'
   | 'tv-l-rechner'
-  | 'stundenlohn-rechner';
+  | 'stundenlohn-rechner'
+  | 'minijob-rechner';
 
 export interface CalculatorMeta {
   slug: CalculatorSlug;
@@ -264,8 +265,21 @@ export const calculators: CalculatorMeta[] = [
     alsoIn: [],
     keywords: ['stundenlohn', 'stundenlohn berechnen', 'monatsgehalt', 'mindestlohn', 'mindestlohn 2026', 'gehalt pro stunde', 'wochenstunden', 'teilzeit', 'überstunden', 'lohn'],
     icon: 'clock',
-    related: ['werkstudent-brutto-netto-rechner', 'tvoed-rechner', 'dreisatz-rechner', 'prozent-rechner'],
+    related: ['minijob-rechner', 'werkstudent-brutto-netto-rechner', 'tvoed-rechner', 'dreisatz-rechner'],
     ogFormula: 'Stundenlohn = Monatsgehalt ÷ (Wochenstunden × 4,33)',
+    added: '2026-11-26',
+  },
+  {
+    slug: 'minijob-rechner',
+    href: '/minijob-rechner/',
+    name: 'Minijob-Rechner',
+    description: 'Minijob 2026 berechnen: Verdienst, maximale Stunden zum Mindestlohn, Netto und Arbeitgeberkosten – mit Prüfung der 603-€-Grenze.',
+    category: 'gehalt-steuern',
+    alsoIn: [],
+    keywords: ['minijob', 'minijob rechner', 'minijob 2026', 'minijob grenze', '603 euro', 'geringfügige beschäftigung', 'aushilfe', 'nebenjob', 'pauschalabgaben', 'rentenversicherung befreiung', 'privathaushalt'],
+    icon: 'minijob',
+    related: ['stundenlohn-rechner', 'werkstudent-brutto-netto-rechner', 'tvoed-rechner'],
+    ogFormula: 'Minijob: bis 603 € im Monat (2026)',
     added: '2026-11-26',
   },
 ];

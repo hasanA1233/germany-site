@@ -310,3 +310,24 @@ test('Stundenlohn: Monat ↔ Stunde, Mindestlohn-Vergleich, Urlaub', () => {
   assert.ok(c.ok && c.gearbeiteteStundenJahr === 1840 && Math.abs(c.stundenlohnGearbeitet! - 19.57) < 0.01); // 36.000 ÷ 1.840 h
   assert.ok(fail(calculateStundenlohn({ modus: 'monat', betrag: 0, wochenstunden: 0 })).wochenstunden);
 });
+
+// ---------------------------------------------------------------- Minijob
+import { calculateMinijob } from '../src/lib/calc/minijob.ts';
+
+test('Minijob 2026: Mindestlohn, Grenze 603 €, Abgaben Gewerbe und Haushalt', () => {
+  const a = calculateMinijob({ stundenlohn: 13.9, arbeitgeber: 'gewerbe', rvBefreit: false, gesetzlichVersichert: true });
+  assert.ok(a.ok);
+  if (!a.ok) return;
+  assert.equal(a.maxStunden, 43.38); // 603 ÷ 13,90
+  assert.equal(a.verdienst, 602.98);
+  const b = calculateMinijob({ stundenlohn: 13.9, stundenProMonat: 43, arbeitgeber: 'gewerbe', rvBefreit: false, gesetzlichVersichert: true });
+  assert.ok(b.ok && b.verdienst === 597.7 && b.status === 'minijob' && b.rvEigenanteil === 21.52 && b.netto === 576.18);
+  // Gewerbe: 31,17 % Abgaben (ohne Unfallversicherung)
+  assert.ok(b.ok && Math.abs(b.arbeitgeber.summe - 597.7 * 0.3117) < 0.03);
+  const c = calculateMinijob({ stundenlohn: 15, stundenProMonat: 40, arbeitgeber: 'haushalt', rvBefreit: true, gesetzlichVersichert: true });
+  assert.ok(c.ok && c.verdienst === 600 && c.netto === 600 && Math.abs(c.arbeitgeber.summe - 600 * 0.1462) < 0.02);
+  const d = calculateMinijob({ stundenlohn: 15, stundenProMonat: 45, arbeitgeber: 'gewerbe', rvBefreit: false, gesetzlichVersichert: true });
+  assert.ok(d.ok && d.status === 'ueberschritten');
+  const e = calculateMinijob({ stundenlohn: 12, stundenProMonat: 40, arbeitgeber: 'gewerbe', rvBefreit: false, gesetzlichVersichert: false });
+  assert.ok(e.ok && e.unterMindestlohn && e.arbeitgeber.kv === 0);
+});

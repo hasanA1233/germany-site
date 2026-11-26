@@ -1,0 +1,134 @@
+---
+import CalculatorShell from '../calculator/CalculatorShell.astro';
+import NumberField from '../calculator/NumberField.astro';
+import ChoiceField from '../calculator/ChoiceField.astro';
+import ResultMain from '../calculator/ResultMain.astro';
+import ResultList from '../calculator/ResultList.astro';
+import { steuer2026 } from '../../data/steuer-2026';
+const p = 'mj';
+const ml = steuer2026.mindestlohn.toLocaleString('de-DE', { minimumFractionDigits: 2 });
+---
+
+<CalculatorShell
+  slug="minijob"
+  title="Minijob 2026 berechnen"
+  note={`Verdienstgrenze 2026: ${steuer2026.minijobGrenze} € im Monat (im Jahresdurchschnitt). Annahme: Die Pauschsteuer von 2 % trägt der Arbeitgeber. Ohne Stundenangabe rechnet der Rechner mit dem höchstmöglichen Verdienst.`}
+>
+  <div class="grid grid-cols-2 gap-3">
+    <NumberField idPrefix={p} name="stundenlohn" label="Stundenlohn" value={ml} suffix="€" />
+    <NumberField idPrefix={p} name="stunden" label="Stunden pro Monat" optional placeholder="max." decimals={2} hint="Leer = maximal möglich" />
+  </div>
+  <ChoiceField
+    idPrefix={p}
+    name="arbeitgeber"
+    legend="Arbeitgeber"
+    value="gewerbe"
+    options={[
+      { value: 'gewerbe', label: 'Gewerblich' },
+      { value: 'haushalt', label: 'Privathaushalt' },
+    ]}
+  />
+  <ChoiceField
+    idPrefix={p}
+    name="rv"
+    legend="Von der Rentenversicherungspflicht befreit?"
+    value="nein"
+    options={[
+      { value: 'nein', label: 'Nein (Standard)' },
+      { value: 'ja', label: 'Ja, befreit' },
+    ]}
+  />
+  <ChoiceField
+    idPrefix={p}
+    name="kv"
+    legend="Minijobber gesetzlich krankenversichert?"
+    value="ja"
+    options={[
+      { value: 'ja', label: 'Ja' },
+      { value: 'nein', label: 'Nein (privat)' },
+    ]}
+  />
+
+  <Fragment slot="results">
+    <p
+      data-state-for="status"
+      data-out="status"
+      class="mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold ring-1 data-[state=ok]:bg-brand-50 data-[state=ok]:text-brand-700 data-[state=ok]:ring-brand-100 data-[state=warn]:bg-danger-50 data-[state=warn]:text-danger-700 data-[state=warn]:ring-danger-700/30"
+    >
+    </p>
+    <ResultMain label="Netto für den Minijobber" out="netto" sub="Monatsverdienst brutto:" subOut="verdienst" />
+    <ResultList
+      items={[
+        { label: 'Maximale Stunden bei diesem Stundenlohn', out: 'maxStunden' },
+        { label: 'Eigenanteil Rentenversicherung', out: 'rvEigen' },
+        { label: 'Netto pro Jahr', out: 'nettoJahr' },
+      ]}
+    />
+    <h4 class="mt-5 text-sm font-semibold text-navy-900">Kosten für den Arbeitgeber</h4>
+    <ResultList
+      items={[
+        { label: 'Pauschalbeitrag Krankenversicherung', out: 'agKv' },
+        { label: 'Pauschalbeitrag Rentenversicherung', out: 'agRv' },
+        { label: 'Pauschsteuer (2 %)', out: 'agSt' },
+        { label: 'Umlagen (U1, U2, Insolvenzgeld)', out: 'agUml' },
+        { label: 'Unfallversicherung', out: 'agUv' },
+        { label: 'Gesamtkosten pro Monat', out: 'agGesamt', strong: true },
+      ]}
+    />
+    <p class="mt-3 text-sm leading-relaxed text-ink" data-out="hinweis"></p>
+    <div class="mt-4 rounded-2xl border border-line bg-card p-4 text-sm">
+      <p class="font-semibold text-navy-900">Rechenweg</p>
+      <p class="mt-1 font-mono text-[0.95em] tabular-nums text-ink" data-out="rw1"></p>
+      <p class="mt-1 font-mono text-[0.95em] tabular-nums text-ink" data-out="rw2"></p>
+    </div>
+  </Fragment>
+</CalculatorShell>
+
+<script>
+  import { mountCalculator } from '../../scripts/calc-runtime';
+  import { calculateMinijob } from '../../lib/calc/minijob';
+  import { minijob2026 } from '../../data/minijob-2026';
+  import { formatEUR, formatNumber } from '../../lib/format';
+
+  mountCalculator('minijob', (c) => {
+    const arbeitgeber = c.choice('arbeitgeber') === 'haushalt' ? 'haushalt' : 'gewerbe';
+    const stunden = c.optional('stunden');
+    const r = calculateMinijob({
+      stundenlohn: c.num('stundenlohn'),
+      stundenProMonat: stunden,
+      arbeitgeber,
+      rvBefreit: c.choice('rv') === 'ja',
+      gesetzlichVersichert: c.choice('kv') !== 'nein',
+    });
+    if (!r.ok) return r.errors;
+    const ok = r.status === 'minijob';
+    c.state('status', ok && !r.unterMindestlohn ? 'ok' : 'warn');
+    c.out(
+      'status',
+      !ok ? `Achtung: über der Minijob-Grenze von ${r.grenze} €` : r.unterMindestlohn ? 'Achtung: Stundenlohn unter dem Mindestlohn' : `✓ Minijob – unter der Grenze von ${r.grenze} €`,
+    );
+    c.out('netto', formatEUR(r.netto));
+    c.out('verdienst', formatEUR(r.verdienst));
+    c.out('maxStunden', `${formatNumber(r.maxStunden, 2)} Std. im Monat`);
+    c.out('rvEigen', r.rvEigenanteil > 0 ? `${formatEUR(r.rvEigenanteil)} (${formatNumber(minijob2026[arbeitgeber].rvEigenanteil, 2)} %)` : '0,00 € (befreit)');
+    c.out('nettoJahr', formatEUR(r.netto * 12));
+    const ag = r.arbeitgeber;
+    c.out('agKv', formatEUR(ag.kv));
+    c.out('agRv', formatEUR(ag.rv));
+    c.out('agSt', formatEUR(ag.steuer));
+    c.out('agUml', formatEUR(ag.umlagen));
+    c.out('agUv', ag.unfall === null ? 'individuell (Berufsgenossenschaft)' : formatEUR(ag.unfall));
+    c.out('agGesamt', formatEUR(ag.gesamtkosten) + (ag.unfall === null ? ' + Unfallversicherung' : ''));
+    c.out(
+      'hinweis',
+      !ok
+        ? `Bei ${formatEUR(r.verdienst)} liegt keine geringfügige Beschäftigung mehr vor – es sei denn, die Grenze wird nur unvorhersehbar in höchstens zwei Monaten eines Jahres überschritten. Regelmäßig darüber gelten die Regeln des Übergangsbereichs (Midijob) mit reduzierten Sozialabgaben.`
+        : r.rvEigenanteil > 0
+          ? 'Tipp: Den Eigenanteil zur Rentenversicherung sparen Sie, wenn Sie sich befreien lassen – dafür erwerben Sie weniger Rentenansprüche.'
+          : 'Ohne Rentenversicherungspflicht erwerben Sie aus diesem Minijob nur geringe Rentenansprüche aus dem Arbeitgeberbeitrag.',
+    );
+    c.out('rw1', `${formatEUR(c.num('stundenlohn'))} × ${formatNumber(stunden ?? r.maxStunden, 2)} Std. = ${formatEUR(r.verdienst)}`);
+    c.out('rw2', `${formatEUR(r.verdienst)} − ${formatEUR(r.rvEigenanteil)} Rentenbeitrag = ${formatEUR(r.netto)} netto`);
+    return null;
+  });
+</script>

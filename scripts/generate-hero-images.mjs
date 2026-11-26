@@ -280,6 +280,36 @@ const scenes = {
     <rect x="735" y="318" width="210" height="34" rx="10" fill="${C.primary}"/>
     <rect x="735" y="374" width="250" height="34" rx="10" fill="${C.sun}"/>
   </g>`,
+
+  /** Minijob: Arbeitstasche und Verdienstbalken mit Grenzmarkierung (ohne Zahl) */
+  'minijob-rechner': () => `
+  ${sky()}
+  <g filter="url(#soft)">
+    <rect x="230" y="270" width="300" height="220" rx="30" fill="${C.primaryDark}"/>
+    <rect x="320" y="220" width="120" height="60" rx="18" fill="none" stroke="${C.primaryDark}" stroke-width="18"/>
+    <rect x="230" y="355" width="300" height="18" fill="${C.ink}" opacity=".25"/>
+    <rect x="360" y="342" width="40" height="44" rx="8" fill="${C.sun}"/>
+  </g>
+  <g filter="url(#soft)">
+    <rect x="620" y="250" width="440" height="230" rx="26" fill="${C.white}"/>
+    <rect x="660" y="330" width="360" height="54" rx="16" fill="${C.ink}" opacity=".08"/>
+    <rect x="660" y="330" width="290" height="54" rx="16" fill="${C.primary}"/>
+    <path d="M970 300 V 414" stroke="${C.sun}" stroke-width="8" stroke-dasharray="12 10" stroke-linecap="round"/>
+    <rect x="660" y="420" width="160" height="14" rx="7" fill="${C.ink}" opacity=".15"/>
+  </g>`,
+
+  /** In-Artikel-Grafik Minijob: Balken knapp unter Grenze, kleiner Abzug */
+  'minijob-rechner-beispiel': () => `
+  ${sky()}
+  <g filter="url(#soft)">
+    <rect x="260" y="180" width="680" height="320" rx="28" fill="${C.white}"/>
+    <rect x="310" y="250" width="560" height="60" rx="18" fill="${C.ink}" opacity=".08"/>
+    <rect x="310" y="250" width="520" height="60" rx="18" fill="${C.primary}"/>
+    <rect x="310" y="350" width="500" height="60" rx="18" fill="${C.primaryDark}" opacity=".55"/>
+    <rect x="810" y="350" width="20" height="60" rx="6" fill="${C.sun}"/>
+    <path d="M850 220 V 440" stroke="${C.sun}" stroke-width="8" stroke-dasharray="12 10" stroke-linecap="round"/>
+  </g>
+  <g filter="url(#soft)">${coin(1040, 470, 30)}${coin(1040, 448, 30)}</g>`,
 };
 
 await mkdir(OUT, { recursive: true });
